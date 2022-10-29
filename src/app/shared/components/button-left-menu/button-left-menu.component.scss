@@ -1,0 +1,18 @@
+
+p {
+  color: rgba(0,0,0,.5);//#007bff;
+  text-decoration: none;
+  background-color: transparent;
+  margin: 0%;
+  cursor: pointer;
+  &.my-nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    &:hover {
+      color: #007bff;
+    }
+  }
+  &.is-active {
+    color: #007bff;
+  }
+}

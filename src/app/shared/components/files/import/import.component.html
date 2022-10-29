@@ -1,0 +1,14 @@
+
+<form for="file" class="card pt-3 text-center" >
+  <label for="file">
+    <i class="fas fa-cloud-upload-alt fa-2x icon-color-upload"></i>
+    <input 
+      type="file" 
+      id="file" 
+      class="import" 
+      (change)="onFileChange($event)"
+      [accept]="config.accept"
+    >
+    <span>{{config.label}}</span>
+  </label>
+</form>

@@ -1,0 +1,33 @@
+.notification {
+  padding: 1em!important;
+  margin-bottom: 0!important;
+  width: 350px;
+  z-index: 1;
+  animation: fadeIn ease 2s;
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  &.fadeOut {
+    animation: fadeOut ease 2s;
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+  }
+}

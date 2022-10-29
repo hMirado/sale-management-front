@@ -1,0 +1,27 @@
+.icon-color-upload {
+  color: #144B72;
+}
+
+.icon-color-download {
+  color: #EC6A6C;
+}
+
+
+label {
+  .import {
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Open Sans";
+
+  &:hover {
+    cursor: pointer;
+  }
+}
