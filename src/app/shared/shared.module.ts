@@ -4,13 +4,12 @@ import { ButtonLeftMenuComponent } from './components/button-left-menu/button-le
 import { BreadCrumbComponent } from './components/bread-crumb/bread-crumb.component';
 import { PageTitleComponent } from './components/page-title/page-title.component';
 import { ContentHeaderComponent } from './components/content-header/content-header.component';
-import { NotificationComponent } from './components/notification/notification.component';
 import { ToDoComponent } from './components/to-do/to-do.component';
 import { ImportComponent } from './components/files/import/import.component';
 import { ExportComponent } from './components/files/export/export.component';
 import { BoxSummaryComponent } from './components/box-summary/box-summary.component';
-
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TableComponent } from './components/table/table.component';
 
 @NgModule({
   declarations: [
@@ -18,14 +17,16 @@ import { BoxSummaryComponent } from './components/box-summary/box-summary.compon
     BreadCrumbComponent,
     PageTitleComponent,
     ContentHeaderComponent,
-    NotificationComponent,
     ToDoComponent,
     ImportComponent,
     ExportComponent,
-    BoxSummaryComponent
+    BoxSummaryComponent,
+    TableComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -34,7 +35,8 @@ import { BoxSummaryComponent } from './components/box-summary/box-summary.compon
     ContentHeaderComponent,
     ToDoComponent,
     ImportComponent,
-    ExportComponent
+    ExportComponent,
+    TableComponent
   ]
 })
 export class SharedModule { }

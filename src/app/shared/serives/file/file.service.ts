@@ -1,19 +1,23 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { IBase64File } from '../../models/file/i-base64-file';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
-  public base64File$: BehaviorSubject<string|ArrayBuffer|null> = new BehaviorSubject<string|ArrayBuffer|null>('');
+  public base64File$: BehaviorSubject<IBase64File> = new BehaviorSubject<IBase64File>({file: null, id: ''});
   
   constructor() { }
 
-  convertFileToBase64(file: File) {
+  convertFileToBase64(file: File, id:string) {
     let reader = new FileReader();
-
     reader.onloadend = () => {
-      this.base64File$.next(reader.result);
+      const data: IBase64File = {
+        file: reader.result,
+        id: id
+      }
+      this.base64File$.next(data);
     };
     reader.readAsDataURL(file);
   }

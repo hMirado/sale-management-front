@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Notification } from './models/notification/notification.model';
 import { NotificationService } from './services/notification/notification.service';
@@ -13,8 +14,12 @@ export class CoreComponent implements OnInit, OnDestroy {
   private subscription = new Subscription()
   public notifications: Notification[] = [];
   constructor(
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+    private router: Router,
+  ) {
+    this.routerEvent()
+    this.notifications = [];
+  }
 
   ngOnInit(): void {
     this.addNotification();
@@ -23,6 +28,18 @@ export class CoreComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  routerEvent() {
+    this.router.events.subscribe((e) => {
+      if (e instanceof NavigationStart) {
+        this.notifications = [];
+      } 
+
+      if (e instanceof NavigationEnd) {
+        this.notifications = [];
+      }
+    });
   }
 
   addNotification() {

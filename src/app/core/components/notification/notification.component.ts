@@ -1,4 +1,5 @@
-import { Component, ElementRef, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { NotificationService } from '../../services/notification/notification.service';
 
 @Component({
@@ -6,11 +7,12 @@ import { NotificationService } from '../../services/notification/notification.se
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.scss']
 })
-export class NotificationComponent implements OnInit {
+export class NotificationComponent implements OnInit, OnDestroy{
   @Input() public type!: string;
   @Input() public message!: string;
 
   public fadeOut: string = '';
+  subscription: Subscription = new Subscription();
   constructor(
     private host: ElementRef<HTMLElement>,
     private notificationService: NotificationService
@@ -18,6 +20,10 @@ export class NotificationComponent implements OnInit {
 
   ngOnInit(): void {
     this.closeNotification();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   closeNotification(): void {
