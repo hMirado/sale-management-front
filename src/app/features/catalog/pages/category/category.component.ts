@@ -15,6 +15,8 @@ import {exportCategoryConfig, impportCategoryConfig, tableCategoryHeader, tableC
 import { Category } from '../../models/category/category.model';
 import { CategoryService } from '../../service/category/category.service';
 import {ActivatedRoute, Params} from "@angular/router";
+import { IFilterFieldValue } from 'src/app/shared/models/i-filter/i-filter-field-value';
+import { IFilter } from 'src/app/shared/models/i-filter/i-filter';
 
 @Component({
   selector: 'app-category',
@@ -176,5 +178,18 @@ export class CategoryComponent implements OnInit, OnDestroy {
       type: type,
       message: message
     })
+  }
+
+  addFilterValue() {
+    const filter: IFilter = {
+      title: '',
+      fields: [
+        {
+          key: 'search',
+          label: 'Libéllé ou code article',
+          type: 'input'
+        }
+      ]
+    }
   }
 }

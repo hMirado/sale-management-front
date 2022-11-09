@@ -9,7 +9,7 @@ import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
 import { IImport } from 'src/app/shared/models/import/i-import';
 import { ExportService } from 'src/app/shared/serives/export/export.service';
 import { FileService } from 'src/app/shared/serives/file/file.service';
-import {exportProductConfig, impportProductConfig, tableCategoryHeader, tableProductId} from '../../config/constant';
+import {exportProductConfig, impportProductConfig, tableProductHeader, tableProductId} from '../../config/constant';
 import { ProductService } from '../../service/product/product.service';
 import {ActivatedRoute, Params} from "@angular/router";
 import {TableService} from "../../../../shared/serives/table/table.service";
@@ -155,7 +155,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         isDeleteable: true,
         isSwitchable: true
       };
-      table.header = tableCategoryHeader;
+      table.header = tableProductHeader;
       table.body = cells;
       this.tableService.setTableValue(table);
       this.currentPage = response.data.currentPage;

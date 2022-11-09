@@ -10,6 +10,7 @@ import { ExportComponent } from './components/files/export/export.component';
 import { BoxSummaryComponent } from './components/box-summary/box-summary.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableComponent } from './components/table/table.component';
+import { FilterComponent } from './components/filter/filter.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { TableComponent } from './components/table/table.component';
     ImportComponent,
     ExportComponent,
     BoxSummaryComponent,
-    TableComponent
+    TableComponent,
+    FilterComponent
   ],
   imports: [
     CommonModule,
