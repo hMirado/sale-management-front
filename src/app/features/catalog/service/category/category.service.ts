@@ -24,6 +24,11 @@ export class CategoryService {
     return this.apiService.doPost(url, data);
   }
 
+  createCategory(categories: Category[]) {
+    let url = `${environment['catalog-services']}/category`;
+    return this.apiService.doPost(url, categories)
+  }
+
   exportModel(): Observable<ApiResponse> {
     let url = `${environment['catalog-services']}/category/export-model`;
     return this.apiService.doGet(url);
@@ -59,7 +64,7 @@ export class CategoryService {
           key: 'code',
           type: 'simple',
           expand: false,
-          value: value.code,
+          value: value.code.toUpperCase(),
         },
         {
           id: value.category_uuid,

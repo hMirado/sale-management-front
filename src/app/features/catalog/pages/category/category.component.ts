@@ -15,8 +15,10 @@ import {exportCategoryConfig, impportCategoryConfig, tableCategoryHeader, tableC
 import { Category } from '../../models/category/category.model';
 import { CategoryService } from '../../service/category/category.service';
 import {ActivatedRoute, Params} from "@angular/router";
-import { IFilterFieldValue } from 'src/app/shared/models/i-filter/i-filter-field-value';
 import { IFilter } from 'src/app/shared/models/i-filter/i-filter';
+import {ICardButton} from "../../../../shared/models/i-card-button/i-card-button";
+import {ModalService} from "../../../../shared/serives/modal/modal.service";
+import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-category',
@@ -27,6 +29,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   public title: string = 'Catégories d\articles';
   public breadCrumbs: BreadCrumb[] = [];
+  public categoryFormGroup!: FormGroup;
   private subscription = new Subscription();
   public categoryNumber: number = 0;
 
@@ -43,21 +46,38 @@ export class CategoryComponent implements OnInit, OnDestroy {
   public totalPages: number = 0;
   public totalItems: number = 0;
 
+  public categoryCardButton: ICardButton = {
+    id: 'create-category',
+    label: 'Créer une catégorie',
+    icon: {
+      id: 'create-category-icon',
+      icon: 'fa-plus',
+      size: '2x',
+      color: 'add'
+    }
+  }
+
   constructor(
     private fileService: FileService,
     private categoryService: CategoryService,
     private notificationService: NotificationService,
     private exportService: ExportService,
     private tableService: TableService,
-    private activatedRoute: ActivatedRoute
-  ) { }
+    private activatedRoute: ActivatedRoute,
+    private modalService: ModalService,
+    private formBuilder: FormBuilder,
+  ) {
+    this.addHeaderContent();
+    this.createForm();
+  }
 
   ngOnInit(): void {
-    this.addHeaderContent();
     this.importFile();
     this.exportFile();
+    this.categoryCardButton.action = this.openModal;
     this.countCategories();
     this.getCategories();
+    this.addLabel();
   }
 
   ngOnDestroy(): void {
@@ -75,6 +95,56 @@ export class CategoryComponent implements OnInit, OnDestroy {
         label: 'Catégories d\'articles'
       }
     ]
+  }
+
+  createForm() {
+    this.categoryFormGroup = this.formBuilder.group({
+      category: this.formBuilder.array([])
+    })
+  }
+
+  get categoryForm(): FormArray {
+    return this.categoryFormGroup.get('category') as FormArray;
+  }
+
+  addLabel() {
+    this.categoryForm.push(this.formBuilder.group({
+      code: ['', Validators.required],
+      label: ['', Validators.required]
+    }))
+  }
+
+  removeLabel(i: number) {
+    this.categoryForm.removeAt(i);
+  }
+
+  cancel() {
+    this.subscription.add(
+      this.modalService.isCanceled$.subscribe((status: boolean) => {
+        if (status) {
+          this.categoryFormGroup.reset();
+          this.categoryForm.clear();
+          this.addLabel()
+        }
+      })
+    )
+  }
+
+  saveCategory() {
+    const categories = this.categoryFormGroup.value
+    console.log(categories)
+    this.subscription.add(
+      this.categoryService.createCategory(categories.category).subscribe((response: ApiResponse) => {
+        this.modalService.hideModal(this.uniqueId);
+        if (response.status == responseStatus.success) {
+          this.showNotification('success', response.notification);
+          this.getCategories()
+          this.countCategories();
+        } else if(response.status == responseStatus.error) {
+          this.showNotification('error', response.notification);
+        }
+      })
+    );
   }
 
   importFile() {
@@ -191,5 +261,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
         }
       ]
     }
+  }
+
+  openModal = () => {
+    this.modalService.showModal(this.uniqueId)
   }
 }
