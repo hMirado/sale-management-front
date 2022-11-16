@@ -1,1 +1,36 @@
-<p>product works!</p>
+<app-content-header
+  [breadCrumbs]="breadCrumbs"
+  [title]="title"
+></app-content-header>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <app-to-do class="col-lg-4">
+        <div class="row">
+        </div>
+      </app-to-do>
+      <div class="col-lg-7">
+        <div class="row">
+          <div class="col-6">
+            <div class="info-box">
+              <span class="info-box-icon bg-info elevation-1">
+                <i class="fas fa-laptop"></i>
+              </span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">
+                  Nombre d'article(s)</span>
+                <span class="info-box-number">
+                  {{productNumber}}
+                </span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
