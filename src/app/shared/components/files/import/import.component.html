@@ -1,5 +1,5 @@
 
-<form for="file" class="card pt-3 text-center" >
+<form for="file" class="card pt-3 text-center" [formGroup]="importFormGroup">
   <label for="file">
     <i class="fas fa-cloud-upload-alt fa-2x icon-color-upload"></i>
     <input 
@@ -7,6 +7,7 @@
       id="file" 
       class="import" 
       (change)="onFileChange($event)"
+      (click)="resetForm($event)"
       [accept]="config.accept"
     >
     <span>{{config.label}}</span>
