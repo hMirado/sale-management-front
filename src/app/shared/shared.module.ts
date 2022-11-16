@@ -11,6 +11,8 @@ import { BoxSummaryComponent } from './components/box-summary/box-summary.compon
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableComponent } from './components/table/table.component';
 import { FilterComponent } from './components/filter/filter.component';
+import { CardButtonComponent } from './components/card-button/card-button.component';
+import { ModalComponent } from './components/modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { FilterComponent } from './components/filter/filter.component';
     ExportComponent,
     BoxSummaryComponent,
     TableComponent,
-    FilterComponent
+    FilterComponent,
+    CardButtonComponent,
+    ModalComponent
   ],
   imports: [
     CommonModule,
@@ -38,7 +42,9 @@ import { FilterComponent } from './components/filter/filter.component';
     ToDoComponent,
     ImportComponent,
     ExportComponent,
-    TableComponent
+    TableComponent,
+    CardButtonComponent,
+    ModalComponent
   ]
 })
 export class SharedModule { }

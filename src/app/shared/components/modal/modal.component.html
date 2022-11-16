@@ -1,0 +1,19 @@
+<div class="custom-modal" *ngIf="config?.visible">
+  <div class="custom-modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <ng-content select="[head]"></ng-content>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-content select="[body]"></ng-content>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button class="btn btn-default ml-1 mr-1" (click)="closeModal()">Annuler</button>
+        <ng-content select="[save]"></ng-content>
+      </div>
+    </div>
+  </div>
+</div>
