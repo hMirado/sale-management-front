@@ -5,7 +5,6 @@ import { ApiService } from 'src/app/core/services/api/api.service';
 import { environment } from 'src/environments/environment';
 import {IRow} from "../../../../shared/models/table/i-table";
 import {Product} from "../../models/product/product.model";
-import {Category} from "../../models/category/category.model";
 
 @Injectable({
   providedIn: 'root'
@@ -30,11 +29,15 @@ export class ProductService {
     return this.apiService.doGet(url);
   }
 
+  createProduct(data: {}): Observable<ApiResponse> {
+    let url = `${environment['catalog-services']}/product`;
+    return this.apiService.doPost(url, data)
+  }
+
   countProduct(): Observable<ApiResponse> {
     let url = `${environment['catalog-services']}/product/count`;
     return this.apiService.doGet(url);
   }
-
 
   getProducts(page: number = 1): Observable<ApiResponse> {
     let url = `${environment['catalog-services']}/product`;
@@ -68,7 +71,7 @@ export class ProductService {
           key: 'category',
           type: 'simple',
           expand: false,
-          value: value.category.label,
+          value: value?.category ? value.category.label : '',
         },
         {
           id: value.product_uuid,

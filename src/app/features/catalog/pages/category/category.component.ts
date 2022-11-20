@@ -132,7 +132,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   saveCategory() {
     const categories = this.categoryFormGroup.value
-    console.log(categories)
     this.subscription.add(
       this.categoryService.createCategory(categories.category).subscribe((response: ApiResponse) => {
         this.modalService.hideModal(this.uniqueId);

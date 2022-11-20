@@ -8,11 +8,14 @@
     <div class="row">
       <app-to-do class="col-lg-4">
         <div class="row">
-          <div class="col-6">
+          <!-- <div class="col-6">
             <app-import [config]="importProduct" [id]="uniqueIdProduct"></app-import>
           </div>
           <div class="col-6">
             <app-export [config]="exportProduct" [id]="uniqueIdProduct"></app-export>
+          </div> -->
+          <div class="col-6">
+            <app-card-button [config]="productCardButton" [id]="'add-product'"></app-card-button>
           </div>
         </div>
       </app-to-do>
@@ -65,3 +68,14 @@
     </div>
   </div>
 </section>
+
+<app-modal [id]="uniqueId">
+  <div head>
+    <h4 class="modal-title">
+      Création d'un article
+    </h4>
+  </div>
+  <div body>
+    <app-product-create></app-product-create>
+  </div>
+</app-modal>

@@ -11,11 +11,12 @@ import { ExportService } from 'src/app/shared/serives/export/export.service';
 import { FileService } from 'src/app/shared/serives/file/file.service';
 import {exportProductConfig, impportProductConfig, tableProductHeader, tableProductId} from '../../config/constant';
 import { ProductService } from '../../service/product/product.service';
-import {ActivatedRoute, Params} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {TableService} from "../../../../shared/serives/table/table.service";
 import {ICell, IRow, ITable} from "../../../../shared/models/table/i-table";
-import {Category} from "../../models/category/category.model";
 import {Product} from "../../models/product/product.model";
+import { ICardButton } from 'src/app/shared/models/i-card-button/i-card-button';
+import {ModalService} from "../../../../shared/serives/modal/modal.service";
 
 @Component({
   selector: 'app-product',
@@ -40,6 +41,18 @@ export class ProductComponent implements OnInit, OnDestroy {
   public nextPage: number = 0;
   public totalPages: number = 0;
   public totalItems: number = 0;
+  public uniqueId: string = 'product-id';
+
+  public  productCardButton: ICardButton = {
+    id: 'add-product',
+    label: 'Ajouter un article',
+    icon: {
+      id: 'add-product-icon',
+      icon: 'fa-plus',
+      size: '2x',
+      color: 'add'
+    }
+  }
 
   constructor(
     private fileService: FileService,
@@ -47,7 +60,8 @@ export class ProductComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private exportService: ExportService,
     private tableService: TableService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private modalService: ModalService,
   ) { }
 
   ngOnInit(): void {
@@ -56,6 +70,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.exportFile();
     this.countProduct();
     this.getProducts();
+    this.productCardButton.action = this.gotToCreate;
   }
 
   ngOnDestroy(): void {
@@ -136,7 +151,6 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   getProductsResponse(response: ApiResponse) {
-    console.log(response)
     let table: ITable = {
       id: this.tableId,
       header: [],
@@ -176,5 +190,9 @@ export class ProductComponent implements OnInit, OnDestroy {
       type: type,
       message: message
     })
+  }
+
+  gotToCreate = () => {
+    this.modalService.showModal(this.uniqueId)
   }
 }

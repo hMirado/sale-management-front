@@ -39,7 +39,8 @@ export class CategoryService {
     return this.apiService.doGet(url);
   }
 
-  getCategories(page: number = 1): Observable<ApiResponse> {
+  getCategories(page: number = 1, category: string = ''): Observable<ApiResponse> {
+    console.log(category)
     let url = `${environment['catalog-services']}/category`;
     let params = {
       page: page
