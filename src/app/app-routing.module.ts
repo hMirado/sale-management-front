@@ -9,6 +9,10 @@ const routes: Routes = [
   {
     path: 'catalog',
     loadChildren: ()=> import('./features/catalog/catalog.module').then(catalog => catalog.CatalogModule)
+  },
+  {
+    path: 'sale',
+    loadChildren: ()=> import('./features/sale/sale.module').then(sale => sale.SaleModule)
   }
 ];
 

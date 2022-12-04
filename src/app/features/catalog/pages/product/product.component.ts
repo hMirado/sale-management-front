@@ -14,8 +14,9 @@ import { ProductService } from '../../service/product/product.service';
 import {ActivatedRoute, Params} from "@angular/router";
 import {TableService} from "../../../../shared/serives/table/table.service";
 import {ICell, IRow, ITable} from "../../../../shared/models/table/i-table";
-import {Category} from "../../models/category/category.model";
 import {Product} from "../../models/product/product.model";
+import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
+import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 
 @Component({
   selector: 'app-product',
@@ -40,6 +41,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   public nextPage: number = 0;
   public totalPages: number = 0;
   public totalItems: number = 0;
+  public infoBoxProductCount!: IInfoBox;
 
   constructor(
     private fileService: FileService,
@@ -47,7 +49,8 @@ export class ProductComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private exportService: ExportService,
     private tableService: TableService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private helperService: HelperService,
   ) { }
 
   ngOnInit(): void {
@@ -59,6 +62,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.helperService.reset();
     this.subscription.unsubscribe();
   }
 
@@ -85,7 +89,10 @@ export class ProductComponent implements OnInit, OnDestroy {
       )
       .subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
+          this.getProducts();
+          this.countProduct();
           this.showNotification('success', response.notification);
+          this.fileService.base64File$.next({file: null, id: ''});
         }
       })
     );
@@ -119,6 +126,11 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.productService.countProduct().subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
           this.productNumber = response.data;
+          this.infoBoxProductCount =  {
+            bg: 'bg-info',
+            number: this.productNumber,
+            text: 'Total article(s)'
+          }
         }
       })
     );

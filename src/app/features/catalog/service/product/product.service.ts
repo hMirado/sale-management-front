@@ -17,7 +17,7 @@ export class ProductService {
   ) { }
 
   importProduct(file:  string|ArrayBuffer|null): Observable<ApiResponse> {
-    let url = `${environment['catalog-services']}/product/import`;
+    let url = `${environment['store-services']}/product/import`;
     let data: Object = {
       file: file
     }
@@ -26,18 +26,18 @@ export class ProductService {
   }
 
   exportModel(): Observable<ApiResponse>{
-    let url = `${environment['catalog-services']}/product/export-model`;
+    let url = `${environment['store-services']}/product/export-model`;
     return this.apiService.doGet(url);
   }
 
   countProduct(): Observable<ApiResponse> {
-    let url = `${environment['catalog-services']}/product/count`;
+    let url = `${environment['store-services']}/product/count`;
     return this.apiService.doGet(url);
   }
 
 
   getProducts(page: number = 1): Observable<ApiResponse> {
-    let url = `${environment['catalog-services']}/product`;
+    let url = `${environment['store-services']}/product`;
     let params = {
       page: page
     }

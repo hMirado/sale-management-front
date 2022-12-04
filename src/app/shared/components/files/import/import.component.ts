@@ -42,7 +42,6 @@ export class ImportComponent implements OnInit, OnDestroy {
   resetForm(event:any) {
     event.target.value = '';
     this.importFormGroup.reset();
-    
   }
 
   onFileChange(event: any) {
