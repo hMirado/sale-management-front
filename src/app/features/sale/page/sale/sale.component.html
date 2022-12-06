@@ -4,13 +4,20 @@
   </div>
   <div class="container-custom">
     <div class="item col-9 pt-1">
-      <div class="btn-group btn-group-toggle w-100">
+      <div class="btn-group btn-group-toggle w-100" style="height: 4%;">
         <button class="btn btn-sm btn-outline-primary focus active">Sélectionner des aticles</button>
         <button class="btn btn-sm btn-outline-danger">Choisir un client</button>
       </div>
-      <div class="mt-2">
-      <app-sale-search></app-sale-search>
-        <app-catalog></app-catalog>
+      <div class="mt-2" style="height: 6%">
+        <app-sale-search></app-sale-search>
+      </div>
+      <div class="mt-2 row" style="height: 87%">
+        <div class="col-2" style="border-right: 1px solid #e0e0e0; height:100%">
+          <app-category></app-category>
+        </div>
+        <div class="col-10" style="height:100%">
+          <app-catalog></app-catalog>
+        </div>
       </div>
     </div>
     <div class="item col-3 pt-1">

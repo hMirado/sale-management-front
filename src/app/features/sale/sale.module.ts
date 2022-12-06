@@ -8,8 +8,8 @@ import { SearchComponent } from './components/search/search.component';
 import { CartComponent } from './components/cart/cart.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ProductComponent } from './components/catalog/product/product.component';
-
-
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { CategoryComponent } from './components/category/category.component';
 
 @NgModule({
   declarations: [
@@ -18,11 +18,14 @@ import { ProductComponent } from './components/catalog/product/product.component
     CustomerComponent,
     SearchComponent,
     CartComponent,
-    ProductComponent
+    ProductComponent,
+    CategoryComponent
   ],
   imports: [
     CommonModule,
     SaleRoutingModule,
+    ReactiveFormsModule,
+    FormsModule,
     SharedModule
   ]
 })

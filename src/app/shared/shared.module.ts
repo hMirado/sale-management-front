@@ -18,6 +18,8 @@ import { TabsComponent } from './components/tabs/tabs.component';
 import { TabComponent } from './components/tabs/tab/tab.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { MatIconModule } from '@angular/material/icon';
     ReactiveFormsModule,
     FormsModule,
     MatTabsModule,
-    MatIconModule
+    MatIconModule,
+    MatChipsModule,
+    MatRippleModule
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -59,7 +63,9 @@ import { MatIconModule } from '@angular/material/icon';
     TabsComponent,
     TabComponent,
     MatTabsModule,
-    MatIconModule
+    MatIconModule,
+    MatChipsModule,
+    MatRippleModule
   ]
 })
 export class SharedModule { }

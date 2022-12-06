@@ -1,0 +1,26 @@
+.content {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.category-item{ 
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn-category {
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+}
+
+.btn-category:hover {
+  background-color: #e0e0e0;
+}
+
+.category-selected {
+  background-color: #e0e0e0;
+}
