@@ -1,0 +1,57 @@
+.wrapper-custom {
+  height: 100vh;
+  overflow: hidden;
+
+  .title {
+    height: 3%;
+    text-align: center;
+    color: #dc3545;
+    font-size: 20px;
+    font-weight: 500px;
+  }
+
+  .container-custom{
+    height: 97%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-evenly;
+    padding:10px;
+  }
+
+  .item {
+    height: 100%;
+    margin: 2px;
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+}
+
+
+.mat-tab-header {
+  width: 50%;
+  margin-bottom: 10px;
+  border-bottom: 0px solid !important;
+}
+
+.content-wrapper {
+  margin-left: 0!important;
+}
+
+.container-fluid {
+  width: 100%!important;
+  padding-right: 0;
+  padding-left: 0;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.content-wrapper>.content {
+  padding: 0!important;
+}
+
+.content-wrapper.kanban .card.card-row {
+  display: inline-block;
+  margin: 0.5rem;
+}

@@ -1,0 +1,44 @@
+<div class="hold-transition bg login-page">
+
+  <div class="login-box">
+    <div class="login-logo">
+      <p>
+        <b class="text-primary">Planet</b>
+        <span class="text-danger">Game</span>
+      </p>
+    </div>
+    <div class="card">
+      <div class="card-body login-card-body">
+        <form [formGroup]="loginForm">
+          <div class="input-group mb-3">
+            <input type="email" class="form-control" placeholder="Email">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <input type="password" class="form-control" placeholder="Mots de passe">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+            </div>
+            <!-- /.col -->
+            <div class="col-6">
+              <button type="submit" class="btn btn-outline-primary btn-sm btn-block">Se connecter</button>
+            </div>
+            <!-- /.col -->
+          </div>
+        </form>
+      </div>
+      <!-- /.login-card-body -->
+    </div>
+  </div>
+
+</div>
