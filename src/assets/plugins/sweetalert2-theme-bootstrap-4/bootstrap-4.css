@@ -383,7 +383,7 @@
   border: 0;
   border-radius: 0.25em;
   background: initial;
-  background-color: #007bff;
+  background-color: #0030ff;
   color: #fff;
   font-size: 1em;
 }
@@ -1519,8 +1519,8 @@ body.swal2-toast-shown .swal2-container.swal2-bottom-end, body.swal2-toast-shown
   opacity: 0;
 }
 .swal2-radio label input:checked ~ .swal2-label::before {
-  border-color: #007bff;
-  background: #007bff;
+  border-color: #0030ff;
+  background: #0030ff;
   color: #fff;
 }
 .swal2-radio label input:focus ~ .swal2-label::before {
@@ -1578,8 +1578,8 @@ body.swal2-toast-shown .swal2-container.swal2-bottom-end, body.swal2-toast-shown
   opacity: 0;
 }
 .swal2-checkbox input:checked ~ .swal2-label::before {
-  border-color: #007bff;
-  background: #007bff;
+  border-color: #0030ff;
+  background: #0030ff;
   color: #fff;
 }
 .swal2-checkbox input:focus ~ .swal2-label::before {
@@ -1666,7 +1666,7 @@ body.swal2-toast-shown .swal2-container.swal2-bottom-end, body.swal2-toast-shown
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   border: 0;
   border-radius: 1rem;
-  background: #007bff;
+  background: #0030ff;
   box-shadow: 0 0.1rem 0.25rem rgba(0, 0, 0, 0.1);
   -webkit-appearance: none;
           appearance: none;
@@ -1692,7 +1692,7 @@ body.swal2-toast-shown .swal2-container.swal2-bottom-end, body.swal2-toast-shown
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   border: 0;
   border-radius: 1rem;
-  background: #007bff;
+  background: #0030ff;
   box-shadow: 0 0.1rem 0.25rem rgba(0, 0, 0, 0.1);
   -moz-appearance: none;
        appearance: none;
@@ -1720,7 +1720,7 @@ body.swal2-toast-shown .swal2-container.swal2-bottom-end, body.swal2-toast-shown
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   border: 0;
   border-radius: 1rem;
-  background: #007bff;
+  background: #0030ff;
   box-shadow: 0 0.1rem 0.25rem rgba(0, 0, 0, 0.1);
   appearance: none;
 }

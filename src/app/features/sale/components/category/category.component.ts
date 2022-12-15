@@ -26,7 +26,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   getCategories() {
     this.subscription.add(
-      this.saleService.category$.subscribe(categories => {
+      this.saleService.categories$.subscribe(categories => {
         this.categories = categories
       })
     )

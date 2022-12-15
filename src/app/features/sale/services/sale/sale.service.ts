@@ -10,8 +10,9 @@ import { Product } from '../../models/product/product.model';
   providedIn: 'root'
 })
 export class SaleService {
-  public category$: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
-  public product$: BehaviorSubject<Product[]> = new BehaviorSubject<Product[]>([]);
+  public categories$: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
+  public products$: BehaviorSubject<Product[]> = new BehaviorSubject<Product[]>([]);
+  public productUuid$:  BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   constructor(
     private apiService: ApiService,
@@ -27,11 +28,15 @@ export class SaleService {
     return this.apiService.doGet(url, params);
   }
 
-  setCategory(category: Category[]) {
-    this.category$.next(category);
+  setCategories(category: Category[]) {
+    this.categories$.next(category);
   }
 
-  setProduct(product: Product[]) {
-    this.product$.next(product);
+  setProducts(product: Product[]) {
+    this.products$.next(product);
+  }
+
+  setProductUuid(productUuid: string) {
+    this.productUuid$.next(productUuid);
   }
 }

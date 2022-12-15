@@ -31,10 +31,14 @@ export class SaleComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.saleService.getCategorieAndProduct('ae229430-e5a0-4cb1-b3a9-5b15e168d1fa').subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
-          this.saleService.setCategory(response.data.categories)
-          this.saleService.setProduct(response.data.products)
+          this.saleService.setCategories(response.data.categories)
+          this.saleService.setProducts(response.data.products)
         }
       })
     );
+  }
+
+  remove(uuid: string) {
+    
   }
 }

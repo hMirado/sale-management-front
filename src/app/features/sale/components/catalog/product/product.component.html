@@ -19,8 +19,10 @@ align-content: center;">
       </div>
       
       <div class="add-to-cart" *ngIf="getStockStatus()">
-        <button class="btn btn-add-to-cart btn-xs" (click)="addProduct(product)"><i class="fa fa-shopping-basket"></i> Ajouter</button>
-        <button class="btn btn-remove-to-cart btn-xs" (click)="removeProduct(product)"><i class="fas fa-trash-alt"></i> Supprimer</button>
+        <button *ngIf="!isAdded else notAdded" class="btn btn-add-to-cart btn-xs" (click)="addProduct(product)"><i class="fa fa-shopping-basket"></i> Ajouter</button>
+        <ng-template #notAdded>
+          <button class="btn btn-remove-to-cart btn-xs" (click)="removeProduct(product)"><i class="fas fa-trash-alt"></i> Supprimer</button>
+        </ng-template>
       </div>
     </div>
   </div>

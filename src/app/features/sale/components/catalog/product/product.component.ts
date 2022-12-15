@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Product } from '../../../models/product/product.model';
+import { SaleService } from '../../../services/sale/sale.service';
 
 @Component({
   selector: 'app-sale-product',
@@ -8,7 +9,11 @@ import { Product } from '../../../models/product/product.model';
 })
 export class ProductComponent implements OnInit {
   @Input() public product!: Product;
-  constructor() { }
+  @Input() public isAdded: boolean = false;
+
+  constructor(
+    private saleService: SaleService
+  ) { }
 
   ngOnInit(): void {
     
@@ -23,10 +28,12 @@ export class ProductComponent implements OnInit {
   }
 
   addProduct(product: Product) {
-    console.log(product);
+    this.saleService.setProductUuid(product.product_uuid);
+    this.isAdded = true;
   }
 
   removeProduct(product: Product) {
     console.log(product);
+    this.isAdded = false;
   }
 }

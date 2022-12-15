@@ -11,16 +11,8 @@ import { SaleService } from '../../services/sale/sale.service';
 export class CatalogComponent implements OnInit, OnDestroy {
   public products?: Product[] = [];
   private subscription = new Subscription();
-  
-  vegetables: any[] = [
-    {name: 'apple'},
-    {name: 'banana'},
-    {name: 'strawberry'},
-    {name: 'orange'},
-    {name: 'kiwi'},
-    {name: 'cherry'},
-  ];
-  
+  public removedProducts: string[] = [];
+
   constructor(
     private saleService: SaleService,
   ) { }
@@ -35,7 +27,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
   getProducts() {
     this.subscription.add(
-      this.saleService.product$.subscribe(products => {
+      this.saleService.products$.subscribe(products => {
         this.products = products;
       })
     )
