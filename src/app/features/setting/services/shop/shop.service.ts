@@ -21,7 +21,7 @@ export class ShopService {
    * @returns Shop
    */
   getShops(): Observable<ApiResponse> {
-    return this.apiService.doGet(`${environment['shop-services']}/shop`);
+    return this.apiService.doGet(`${environment['store-services']}/shop`);
   }
 
   nextShopsValue(shops: Shop[]): void {
@@ -35,7 +35,7 @@ export class ShopService {
    * @returns boolean
    */
   updateShopStatus(shop_uuid: string, shop: Object): Observable<ApiResponse> {
-    let url = `${environment['shop-services']}/shop/${shop_uuid}/status`;
+    let url = `${environment['store-services']}/shop/${shop_uuid}/status`;
     return this.apiService.doPut(url, shop);
   }
 
@@ -50,12 +50,12 @@ export class ShopService {
    * @returns boolean
    */
   updateShop(shop_uuid: string, shop: Shop): Observable<ApiResponse> {
-    let url = `${environment['shop-services']}/shop/${shop_uuid}`;
+    let url = `${environment['store-services']}/shop/${shop_uuid}`;
     return this.apiService.doPut(url, shop);
   }
 
   createShop(shop: Shop): Observable<ApiResponse> {
-    let url = `${environment['shop-services']}/shop`;
+    let url = `${environment['store-services']}/shop`;
     return this.apiService.doPost(url, shop);
   }
 }

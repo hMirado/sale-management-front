@@ -1,6 +1,6 @@
 
 p {
-  color: rgba(0,0,0,.5);//#007bff;
+  color: rgba(0,0,0,.5);//#0030ff;
   text-decoration: none;
   background-color: transparent;
   margin: 0%;
@@ -9,10 +9,10 @@ p {
     display: block;
     padding: 0.5rem 1rem;
     &:hover {
-      color: #007bff;
+      color: #0030ff;
     }
   }
   &.is-active {
-    color: #007bff;
+    color: #0030ff;
   }
 }

@@ -19,6 +19,8 @@ import { IFilter } from 'src/app/shared/models/i-filter/i-filter';
 import {ICardButton} from "../../../../shared/models/i-card-button/i-card-button";
 import {ModalService} from "../../../../shared/serives/modal/modal.service";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
+import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 
 @Component({
   selector: 'app-category',
@@ -27,7 +29,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 })
 export class CategoryComponent implements OnInit, OnDestroy {
 
-  public title: string = 'Catégories d\articles';
+  public title: string = 'Catégories d\'articles';
   public breadCrumbs: BreadCrumb[] = [];
   public categoryFormGroup!: FormGroup;
   private subscription = new Subscription();
@@ -57,6 +59,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
   }
 
+  public infoBoxCategoryCount!: IInfoBox;
+
   constructor(
     private fileService: FileService,
     private categoryService: CategoryService,
@@ -66,6 +70,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private modalService: ModalService,
     private formBuilder: FormBuilder,
+    private helperService: HelperService,
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -81,6 +86,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.helperService.reset();
     this.subscription.unsubscribe();
   }
 
@@ -131,7 +137,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   saveCategory() {
-    const categories = this.categoryFormGroup.value
+    const categories = this.categoryFormGroup.value;
     this.subscription.add(
       this.categoryService.createCategory(categories.category).subscribe((response: ApiResponse) => {
         this.modalService.hideModal(this.uniqueId);
@@ -156,6 +162,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
       )
       .subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
+          this.getCategories();
           this.showNotification('success', response.notification);
           this.countCategories();
         }
@@ -191,6 +198,11 @@ export class CategoryComponent implements OnInit, OnDestroy {
       this.categoryService.countCategories().subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
           this.categoryNumber = response.data;
+          this.infoBoxCategoryCount =  {
+            bg: 'bg-info',
+            number: this.categoryNumber,
+            text: 'Catégorie(s) d\'article(s)'
+          }
         }
       })
     );

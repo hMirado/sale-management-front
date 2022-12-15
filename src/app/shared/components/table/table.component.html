@@ -1,4 +1,4 @@
-<table class="table">
+<table class="table table-hover text-nowrap">
   <thead>
   <tr>
     <th *ngFor="let header of tables?.header" [attr.collspan]="header?.collspan">
@@ -14,16 +14,18 @@
         <img *ngIf="row?.image" [src]="row?.image">
         {{ row?.value }}
       </td>
-      <td *ngIf="haveAction" class="row">
-        <div class="col-2">
-          <i *ngIf="this.tables.body?.isEditable" class="fas fa-edit text-secondary"></i>
-        </div>
-        <div class="col-2">
-          <i *ngIf="this.tables.body?.isDeleteable" class="far fa-trash-alt text-secondar2"></i>
-        </div>
-        <div class="custom-control custom-switch custom-switch-on-success col-2">
-          <input type="checkbox" class="custom-control-input" id="customSwitch{{i}}">
-          <label class="custom-control-label" for="customSwitch{{i}}"></label>
+      <td *ngIf="haveAction">
+        <div class="row">
+          <div class="col-2">
+            <i *ngIf="this.tables.body?.isEditable" class="fas fa-edit text-secondary"></i>
+          </div>
+          <div class="col-2">
+            <i *ngIf="this.tables.body?.isDeleteable" class="far fa-trash-alt text-secondar2"></i>
+          </div>
+          <div class="custom-control custom-switch custom-switch-on-success col-2">
+            <input type="checkbox" class="custom-control-input" id="customSwitch{{i}}">
+            <label class="custom-control-label" for="customSwitch{{i}}"></label>
+          </div>
         </div>
       </td>
     </tr>

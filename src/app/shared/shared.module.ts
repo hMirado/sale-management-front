@@ -13,6 +13,13 @@ import { TableComponent } from './components/table/table.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { CardButtonComponent } from './components/card-button/card-button.component';
 import { ModalComponent } from './components/modal/modal.component';
+import { InfoBoxComponent } from './components/info-box/info-box.component';
+import { TabsComponent } from './components/tabs/tabs.component';
+import { TabComponent } from './components/tabs/tab/tab.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -27,12 +34,19 @@ import { ModalComponent } from './components/modal/modal.component';
     TableComponent,
     FilterComponent,
     CardButtonComponent,
-    ModalComponent
+    ModalComponent,
+    InfoBoxComponent,
+    TabsComponent,
+    TabComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    MatTabsModule,
+    MatIconModule,
+    MatChipsModule,
+    MatRippleModule
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -44,7 +58,14 @@ import { ModalComponent } from './components/modal/modal.component';
     ExportComponent,
     TableComponent,
     CardButtonComponent,
-    ModalComponent
+    ModalComponent,
+    InfoBoxComponent,
+    TabsComponent,
+    TabComponent,
+    MatTabsModule,
+    MatIconModule,
+    MatChipsModule,
+    MatRippleModule
   ]
 })
 export class SharedModule { }
