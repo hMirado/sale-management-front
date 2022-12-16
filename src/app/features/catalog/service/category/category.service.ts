@@ -16,7 +16,7 @@ export class CategoryService {
   ) { }
 
   importCategory(file:  string|ArrayBuffer|null): Observable<ApiResponse> {
-    let url = `${environment['store-services']}/category/import`;
+    let url = `${environment['store-service']}/category/import`;
     let data: Object = {
       file: file
     }
@@ -25,22 +25,22 @@ export class CategoryService {
   }
 
   createCategory(categories: Category[]) {
-    let url = `${environment['store-services']}/category`;
+    let url = `${environment['store-service']}/category`;
     return this.apiService.doPost(url, categories)
   }
 
   exportModel(): Observable<ApiResponse> {
-    let url = `${environment['store-services']}/category/export-model`;
+    let url = `${environment['store-service']}/category/export-model`;
     return this.apiService.doGet(url);
   }
 
   countCategories(): Observable<ApiResponse> {
-    let url = `${environment['store-services']}/category/count`;
+    let url = `${environment['store-service']}/category/count`;
     return this.apiService.doGet(url);
   }
 
   getCategories(page: number = 1): Observable<ApiResponse> {
-    let url = `${environment['store-services']}/category`;
+    let url = `${environment['store-service']}/category`;
     let params = {
       page: page
     }

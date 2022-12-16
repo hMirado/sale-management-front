@@ -118,7 +118,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         category.valueChanges.pipe(
           debounceTime(500),
           switchMap((category: string) => {
-            return this.categoryService.getCategories(1, category)
+            return this.categoryService.getCategories(1)
           })
         ).subscribe((response: ApiResponse) => this.getCategoriesResponse(response))
       );

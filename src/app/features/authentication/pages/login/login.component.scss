@@ -1,8 +1,16 @@
+// primary normal #007bff
+// primary custom #0030ff
+
 .bg {
   background-image: url('~src/assets/images/bg-login.jpeg');
   background-size: cover;
 }
 
-
-// primary normal #007bff
-// primary custom #0030ff
+.notification {
+  position: absolute;
+  top: 50px;
+  right: 0px;
+  padding-right: 7.5px;
+  display: grid;
+  grid-gap: 10px;
+}

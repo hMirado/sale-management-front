@@ -1,15 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { IsLoggedGuard } from './guard/is-logged.guard';
 import {LoginComponent} from "./pages/login/login.component";
 
 const routes: Routes = [
   {
     path: '',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [ IsLoggedGuard ]
   },
   {
     path: '**',
-    redirectTo: ''
+    redirectTo: '',
+    canActivate: [ IsLoggedGuard ]
   }
 ];
 

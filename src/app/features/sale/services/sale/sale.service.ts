@@ -24,7 +24,7 @@ export class SaleService {
       search: search,
       category: category
     }
-    const url = `${environment['store-services']}/product/sale/${shopUuid}`;
+    const url = `${environment['store-service']}/product/sale/${shopUuid}`;
     return this.apiService.doGet(url, params);
   }
 

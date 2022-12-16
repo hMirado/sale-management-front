@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from '../../serives/local-storage/local-storage.service';
+import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticationGuard implements CanActivate {
+export class IsLoggedGuard implements CanActivate {
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -16,12 +16,10 @@ export class AuthenticationGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const token = this.localStorageService.getLocalStorage('token');
-    if (!token)  {
-      this.localStorageService.clearLocalStorage();
-      this.router.navigate(['authentication']);
-    }
-    return true;
+      const token = this.localStorageService.getLocalStorage('token');
+      if (token)  {
+        this.router.navigate(['/catalog/category']);
+      }
+      return true;
   }
-  
 }

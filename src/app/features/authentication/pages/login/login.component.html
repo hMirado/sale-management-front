@@ -1,17 +1,30 @@
 <div class="hold-transition bg login-page">
-
   <div class="login-box">
-    <div class="login-logo">
-      <p>
-        <b class="text-primary">Planet</b>
-        <span class="text-danger">Game</span>
-      </p>
-    </div>
-    <div class="card">
-      <div class="card-body login-card-body">
+    <div class="card card-outline">
+      <div class="card-header text-center">
+        <p class="h1">
+          <b class="text-primary">Planet</b>
+          <span class="text-danger">Game</span>
+        </p>
+      </div>
+      <div class="card-body">
         <form [formGroup]="loginForm">
           <div class="input-group mb-3">
-            <input type="email" class="form-control" placeholder="Email">
+            <input type="email" 
+              class="form-control" 
+              [ngClass]="{
+                'input-error': 
+                  (
+                    loginForm.get('touched')?.touched || !loginForm.get('email')?.valid
+                  ) 
+                  && loginForm.get('email')?.hasError('required')
+                  && hasError
+              }"
+              id="email"
+              name="email" 
+              formControlName="email"
+              placeholder="Email"
+            >
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-envelope"></span>
@@ -19,7 +32,22 @@
             </div>
           </div>
           <div class="input-group mb-3">
-            <input type="password" class="form-control" placeholder="Mots de passe">
+            <input 
+              type="password" 
+              class="form-control"
+              [ngClass]="{
+                'input-error': 
+                  (
+                    loginForm.get('touched')?.touched || !loginForm.get('password')?.valid
+                  ) 
+                  && loginForm.get('password')?.hasError('required')
+                  && hasError
+              }"
+              id="password"
+              name="password" 
+              formControlName="password"
+              placeholder="Mots de passe"
+            >
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-lock"></span>
@@ -29,16 +57,12 @@
           <div class="row">
             <div class="col-6">
             </div>
-            <!-- /.col -->
             <div class="col-6">
-              <button type="submit" class="btn btn-outline-primary btn-sm btn-block">Se connecter</button>
+              <button type="submit" class="btn btn-outline-primary btn-block" (click)="login()">Se connecter</button>
             </div>
-            <!-- /.col -->
           </div>
         </form>
       </div>
-      <!-- /.login-card-body -->
     </div>
   </div>
-
 </div>

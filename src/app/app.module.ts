@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AuthenticationModule } from './features/authentication/authentication.module';
 
 @NgModule({
   declarations: [
@@ -16,8 +17,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     CoreModule,
-    BrowserAnimationsModule
+    AuthenticationModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'fr-FR'}

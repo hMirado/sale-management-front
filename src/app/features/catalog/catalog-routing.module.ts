@@ -4,6 +4,7 @@ import { CoreComponent } from 'src/app/core/core.component';
 import { CategoryComponent } from './pages/category/category.component';
 import { ProductComponent } from './pages/product/product.component';
 import { CreateComponent as ProductCreateComponent } from './pages/product/create/create.component';
+import { AuthenticationGuard } from 'src/app/shared/guards/authentication/authentication.guard';
 
 const routes: Routes = [
   {
@@ -27,7 +28,8 @@ const routes: Routes = [
           }
         ]
       }
-    ]
+    ],
+    canActivate: [AuthenticationGuard]
   }
 ];
 

@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  'store-services': 'http://localhost:3000'
+  'store-service': 'http://localhost:3000'
 };
 
 /*
