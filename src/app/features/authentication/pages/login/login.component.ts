@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { tokenKey } from 'src/app/shared/config/constant';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 import { Login } from '../../models/login/login.model';
@@ -59,7 +60,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   getUserData(token : string) {
-    this.localStorageService.setLocalStorage('token', token);
+    this.localStorageService.setLocalStorage(tokenKey, token);
     this.router.navigateByUrl('/catalog/category/');
   }
 }

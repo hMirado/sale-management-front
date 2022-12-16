@@ -227,7 +227,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
     if (response.status == responseStatus.success) {
       this.rows = [];
-      let categories: Category[] = response.data.items;
+      let categories: Category[] = response.data;
       categories.forEach((category: Category) => {
         let row: IRow = this.categoryService.addTableRowValue(category);
         this.rows.push(row);
