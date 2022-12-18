@@ -148,7 +148,6 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   getProductsResponse(response: ApiResponse) {
-    console.log(response)
     let table: ITable = {
       id: this.tableId,
       header: [],
@@ -156,7 +155,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
     if (response.status == responseStatus.success) {
       this.rows = [];
-      let products: Product[] = response.data.items;
+      let products: Product[] = response.data;
       products.forEach((product: Product) => {
         let row: IRow = this.productService.addTableRowValue(product);
         this.rows.push(row);

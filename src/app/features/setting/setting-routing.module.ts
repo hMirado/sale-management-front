@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CoreComponent } from 'src/app/core/core.component';
+import { AuthenticationGuard } from 'src/app/shared/guards/authentication/authentication.guard';
 import { ShopComponent } from './pages/shop/shop.component';
 
 const routes: Routes = [
@@ -12,7 +13,8 @@ const routes: Routes = [
         path: 'shop',
         component: ShopComponent
       }
-    ]
+    ],
+    canActivate: [AuthenticationGuard]
   }
 ];
 

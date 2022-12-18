@@ -61,8 +61,8 @@
             </tr>
             <tr *ngFor="let shop of shops">
               <td>
-                <button class="btn btn-outline-info btn-sm mr-1">
-                  <i class="fas fa-edit pointer" (click)="editShop(shop.shop_uuid)"></i>
+                <button class="btn btn-outline-info btn-sm mr-1" (click)="editShop(shop.shop_uuid)">
+                  <i class="fas fa-edit pointer"></i>
                 </button>
                 <!-- <i *ngIf="shop.status else activeShop" class="fas fa-times-circle text-danger pointer" (click)="updateShopStatus(shop.shop_uuid, shop.status)"></i>
                 <ng-template #activeShop>

@@ -20,9 +20,17 @@
     <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <li class="nav-item">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+            <i class="nav-icon fas fa-home"></i>
+            <p>
+              Accueil
+            </p>
+          </a>
+        </li>
         <li class="nav-item" [ngClass]="{'menu-open': catalogCategory.isActive || catalogProduct.isActive}">
           <a class="nav-link" [ngClass]="{'active': catalogCategory.isActive || catalogProduct.isActive}">
-            <i class="nav-icon fas fa-dolly"></i>
+            <i class="nav-icon fas fa-desktop"></i>
             <p>
               CATALOGUES
               <i class="right fas fa-angle-left"></i>
