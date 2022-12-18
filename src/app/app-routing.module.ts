@@ -3,6 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: '',
+    loadChildren: () => import('./features/home/home.module').then(home => home.HomeModule)
+  },
+  {
     path: 'setting',
     loadChildren: () => import('./features/setting/setting.module').then(setting => setting.SettingModule)
   },
@@ -17,6 +21,10 @@ const routes: Routes = [
   {
     path: 'authentication',
     loadChildren: () => import('./features/authentication/authentication.module').then(authentication => authentication.AuthenticationModule)
+  },
+  {
+    path: '**',
+    redirectTo: '/'
   }
 ];
 

@@ -4,7 +4,7 @@ import { IHeader } from "src/app/shared/models/table/i-table";
 
 // start of category
 export const impportCategoryConfig: IImport = {
-  label: 'Importer catégorie (.xlsx)',
+  label: 'Importer catégorie',
   validation: {
     encoding: ['utf8'],
     maxSize: 1024 * 8
@@ -28,7 +28,7 @@ export const tableCategoryHeader: IHeader[] = [
 
 // start of product
 export const impportProductConfig: IImport = {
-  label: 'Importer article (.xlsx)',
+  label: 'Importer article',
   validation: {
     encoding: ['utf8'],
     maxSize: 1024 * 8

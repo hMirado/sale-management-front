@@ -19,7 +19,7 @@ export class IsLoggedGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       const token = this.localStorageService.getLocalStorage(tokenKey);
       if (token)  {
-        this.router.navigate(['/catalog/category']);
+        this.router.navigate(['/']);
       }
       return true;
   }
