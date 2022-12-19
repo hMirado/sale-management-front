@@ -28,6 +28,44 @@
             </p>
           </a>
         </li>
+        <ng-container *ngFor="let menu of menus; let i = index">
+          <li 
+            *ngIf="!menu.groupName && !menu.authorization && menu.subMenu && menu.subMenu.length > 0" 
+            class="nav-item" 
+            [ngClass]="{'menu-open': menuOpenId == i}"
+          >
+            <a 
+              class="nav-link pointer" 
+              [ngClass]="{'active':  menuOpenId == i}"
+            >
+              <i class="nav-icon {{ menu?.icon }}"></i>
+              <p>
+                {{menu?.label }}
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item" *ngFor="let subMenu of menu.subMenu" (click)="getMenuOpened(i)">
+                <a [routerLink]="subMenu.url" 
+                  routerLinkActive="active" 
+                  [routerLinkActiveOptions]="{exact: true}" 
+                  class="nav-link"
+                  #menuActive="routerLinkActive"
+                >
+                  <p>{{subMenu.label}}</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ng-container>
+        <!-- <li class="nav-item">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+            <i class="nav-icon fas fa-home"></i>
+            <p>
+              Accueil
+            </p>
+          </a>
+        </li>
         <li class="nav-item" [ngClass]="{'menu-open': catalogCategory.isActive || catalogProduct.isActive}">
           <a class="nav-link" [ngClass]="{'active': catalogCategory.isActive || catalogProduct.isActive}">
             <i class="nav-icon fas fa-desktop"></i>
@@ -69,7 +107,7 @@
               Boutiques
             </p>
           </a>
-        </li>
+        </li> -->
       </ul>
     </nav>
     <!-- /.sidebar-menu -->
