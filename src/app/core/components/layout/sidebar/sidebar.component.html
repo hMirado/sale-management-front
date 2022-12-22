@@ -32,11 +32,11 @@
           <li 
             *ngIf="!menu.groupName && !menu.authorization && menu.subMenu && menu.subMenu.length > 0" 
             class="nav-item" 
-            [ngClass]="{'menu-open': menuOpenId == i}"
+            [ngClass]="{'menu-open': menuOpenId == i+1}"
           >
             <a 
               class="nav-link pointer" 
-              [ngClass]="{'active':  menuOpenId == i}"
+              [ngClass]="{'active':  menuOpenId == i+1}"
             >
               <i class="nav-icon {{ menu?.icon }}"></i>
               <p>
@@ -45,69 +45,61 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item" *ngFor="let subMenu of menu.subMenu" (click)="getMenuOpened(i)">
+              <li class="nav-item" *ngFor="let subMenu of menu.subMenu" (click)="getMenuOpened(i+1, 0)">
                 <a [routerLink]="subMenu.url" 
                   routerLinkActive="active" 
                   [routerLinkActiveOptions]="{exact: true}" 
                   class="nav-link"
-                  #menuActive="routerLinkActive"
                 >
                   <p>{{subMenu.label}}</p>
                 </a>
               </li>
             </ul>
           </li>
+          <ng-container *ngIf="menu.groupName && menu.subMenu && menu.subMenu.length > 0">
+            <li class="nav-header">
+              {{ menu?.groupName }}
+            </li>
+            <ng-container *ngFor="let subMenu of menu.subMenu; let j = index;">
+              <li class="nav-item" *ngIf="subMenu?.authorization && !subMenu.subMenu else sub" (click)="getMenuOpened(0, 0)">
+                <a [routerLink]="subMenu.url" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+                  <i class="nav-icon {{subMenu.icon}}"></i>
+                  <p>
+                    {{ subMenu.label }}
+                  </p>
+                </a>
+              </li>
+              <ng-template #sub>
+                <li 
+                  class="nav-item" 
+                  [ngClass]="{'menu-open': subMenuOpenId == j+1}"
+                >
+                  <a 
+                    class="nav-link pointer" 
+                    [ngClass]="{'active':  subMenuOpenId == j+1}"
+                  >
+                    <i class="nav-icon {{ subMenu?.icon }}"></i>
+                    <p>
+                      {{subMenu?.label }}
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item" *ngFor="let sub of subMenu.subMenu" (click)="getMenuOpened(0, j+1)">
+                      <a [routerLink]="sub.url" 
+                        routerLinkActive="active" 
+                        [routerLinkActiveOptions]="{exact: true}" 
+                        class="nav-link"
+                      >
+                        <p>{{sub.label}}</p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ng-template>
+            </ng-container>
+          </ng-container>
         </ng-container>
-        <!-- <li class="nav-item">
-          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
-            <i class="nav-icon fas fa-home"></i>
-            <p>
-              Accueil
-            </p>
-          </a>
-        </li>
-        <li class="nav-item" [ngClass]="{'menu-open': catalogCategory.isActive || catalogProduct.isActive}">
-          <a class="nav-link" [ngClass]="{'active': catalogCategory.isActive || catalogProduct.isActive}">
-            <i class="nav-icon fas fa-desktop"></i>
-            <p>
-              CATALOGUES
-              <i class="right fas fa-angle-left"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a routerLink="/catalog/category" 
-                routerLinkActive="active" 
-                [routerLinkActiveOptions]="{exact: true}" 
-                class="nav-link"
-                #catalogCategory="routerLinkActive"
-              >
-                <p>Catégories</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a routerLink="/catalog/product" 
-                routerLinkActive="active" 
-                [routerLinkActiveOptions]="{exact: true}"
-                class="nav-link"
-                #catalogProduct="routerLinkActive" 
-              >
-                <p>Articles</p>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-header">
-          MON ENTREPRISE
-        </li>
-        <li class="nav-item">
-          <a routerLink="/setting/shop" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
-            <i class="nav-icon fas fa-calendar-alt"></i>
-            <p>
-              Boutiques
-            </p>
-          </a>
-        </li> -->
       </ul>
     </nav>
     <!-- /.sidebar-menu -->

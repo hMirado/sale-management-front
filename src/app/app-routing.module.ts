@@ -23,8 +23,12 @@ const routes: Routes = [
     loadChildren: () => import('./features/authentication/authentication.module').then(authentication => authentication.AuthenticationModule)
   },
   {
+    path: 'error',
+    loadChildren: () => import('./features/error/error.module').then(error => error.ErrorModule)
+  },
+  {
     path: '**',
-    redirectTo: '/'
+    redirectTo: 'error/not-found'
   }
 ];
 

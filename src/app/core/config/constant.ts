@@ -82,24 +82,24 @@ export const appMenu: Menu[] = [
     groupName: 'MON ENTREPRISE',
     subMenu: [
       {
-        authorization: 'PAGE_STOCK',
+        authorization: 'PAGE_ITEM',
         icon: 'fas fa-calendar-alt',
         label: 'Boutiques',
         url: '/setting/shop'
       },
       {
-        icon: 'fas fa-desktop',
+        icon: 'fas fa-users',
         label: 'UTILISATEURS',
         subMenu: [
           {
-            authorization: 'PAGE_ROLE',
+            authorization: 'PAGE_STOCK',
             label: 'Gestion des profils',
-            url: '/catalog/product'
+            url: '/test'
           },
           {
-            authorization: 'PAGE_USER',
+            authorization: 'PAGE_STOCK',
             label: 'Gestion des utilisateurs',
-            url: '/catalog/category'
+            url: '/test'
           },
         ]
       }
