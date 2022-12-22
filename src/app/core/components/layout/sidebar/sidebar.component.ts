@@ -16,6 +16,7 @@ export class SidebarComponent implements OnInit {
   public menus: Menu[] = [];
   public menuId: number = 0;
   public menuOpenId: number;
+  public subMenuOpenId: number;
   constructor(
     private localStorageService: LocalStorageService,
     private helperService: HelperService,
@@ -36,28 +37,44 @@ export class SidebarComponent implements OnInit {
 
   getUserMenu(authKey: string[]) {
     const allMenu = appMenu;
-    allMenu.forEach((menu: Menu, index: number) => {
-      if (!menu.groupName && !menu.authorization && menu.subMenu && menu.subMenu.length > 0) 
-        this.addMenu(authKey, menu, index)
-      if (menu.groupName && menu.subMenu && menu.subMenu.length > 0)
-        this.addMenu(authKey, menu, index);
+    allMenu.forEach((menu: Menu, i: number) => {
+      if (!menu.groupName && !menu.authorization && menu.subMenu && menu.subMenu.length > 0) {
+        this.addMenu(authKey, menu, i);
+      }
+      if (menu.groupName && menu.subMenu && menu.subMenu.length > 0) {
+        const hasGroupName = menu.groupName ? true : false;
+        this.addMenu(authKey, menu, i,hasGroupName);
+      }
       if (menu.authorization) this.menus.push(menu)
     })
   }
 
-  private addMenu(authKey: string[], menu: Menu, i: number) {
+  private addMenu(authKey: string[], menu: Menu, i: number, hasGroupName: boolean = false) {
     let newMenu = menu;
-    menu?.subMenu?.forEach(subMenu => {
-      if (subMenu.url === this.router.url) this.menuOpenId = i;
-      
-      if (!authKey.includes(subMenu.authorization as string)) {
-        newMenu = newMenu.subMenu?.filter( x => x.authorization !== subMenu.authorization) as Menu;
+    menu?.subMenu?.forEach((subMenu) => {
+      if (subMenu.authorization) {
+        if (subMenu.url === this.router.url && !hasGroupName) {
+          this.menuOpenId = i+1;
+          this.subMenuOpenId = 0;
+        }
+        newMenu.subMenu = newMenu.subMenu?.filter(x => authKey.includes(x.authorization as string));
+      }
+      if (subMenu.subMenu && subMenu.subMenu.length > 0) {
+        subMenu.subMenu = subMenu.subMenu.filter(x =>{
+          if (x.url === this.router.url) {
+            this.menuOpenId = 0;
+            this.subMenuOpenId = i+1;
+          }
+          return authKey.includes(x.authorization as string)
+        });
+        newMenu.subMenu?.push(subMenu)
       }
     })
     if (newMenu) this.menus.push(newMenu);
   }
 
-  public getMenuOpened(id: number) {
-    this.menuOpenId = id;
+  public getMenuOpened(i: number = 0, j: number = 0){
+    this.menuOpenId = i;
+    this.subMenuOpenId = j;
   }
 }

@@ -60,6 +60,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   getUserData(token : string) {
     this.localStorageService.setLocalStorage(tokenKey, token);
-    this.router.navigateByUrl('/catalog/category/');
+    this.router.navigateByUrl('/');
   }
 }

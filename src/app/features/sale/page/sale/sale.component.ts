@@ -2,6 +2,9 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
+import { tokenKey } from 'src/app/shared/config/constant';
+import { HelperService } from 'src/app/shared/serives/helper/helper.service';
+import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 import { Product } from '../../models/product/product.model';
 import { SaleService } from '../../services/sale/sale.service';
 
@@ -14,22 +17,33 @@ import { SaleService } from '../../services/sale/sale.service';
 export class SaleComponent implements OnInit, OnDestroy {
   public product!: Product;
   private subscription = new Subscription();
+  private userData: any;
 
   constructor(
-    private saleService: SaleService
+    private saleService: SaleService,
+    private localStorageService: LocalStorageService,
+    private helperService: HelperService,
   ) { }
 
   ngOnInit(): void {
-    this.getProducts()
+    this.getUserData();
+    this.getProducts();
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
+  getUserData() {
+    const token = this.localStorageService.getLocalStorage(tokenKey);
+    const decodedToken = this.helperService.decodeJwtToken(token);
+    console.log(decodedToken);
+    this.userData = decodedToken.user;
+  }
+
   getProducts() {
     this.subscription.add(
-      this.saleService.getCategorieAndProduct('ae229430-e5a0-4cb1-b3a9-5b15e168d1fa').subscribe((response: ApiResponse) => {
+      this.saleService.getCategorieAndProduct(this.userData.shop.shop_uuid).subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
           this.saleService.setCategories(response.data.categories)
           this.saleService.setProducts(response.data.products)

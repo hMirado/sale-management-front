@@ -34,6 +34,7 @@ export class ShopComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.shopService.nextUpdateStatus(false);
   }
 
   addHeaderContent() {
@@ -63,6 +64,7 @@ export class ShopComponent implements OnInit, OnDestroy {
       this.shopService.updateStatus$.subscribe((status: boolean) => {
         if (status) {
           this.getShops();
+          this.shopService.nextUpdateStatus(false);
         }
       })
     );
