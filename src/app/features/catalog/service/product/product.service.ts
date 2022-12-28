@@ -30,7 +30,7 @@ export class ProductService {
   }
 
   createProduct(data: {}): Observable<ApiResponse> {
-    let url = `${environment['catalog-services']}/product`;
+    let url = `${environment['store-service']}/product`;
     return this.apiService.doPost(url, data)
   }
 
@@ -42,6 +42,7 @@ export class ProductService {
   getProducts(page: number = 1): Observable<ApiResponse> {
     let url = `${environment['store-service']}/product`;
     let params = {
+      paginate: 1,
       page: page
     }
     return this.apiService.doGet(url, params)
@@ -78,7 +79,7 @@ export class ProductService {
           key: 'price',
           type: 'simple',
           expand: false,
-          value: value.ttc_price,
+          value: `${value.ttc_price} MGA`,
         }
       ]
     }

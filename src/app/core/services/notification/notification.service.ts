@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Notification } from '../../models/notification/notification.model';
 
 const notification: Notification = {message: '', type: ''}
@@ -8,7 +8,7 @@ const notification: Notification = {message: '', type: ''}
   providedIn: 'root'
 })
 export class NotificationService {
-  public notification$: BehaviorSubject<Notification> = new BehaviorSubject<Notification>(notification)
+  public notification$: Subject<Notification> = new Subject<Notification>()
   public notificationIsRemoved$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() { }

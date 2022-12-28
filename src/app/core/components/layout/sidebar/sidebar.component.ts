@@ -52,8 +52,12 @@ export class SidebarComponent implements OnInit {
   private addMenu(authKey: string[], menu: Menu, i: number, hasGroupName: boolean = false) {
     let newMenu = menu;
     menu?.subMenu?.forEach((subMenu) => {
+      const route = this.router.url;
       if (subMenu.authorization) {
-        if (subMenu.url === this.router.url && !hasGroupName) {
+        if (
+          ( subMenu.url === route || subMenu.url === route.substring(0, this.router.url.indexOf('?')) )
+          && !hasGroupName
+        ) {
           this.menuOpenId = i+1;
           this.subMenuOpenId = 0;
         }
@@ -61,7 +65,7 @@ export class SidebarComponent implements OnInit {
       }
       if (subMenu.subMenu && subMenu.subMenu.length > 0) {
         subMenu.subMenu = subMenu.subMenu.filter(x =>{
-          if (x.url === this.router.url) {
+          if (x.url === route || x.url === route.substring(0, this.router.url.indexOf('?'))) {
             this.menuOpenId = 0;
             this.subMenuOpenId = i+1;
           }

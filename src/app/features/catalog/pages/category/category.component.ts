@@ -93,11 +93,13 @@ export class CategoryComponent implements OnInit, OnDestroy {
   addHeaderContent() {
     this.breadCrumbs = [
       {
-        url: '',
+        url: '/',
+        label: 'Accueil',
+      },
+      {
         label: 'Catalogues',
       },
       {
-        url: '',
         label: 'Catégories d\'articles'
       }
     ]

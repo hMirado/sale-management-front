@@ -6,20 +6,24 @@
         <app-info-box [data]="infoBoxCategoryCount"></app-info-box>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="row">
-          <button class="col-2 btn btn-block btn-outline-primary btn-sm" (click)="openModal()">
-            Ajouter catégorie
-          </button>
-          <app-import class="col-2" [config]="importConfig" [id]="uniqueId"></app-import>
-          <app-export class="col-2" [config]="exportConfig" [id]="uniqueId"></app-export>
-        </div>
+    <div class="row mb-1">
+      <div class="col-2">
+        <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal()">
+          Ajouter catégorie
+        </button>
       </div>
+      <div class="col-2">
+        <app-import [config]="importConfig" [id]="uniqueId"></app-import>
+      </div>
+      <div class="col-2">
+        <app-export [config]="exportConfig" [id]="uniqueId"></app-export>
+      </div>
+    </div>
+    <div class="card">
       <div class="card-body table-responsive p-0">
         <app-table [id]="tableId"></app-table>
       </div>
-      <div class="bg-white card-footer">
+      <div class="bg-white card-footer" *ngIf="currentPage > 0">
         <ul class="pagination pagination-sm m-0 float-right">
           <li class="page-item" *ngIf="lastPage > 0">
             <a class="page-link" [routerLink]="['/catalog/category']" [queryParams]="{page: lastPage}">&laquo;</a>
@@ -29,8 +33,7 @@
               }}</a>
           </li>
           <li class="page-item">
-            <a class="page-link" [routerLink]="['/catalog/category']" [queryParams]="{page: currentPage}"
-              routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ currentPage }}</a>
+            <a class="page-link" [routerLink]="['/catalog/category']" [queryParams]="{page: currentPage}">{{ currentPage }}</a>
           </li>
           <li class="page-item" *ngIf="nextPage == currentPage + 1">
             <a class="page-link" [routerLink]="['/catalog/category']" [queryParams]="{page: nextPage}">{{ nextPage

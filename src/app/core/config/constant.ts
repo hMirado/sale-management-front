@@ -74,9 +74,9 @@ export const appMenu: Menu[] = [
   }, 
   {
     authorization: 'PAGE_STOCK',
-    icon: 'fas fa-boxes-alt',
+    icon: 'fas fa-warehouse',
     label: 'Stock',
-    url: '/catalog/category'
+    url: '/stock'
   },
   {
     groupName: 'MON ENTREPRISE',

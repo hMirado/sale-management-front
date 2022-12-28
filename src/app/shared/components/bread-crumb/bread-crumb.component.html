@@ -1,6 +1,6 @@
 <ol class="breadcrumb float-sm-right">
   <li *ngFor="let breadCrumb of breadCrumbs" class="breadcrumb-item">
-    <a *ngIf="breadCrumb.url != '' else noUrl" [href]="breadCrumb.url">{{ breadCrumb.label }}</a>
+    <a *ngIf="breadCrumb.url else noUrl" [routerLink]="breadCrumb.url">{{ breadCrumb.label }}</a>
     <ng-template #noUrl>
       {{ breadCrumb.label }}
     </ng-template>

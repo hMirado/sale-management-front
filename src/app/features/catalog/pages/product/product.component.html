@@ -7,17 +7,19 @@
         <app-info-box [data]="infoBoxProductCount"></app-info-box>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="row">
-          <app-import class="col-2" [config]="importProduct" [id]="uniqueIdProduct"></app-import>
-          <app-export class="col-2" [config]="exportProduct" [id]="uniqueIdProduct"></app-export>
-        </div>
+    <div class="row mb-1">
+      <div class="col-2">
+        <app-import [config]="importProduct" [id]="uniqueIdProduct"></app-import>
       </div>
+      <div class="col-2">
+        <app-export [config]="exportProduct" [id]="uniqueIdProduct"></app-export>
+      </div>
+    </div>
+    <div class="card">
       <div class="card-bod table-responsive p-0">
         <app-table [id]="tableId"></app-table>
       </div>
-      <div class="bg-white card-footer">
+      <div class="bg-white card-footer" *ngIf="currentPage > 0">
         <ul class="pagination pagination-sm m-0 float-right">
           <li class="page-item" *ngIf="lastPage > 0">
             <a class="page-link" [routerLink]="['/catalog/product']" [queryParams]="{page: lastPage}">&laquo;</a>
@@ -26,8 +28,7 @@
             <a class="page-link" [routerLink]="['/catalog/product']" [queryParams]="{page: lastPage}">{{ lastPage }}</a>
           </li>
           <li class="page-item">
-            <a class="page-link" [routerLink]="['/catalog/product']" [queryParams]="{page: currentPage}"
-              routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ currentPage }}</a>
+            <a class="page-link" [routerLink]="['/catalog/product']" [queryParams]="{page: currentPage}">{{ currentPage }}</a>
           </li>
           <li class="page-item" *ngIf="nextPage == currentPage + 1">
             <a class="page-link" [routerLink]="['/catalog/product']" [queryParams]="{page: nextPage}">{{ nextPage }}</a>
