@@ -4,12 +4,7 @@ import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
-import { IExport } from 'src/app/shared/models/export/i-export';
-import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
-import { IImport } from 'src/app/shared/models/import/i-import';
-import { ExportService } from 'src/app/shared/serives/export/export.service';
-import { FileService } from 'src/app/shared/serives/file/file.service';
-import {exportProductConfig, impportProductConfig, tableProductHeader, tableProductId} from '../../config/constant';
+import {  tableProductHeader, tableProductId } from '../../config/constant';
 import { ProductService } from '../../service/product/product.service';
 import {ActivatedRoute, Params} from "@angular/router";
 import {TableService} from "../../../../shared/serives/table/table.service";
@@ -28,14 +23,9 @@ export class ProductComponent implements OnInit, OnDestroy {
   public breadCrumbs: BreadCrumb[] = [];
   private subscription = new Subscription();
   public productNumber: number = 0;
-
   public uniqueIdProduct: string = 'product-id';
-  public importProduct: IImport = impportProductConfig;
-  public exportProduct: IExport = exportProductConfig;
-
   public tableId: string = tableProductId;
   private rows: IRow[] = [];
-
   public currentPage: number = 0;
   public lastPage: number = 0;
   public nextPage: number = 0;
@@ -44,10 +34,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   public infoBoxProductCount!: IInfoBox;
 
   constructor(
-    private fileService: FileService,
     private productService: ProductService,
     private notificationService: NotificationService,
-    private exportService: ExportService,
     private tableService: TableService,
     private activatedRoute: ActivatedRoute,
     private helperService: HelperService,
@@ -55,8 +43,6 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.addHeaderContent();
-    this.importFile();
-    this.exportFile();
     this.countProduct();
     this.getProducts();
   }
@@ -77,48 +63,6 @@ export class ProductComponent implements OnInit, OnDestroy {
         label: 'Articles'
       }
     ]
-  }
-
-  importFile() {
-    this.subscription.add(
-      this.fileService.base64File$.pipe(
-        switchMap((data: IBase64File) => {
-          if (data.id == this.uniqueIdProduct && data.file != '') return this.productService.importProduct(data.file);
-          else return[]
-        })
-      )
-      .subscribe((response: ApiResponse) => {
-        if (response.status == responseStatus.success) {
-          this.getProducts();
-          this.countProduct();
-          this.showNotification('success', response.notification);
-          this.fileService.base64File$.next({file: null, id: ''});
-        }
-      })
-    );
-  }
-
-  exportFile() {
-    this.subscription.add(
-      this.exportService.isExport$.pipe(
-        switchMap((value: boolean) => {
-          if (value) {
-            return this.productService.exportModel()
-          }
-          else return []
-        })
-      ).subscribe((response: ApiResponse) => {
-        if (response.status == responseStatus.success) {
-          let blob = this.fileService.convertBase64ToBlob(response.data.file);
-          let link = document.createElement('a');
-          link.href = window.URL.createObjectURL(blob);
-          link.download = this.exportProduct.fileName;
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-        }
-      })
-    )
   }
 
   countProduct() {
@@ -187,5 +131,9 @@ export class ProductComponent implements OnInit, OnDestroy {
       type: type,
       message: message
     })
+  }
+
+  goToCreateItem() {
+
   }
 }

@@ -10,14 +10,15 @@
     <div class="card">
       <div class="card-header">
         <div class="row">
-          <app-import class="col-2" [config]="importProduct" [id]="uniqueIdProduct"></app-import>
-          <app-export class="col-2" [config]="exportProduct" [id]="uniqueIdProduct"></app-export>
+          <button class="col-2 btn btn-block btn-outline-primary btn-sm">
+            Ajouter catégorie
+          </button>
         </div>
       </div>
       <div class="card-bod table-responsive p-0">
         <app-table [id]="tableId"></app-table>
       </div>
-      <div class="bg-white card-footer">
+      <div class="bg-white card-footer" *ngIf="currentPage > 0">
         <ul class="pagination pagination-sm m-0 float-right">
           <li class="page-item" *ngIf="lastPage > 0">
             <a class="page-link" [routerLink]="['/catalog/product']" [queryParams]="{page: lastPage}">&laquo;</a>

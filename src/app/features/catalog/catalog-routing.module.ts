@@ -25,6 +25,10 @@ const routes: Routes = [
           {
             path: 'create',
             component: ProductCreateComponent
+          },
+          {
+            path: 'edit/:uuid',
+            component: ProductCreateComponent
           }
         ]
       }
