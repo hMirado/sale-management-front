@@ -13,13 +13,12 @@ import { ShopService } from '../../services/shop/shop.service';
   styleUrls: ['./shop.component.scss']
 })
 export class ShopComponent implements OnInit, OnDestroy {
-
+  public title: string = 'Mes Boutiques';
+  public breadCrumbs: BreadCrumb[] = [];
   private subscription = new Subscription();
   public shops: Shop[] = [];
   public buttonLeftMenu: ButtonLeftMenu = new ButtonLeftMenu();
   public defaultSelected: string = '';
-  public breadCrumbs: BreadCrumb[] = [];
-  public title: string = 'Boutiques';
   
   constructor(
     private shopService: ShopService,
@@ -40,12 +39,14 @@ export class ShopComponent implements OnInit, OnDestroy {
   addHeaderContent() {
     this.breadCrumbs = [
       {
-        url: '',
+        url: '/',
+        label: 'Accueil',
+      },
+      {
         label: 'Mon Entreprise',
       },
       {
-        url: '',
-        label: 'Boutiques'
+        label: 'Mes Boutiques'
       }
     ]
   }

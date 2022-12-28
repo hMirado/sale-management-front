@@ -55,11 +55,13 @@ export class ProductComponent implements OnInit, OnDestroy {
   addHeaderContent() {
     this.breadCrumbs = [
       {
-        url: '',
+        url: '/',
+        label: 'Accueil',
+      },
+      {
         label: 'Catalogues',
       },
       {
-        url: '',
         label: 'Articles'
       }
     ]
@@ -99,7 +101,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
     if (response.status == responseStatus.success) {
       this.rows = [];
-      let products: Product[] = response.data;
+      let products: Product[] = response.data.items;
       products.forEach((product: Product) => {
         let row: IRow = this.productService.addTableRowValue(product);
         this.rows.push(row);

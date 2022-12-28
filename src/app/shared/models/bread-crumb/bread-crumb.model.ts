@@ -1,5 +1,5 @@
 export class BreadCrumb {
-  url!: string;
+  url?: string;
   label!: string;
 }
 

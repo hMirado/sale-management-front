@@ -23,6 +23,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/authentication/authentication.module').then(authentication => authentication.AuthenticationModule)
   },
   {
+    path: 'stock',
+    loadChildren: () =>  import('./features/stock/stock.module').then(stock => stock.StockModule)
+  },
+  {
     path: 'error',
     loadChildren: () => import('./features/error/error.module').then(error => error.ErrorModule)
   },

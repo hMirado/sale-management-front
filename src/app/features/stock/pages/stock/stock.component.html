@@ -1,0 +1,26 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-3">
+        INFO BOX
+      </div>
+    </div>
+    <div class="row mb-1">
+      <div class="col-2">
+        <app-import [config]="importConfig" [id]="uniqueId"></app-import>
+      </div>
+      <div class="col-2">
+        <app-export [config]="exportConfig" [id]="uniqueId"></app-export>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <app-table [id]="tableId"></app-table>
+      </div>
+      <div class="bg-white card-footer" *ngIf="currentPage > 0">
+        
+      </div>
+    </div>
+  </div>
+</section>

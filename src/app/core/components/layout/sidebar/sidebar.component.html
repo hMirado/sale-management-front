@@ -29,6 +29,14 @@
           </a>
         </li>
         <ng-container *ngFor="let menu of menus; let i = index">
+          <li class="nav-item" *ngIf="menu.authorization">
+            <a [routerLink]="menu.url" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
+              <i class="nav-icon {{ menu.icon }}"></i>
+              <p>
+                {{ menu.label }}
+              </p>
+            </a>
+          </li>
           <li 
             *ngIf="!menu.groupName && !menu.authorization && menu.subMenu && menu.subMenu.length > 0" 
             class="nav-item" 

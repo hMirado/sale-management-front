@@ -14,6 +14,8 @@
           </button>
         </div>
       </div>
+    </div>
+    <div class="card">
       <div class="card-body table-responsive p-0">
         <app-table [id]="tableId"></app-table>
       </div>
@@ -27,8 +29,7 @@
               }}</a>
           </li>
           <li class="page-item">
-            <a class="page-link" [routerLink]="['/catalog/category']" [queryParams]="{page: currentPage}"
-              routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ currentPage }}</a>
+            <a class="page-link" [routerLink]="['/catalog/category']" [queryParams]="{page: currentPage}">{{ currentPage }}</a>
           </li>
           <li class="page-item" *ngIf="nextPage == currentPage + 1">
             <a class="page-link" [routerLink]="['/catalog/category']" [queryParams]="{page: nextPage}">{{ nextPage
