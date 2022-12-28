@@ -5,13 +5,10 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { IExport } from 'src/app/shared/models/export/i-export';
-import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
 import { IImport } from 'src/app/shared/models/import/i-import';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
-import { ExportService } from 'src/app/shared/serives/export/export.service';
-import { FileService } from 'src/app/shared/serives/file/file.service';
 import { TableService } from 'src/app/shared/serives/table/table.service';
-import {exportCategoryConfig, impportCategoryConfig, tableCategoryHeader, tableCategoryId} from '../../config/constant';
+import { tableCategoryHeader, tableCategoryId } from '../../config/constant';
 import { Category } from '../../models/category/category.model';
 import { CategoryService } from '../../service/category/category.service';
 import {ActivatedRoute, Params} from "@angular/router";
@@ -34,38 +31,20 @@ export class CategoryComponent implements OnInit, OnDestroy {
   public categoryFormGroup!: FormGroup;
   private subscription = new Subscription();
   public categoryNumber: number = 0;
-
-  public importConfig: IImport = impportCategoryConfig;
-  public exportConfig: IExport = exportCategoryConfig;
   public uniqueId: string = 'category-id';
-
   public tableId: string = tableCategoryId
   private rows: IRow[] = [];
-
   public currentPage: number = 0;
   public lastPage: number = 0;
   public nextPage: number = 0;
   public totalPages: number = 0;
   public totalItems: number = 0;
 
-  public categoryCardButton: ICardButton = {
-    id: 'create-category',
-    label: 'Créer une catégorie',
-    icon: {
-      id: 'create-category-icon',
-      icon: 'fa-plus',
-      size: '2x',
-      color: 'add'
-    }
-  }
-
   public infoBoxCategoryCount!: IInfoBox;
 
   constructor(
-    private fileService: FileService,
     private categoryService: CategoryService,
     private notificationService: NotificationService,
-    private exportService: ExportService,
     private tableService: TableService,
     private activatedRoute: ActivatedRoute,
     private modalService: ModalService,
@@ -77,9 +56,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.importFile();
-    this.exportFile();
-    this.categoryCardButton.action = this.openModal;
     this.countCategories();
     this.getCategories();
     this.addLabel();
@@ -141,6 +117,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.categoryService.createCategory(categories.category).subscribe((response: ApiResponse) => {
         this.modalService.hideModal(this.uniqueId);
+        this.categoryFormGroup.reset();
+        this.categoryForm.clear();
+        this.addLabel();
         if (response.status == responseStatus.success) {
           this.showNotification('success', response.notification);
           this.getCategories()
@@ -150,47 +129,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
         }
       })
     );
-  }
-
-  importFile() {
-    this.subscription.add(
-      this.fileService.base64File$.pipe(
-        switchMap((data: IBase64File) => {
-          if (data.id == this.uniqueId && data.file) return this.categoryService.importCategory(data.file);
-          else return[]
-        })
-      )
-      .subscribe((response: ApiResponse) => {
-        if (response.status == responseStatus.success) {
-          this.getCategories();
-          this.showNotification('success', response.notification);
-          this.countCategories();
-        }
-      })
-    );
-  }
-
-  exportFile() {
-    this.subscription.add(
-      this.exportService.isExport$.pipe(
-        switchMap((value: boolean) => {
-          if (value) {
-            return this.categoryService.exportModel()
-          }
-          else return []
-        })
-      ).subscribe((response: ApiResponse) => {
-        if (response.status == responseStatus.success) {
-          let blob = this.fileService.convertBase64ToBlob(response.data.file);
-          let link = document.createElement('a');
-          link.href = window.URL.createObjectURL(blob);
-          link.download = this.exportConfig.fileName;
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-        }
-      })
-    )
   }
 
   countCategories() {

@@ -12,14 +12,12 @@
           <button class="col-2 btn btn-block btn-outline-primary btn-sm" (click)="openModal()">
             Ajouter catégorie
           </button>
-          <app-import class="col-2" [config]="importConfig" [id]="uniqueId"></app-import>
-          <app-export class="col-2" [config]="exportConfig" [id]="uniqueId"></app-export>
         </div>
       </div>
       <div class="card-body table-responsive p-0">
         <app-table [id]="tableId"></app-table>
       </div>
-      <div class="bg-white card-footer">
+      <div class="bg-white card-footer" *ngIf="currentPage > 0">
         <ul class="pagination pagination-sm m-0 float-right">
           <li class="page-item" *ngIf="lastPage > 0">
             <a class="page-link" [routerLink]="['/catalog/category']" [queryParams]="{page: lastPage}">&laquo;</a>
@@ -70,12 +68,12 @@
           </div>
           <div class="col-1" *ngIf="i > 0">
             <label style="visibility: hidden">x</label>
-            <button class="btn btn-default" (click)="removeLabel(i)"><i class="fas fa-times text-danger"></i></button>
+            <button class="btn btn-default" (click)="removeLabel(i)"><i class="fas fa-trash-alt"></i></button>
           </div>
         </div>
       </ng-container>
     </form>
-    <button class="btn btn-default float-right" (click)="addLabel()">Ajouter</button>
+    <button *ngIf="categoryForm.controls.length <= 5" class="btn btn-sm btn-secondary" (click)="addLabel()">Ajouter ligne</button>
   </div>
-  <button save class="btn btn-default ml-1 mr-1" (click)="saveCategory()">Enregistrer</button>
+  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="saveCategory()">Enregistrer</button>
 </app-modal>
