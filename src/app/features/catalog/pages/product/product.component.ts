@@ -6,7 +6,7 @@ import { NotificationService } from 'src/app/core/services/notification/notifica
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import {  tableProductHeader, tableProductId } from '../../config/constant';
 import { ProductService } from '../../service/product/product.service';
-import {ActivatedRoute, Params} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {TableService} from "../../../../shared/serives/table/table.service";
 import {ICell, IRow, ITable} from "../../../../shared/models/table/i-table";
 import {Product} from "../../models/product/product.model";
@@ -39,6 +39,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     private tableService: TableService,
     private activatedRoute: ActivatedRoute,
     private helperService: HelperService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -136,6 +137,6 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   goToCreateItem() {
-
+    this.router.navigate(['/catalog/product/create'])
   }
 }
