@@ -1,11 +1,16 @@
-<div class="wrapper">
-  <app-header></app-header>
-  <app-sidebar></app-sidebar>
-  <app-footer></app-footer>
-  <div class="content-wrapper">
-    <router-outlet></router-outlet>
+<div class="box">
+  <div class="overlay dark" *ngIf="loading$ | async">
+    <i class="fas fa-4x fa-sync-alt spin"></i>
   </div>
-  <div class="notification" *ngIf="notifications.length > 0">
-    <app-notification *ngFor="let notifiction of notifications" [type]="notifiction.type" [message]="notifiction.message"></app-notification>
+  <div class="wrapper">
+    <app-header></app-header>
+    <app-sidebar></app-sidebar>
+    <app-footer></app-footer>
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+    <div class="notification" *ngIf="notifications.length > 0">
+      <app-notification *ngFor="let notifiction of notifications" [type]="notifiction.type" [message]="notifiction.message"></app-notification>
+    </div>
   </div>
 </div>
