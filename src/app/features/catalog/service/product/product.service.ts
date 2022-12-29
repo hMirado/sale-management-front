@@ -15,20 +15,6 @@ export class ProductService {
     private apiService: ApiService
   ) { }
 
-  importProduct(file:  string|ArrayBuffer|null): Observable<ApiResponse> {
-    let url = `${environment['store-service']}/product/import`;
-    let data: Object = {
-      file: file
-    }
-
-    return this.apiService.doPost(url, data)
-  }
-
-  exportModel(): Observable<ApiResponse>{
-    let url = `${environment['store-service']}/product/export-model`;
-    return this.apiService.doGet(url);
-  }
-
   createProduct(data: {}): Observable<ApiResponse> {
     let url = `${environment['store-service']}/product`;
     return this.apiService.doPost(url, data)
@@ -83,5 +69,10 @@ export class ProductService {
         }
       ]
     }
+  }
+
+  createMultiProduct(products: Product[]): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/product`;
+    return this.apiService.doPost(url, products)
   }
 }

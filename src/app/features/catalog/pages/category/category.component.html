@@ -10,7 +10,7 @@
       <div class="card-header">
         <div class="row">
           <button class="col-2 btn btn-block btn-outline-primary btn-sm" (click)="openModal()">
-            Ajouter catégorie
+            <i class="fas fa-plus"></i> Ajouter catégorie(s)
           </button>
         </div>
       </div>
@@ -47,7 +47,7 @@
 <app-modal [id]="uniqueId">
   <div head>
     <h4 class="modal-title">
-      Création d'une catégorie d'articles
+      Création de catégorie d'articles
     </h4>
   </div>
   <div body>
@@ -57,24 +57,24 @@
           <div class="col-4">
             <div class="form-group">
               <label>Code</label>
-              <input type="text" class="form-control" formControlName="code">
+              <input type="text" class="form-control form-control-sm" formControlName="code">
             </div>
           </div>
           <div class="col-7">
             <div class="form-group">
               <label>Libéllé</label>
-              <input type="text" class="form-control" [ngClass]="{'input-error': categoryForm.hasError('required') }"
+              <input type="text" class="form-control form-control-sm" [ngClass]="{'input-error': categoryForm.hasError('required') }"
                 formControlName="label">
             </div>
           </div>
           <div class="col-1" *ngIf="i > 0">
             <label style="visibility: hidden">x</label>
-            <button class="btn btn-default" (click)="removeLabel(i)"><i class="fas fa-trash-alt"></i></button>
+            <button class="btn btn-sm btn-default" (click)="removeLabel(i)"><i class="fas fa-trash-alt"></i></button>
           </div>
         </div>
       </ng-container>
     </form>
-    <button *ngIf="categoryForm.controls.length <= 5" class="btn btn-sm btn-secondary" (click)="addLabel()">Ajouter ligne</button>
+    <button *ngIf="categoryForm.controls.length < 5" class="btn btn-sm btn-outline-secondary" (click)="addLabel()">Ajouter ligne</button>
   </div>
   <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="saveCategory()">Enregistrer</button>
 </app-modal>

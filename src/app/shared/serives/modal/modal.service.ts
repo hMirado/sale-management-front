@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Subject} from "rxjs";
 import {IModal} from "../../models/i-modal/i-modal";
 
 @Injectable({
@@ -8,7 +8,7 @@ import {IModal} from "../../models/i-modal/i-modal";
 export class ModalService {
   public modal$: BehaviorSubject<IModal | null> = new BehaviorSubject<IModal | null>(null);
   public isSaved$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public isCanceled$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public isCanceled$: Subject<boolean> = new Subject<boolean>();
 
   constructor() { }
 

@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BreadCrumb} from "../../../../../shared/models/bread-crumb/bread-crumb.model";
-import {debounceTime, map, Observable, startWith, Subscription, switchMap} from "rxjs";
+import {debounceTime, of, Subscription, switchMap} from "rxjs";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MatStepper} from "@angular/material/stepper";
 import {ProductService} from "../../../service/product/product.service";
@@ -43,6 +43,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.addAttribute();
     this.getCategories();
     this.getCategoriesValueChange();
+    this.isSerializable();
   }
 
   ngOnDestroy(): void {
@@ -71,6 +72,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       ttcPrice: ['', Validators.required],
       isSerializable: '',
       category: ['', Validators.required],
+      quantity: [1],
     });
 
     this.attributeFormGroup = this.formBuilder.group({
@@ -113,6 +115,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     );
   }
 
+  getCategoriesResponse(response: ApiResponse) {
+    if (response.status == responseStatus.success) {
+      this.categories = response.data;
+    }
+  }
+
   getCategoriesValueChange() {
     const category = this.producFormGroup?.get('category')
     if (category) {
@@ -120,16 +128,16 @@ export class CreateComponent implements OnInit, OnDestroy {
         category.valueChanges.pipe(
           debounceTime(500),
           switchMap((category: string) => {
-            return this.categoryService.getCategories(1)
+            if (category == '') {
+              return this.categoryService.getCategories();
+            } else {
+              this.categories = this.categories.filter(x =>  x.label.toLowerCase().includes(category.toLowerCase()));
+              const result = {status: 200, data: this.categories, notification: 'Résultat de la recherche'};
+              return of(result);
+            }
           })
         ).subscribe((response: ApiResponse) => this.getCategoriesResponse(response))
       );
-    }
-  }
-
-  getCategoriesResponse(response: ApiResponse) {
-    if (response.status == responseStatus.success) {
-      this.categories = response.data.items;
     }
   }
 
@@ -174,6 +182,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.notificationService.addNotification({
       type: type,
       message: message
+    })
+  }
+
+  isSerializable() {
+    this.producFormGroup.get('isSerializable')?.valueChanges.subscribe(value => {
+      console.log(value);
+      
     })
   }
 }
