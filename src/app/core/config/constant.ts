@@ -2,7 +2,8 @@ import { Menu } from "../models/menu/menu.model"
 
 export const responseStatus = {
   success: 200,
-  empty: 400,
+  created: 201,
+  badRequest: 400,
   error: 500
 }
 

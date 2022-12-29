@@ -4,8 +4,6 @@ import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
-import { IExport } from 'src/app/shared/models/export/i-export';
-import { IImport } from 'src/app/shared/models/import/i-import';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { TableService } from 'src/app/shared/serives/table/table.service';
 import { tableCategoryHeader, tableCategoryId } from '../../config/constant';
@@ -13,7 +11,6 @@ import { Category } from '../../models/category/category.model';
 import { CategoryService } from '../../service/category/category.service';
 import {ActivatedRoute, Params} from "@angular/router";
 import { IFilter } from 'src/app/shared/models/i-filter/i-filter';
-import {ICardButton} from "../../../../shared/models/i-card-button/i-card-button";
 import {ModalService} from "../../../../shared/serives/modal/modal.service";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
@@ -59,6 +56,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.countCategories();
     this.getCategories();
     this.addLabel();
+    this.cancel();
   }
 
   ngOnDestroy(): void {
@@ -122,7 +120,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.categoryFormGroup.reset();
         this.categoryForm.clear();
         this.addLabel();
-        if (response.status == responseStatus.success) {
+        if (response.status == responseStatus.created) {
           this.showNotification('success', response.notification);
           this.getCategories()
           this.countCategories();

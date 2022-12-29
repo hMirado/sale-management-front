@@ -10,6 +10,7 @@ import {ModalService} from "../../serives/modal/modal.service";
 })
 export class ModalComponent implements OnInit,OnDestroy {
   @Input() public id: string = '';
+  @Input() public singleButton: boolean = false;
   public config!: IModal;
   private subscription: Subscription = new Subscription();
 
