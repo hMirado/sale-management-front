@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Notification } from './models/notification/notification.model';
+import { LoaderService } from './services/loader/loader.service';
 import { NotificationService } from './services/notification/notification.service';
 
 @Component({
@@ -10,12 +11,13 @@ import { NotificationService } from './services/notification/notification.servic
   styleUrls: ['./core.component.scss']
 })
 export class CoreComponent implements OnInit, OnDestroy {
-
+  public loading$ = this.loaderService.loading$;
   private subscription = new Subscription()
   public notifications: Notification[] = [];
   constructor(
     private notificationService: NotificationService,
     private router: Router,
+    public loaderService: LoaderService,
   ) {
     this.routerEvent()
     this.notifications = [];

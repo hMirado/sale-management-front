@@ -9,8 +9,9 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthenticationModule } from './features/authentication/authentication.module';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HeaderInterceptor } from './core/interceptors/header/header.interceptor';
+import { LoaderInterceptor } from './core/interceptors/loader/loader.interceptor';
 
 @NgModule({
   declarations: [
@@ -19,12 +20,21 @@ import { HeaderInterceptor } from './core/interceptors/header/header.interceptor
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     CoreModule,
     AuthenticationModule
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'fr-FR'},
+    { 
+      provide: LOCALE_ID,
+      useValue: 'fr-FR'
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HeaderInterceptor,
