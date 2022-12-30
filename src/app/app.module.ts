@@ -12,6 +12,7 @@ import { AuthenticationModule } from './features/authentication/authentication.m
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HeaderInterceptor } from './core/interceptors/header/header.interceptor';
 import { LoaderInterceptor } from './core/interceptors/loader/loader.interceptor';
+import { HttpErrorInterceptor } from './core/interceptors/http-error/http-error.interceptor';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,11 @@ import { LoaderInterceptor } from './core/interceptors/loader/loader.interceptor
       provide: HTTP_INTERCEPTORS,
       useClass: HeaderInterceptor,
       multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
     }
   ],
   bootstrap: [AppComponent]
