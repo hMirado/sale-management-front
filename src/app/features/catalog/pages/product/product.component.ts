@@ -249,6 +249,7 @@ export class ProductComponent implements OnInit, OnDestroy {
           label: x.label,
           ht_price: x.ttcPrice * 0.8,
           ttc_price: x.ttcPrice,
+          is_serializable: x.isSerializable,
           fk_category_id: this.categories.filter(category => category.label.toLowerCase == x.category.toLowerCase)[0].category_id
         }
       })

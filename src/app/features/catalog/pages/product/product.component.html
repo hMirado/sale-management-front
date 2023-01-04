@@ -7,13 +7,11 @@
         <app-info-box [data]="infoBoxProductCount"></app-info-box>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="row">
-          <button class="col-2 btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueIdProduct)">
-            <i class="fas fa-plus"></i> Ajouter article(s)
-          </button>
-        </div>
+    <div class="row mb-1">
+      <div class="col-2">
+        <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueIdProduct)">
+          <i class="fas fa-plus"></i> Ajouter article(s)
+        </button>
       </div>
     </div>
     <div class="card">
@@ -148,7 +146,7 @@
     </form>
     <button *ngIf="productForm.controls.length < 5" class="btn btn-sm btn-outline-secondary" (click)="addFormField()">Ajouter ligne</button>
   </div>
-  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="createItems()">Enregistrer</button>
+  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="createItems()">Ajouter</button>
 </app-modal>
 
 <app-modal [id]="modalConfirmationID" [singleButton]="true">
