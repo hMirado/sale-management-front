@@ -30,24 +30,65 @@
     </h4>
   </div>
   <div body>
-    <div class="form-horizontal">
-      <div class="form-group row">
-        <label for="" class="col-3 col-form-label">Article *</label>
-        <div class="col-9">
-          <input
-            type="text" 
-            id="item" 
-            class="form-control form-control-sm"
-            [matAutocomplete]="auto"
-          >
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize">
-              {{product.label}}
-            </mat-option>
-          </mat-autocomplete>
+    <form [formGroup]="stockFormGroup">
+      <div class="form-horizontal">
+        <div class="form-group row">
+          <label for="" class="col-3 col-form-label">Article *</label>
+          <div class="col-9">
+            <input
+              type="text" 
+              id="item" 
+              class="form-control form-control-sm"
+              name="item" 
+              formControlName="item" 
+              [matAutocomplete]="auto"
+              (input)="getProductValueChange()"
+            >
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
+              <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize">
+                {{product.label}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
         </div>
       </div>
-    </div>
+      <ng-container formArrayName="attribute">
+        <div class="mb-2" *ngFor="let attribute of attributeField.controls; let i = index;" [formGroupName]="i">
+          <div class="row">
+            <div class="col-4">
+              <div class="form-group">
+                <input type="text" name="graphics_card" id="graphics_card" formControlName="graphics_card" class="form-control form-control-sm" placeholder="Carte Graphique">
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <input type="text" name="processor" id="processor" formControlName="processor" class="form-control form-control-sm" placeholder="Processeur">
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <input type="text" name="ram" id="ram" formControlName="ram" class="form-control form-control-sm" placeholder="RAM">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4">
+              <div class="form-group">
+                <input type="text" name="storage" id="storage" formControlName="storage" class="form-control form-control-sm" placeholder="Mémoire">
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <input type="text" name="storage_type" id="storage_type" formControlName="storage_type" class="form-control form-control-sm" placeholder="Type de mémoire (SSD, HDD, ...)">
+              </div>
+            </div>
+            <div class="col-4">
+            </div>
+          </div>
+        </div>
+        <button *ngIf="isAddAttribute" class="btn btn-sm btn-outline-warning" (click)="addAttributeField()">Ajouter ligne</button>
+      </ng-container>
+    </form>
   </div>
   <button save class="btn btn-sm btn-outline-primary ml-1 mr-1">Ajouter</button>
 </app-modal>
