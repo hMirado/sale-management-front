@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, of, Subscription, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, from, of, Subscription, switchMap } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
@@ -92,28 +92,28 @@ export class StockComponent implements OnInit, OnDestroy {
    this.stockFormGroup = this.formBuilder.group({
     item: ['', Validators.required],
     quantity: ['', Validators.required],
-    attribute: this.formBuilder.array([])
+    detail: this.formBuilder.array([])
    });
   }
 
-  get attributeField(): FormArray {
-    return this.stockFormGroup.get('attribute') as FormArray;
+  get detailField(): FormArray {
+    return this.stockFormGroup.get('detail') as FormArray;
   }
 
-  addAttributeField() {
+  addDetailField() {
     let field = this.formBuilder.group({
-      graphics_card: '',
-      processor: '',
-      ram: '',
-      storage: '',
-      storage_type: '',
-      serialization:  this.formBuilder.array([])
+      attributes:  this.formBuilder.array([]),
+      serializations:  this.formBuilder.array([]),
     });
-    this.attributeField.push(field)
+    this.detailField.push(field)
+  }
+
+  removeDetailField(i: number) {
+    this.detailField.removeAt(i);
   }
 
   getSerializationField(i: number): FormArray {
-    return this.attributeField.at(i).get('serialization') as FormArray;
+    return this.detailField.at(i).get('serializations') as FormArray;
   }
 
   addSerializationField(i: number) {
@@ -164,13 +164,29 @@ export class StockComponent implements OnInit, OnDestroy {
     }
   }
 
-  public isAddAttribute: boolean = false
+  public isAddAttribute: boolean = false;
   selectedValue(event: any) {
     let selectedOption = event.option.value;
     this.searchProducts = this.products.filter(x =>  x.label.toLowerCase().includes(selectedOption.toLowerCase()));
     this.isAddAttribute = this.searchProducts[0].is_serializable;
-    if (this.isAddAttribute) {
-      this.addAttributeField();
+    const quantity = this.stockFormGroup?.get('quantity');
+    if (this.isAddAttribute && quantity?.value > 0) {
+      this.addDetailField();
+    } else {
+      this.detailField.clear();
+      this.detailField.reset();
+    }
+  }
+
+  getQuantityValueChange() {
+    const quantity = this.stockFormGroup?.get('quantity');
+     if (quantity?.value > 0 && this.isAddAttribute) {
+      for (let i = 0; i < +quantity?.value; i++) {
+        this.addDetailField();
+      }
+    } else {
+      this.detailField.clear();
+      this.detailField.reset();
     }
   }
 }

@@ -17,4 +17,9 @@ export class StockService {
     let url = `${environment['store-service']}/product`;
     return this.apiService.doGet(url)
   }
+
+  getAttributeTypes(): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/attribute-type`;
+    return this.apiService.doGet(url)
+  }
 }

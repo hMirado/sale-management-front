@@ -1,0 +1,16 @@
+fieldset {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+legend {
+  padding: 0.2em 0.5em;
+  font-size: 90%;
+  text-align: left;
+  .attribute {
+    width: 15%;
+  }
+  .serialization {
+    width: 20%;
+  }
+}
