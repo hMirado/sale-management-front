@@ -1,18 +1,25 @@
 <table class="table table-hover text-nowrap">
   <thead>
-  <tr>
-    <th *ngFor="let header of tables?.header" [attr.collspan]="header?.collspan">
-      {{header.value}}
-    </th>
-    <th>Action</th>
-  </tr>
+    <tr>
+      <th 
+        *ngFor="let header of tables?.header" 
+        [attr.collspan]="header?.collspan"
+        [ngClass]="{'text-center': header?.align=='center', 'text-left': header?.align=='left', 'text-right': header?.align=='right'}"
+      >
+        {{header.value}}
+      </th>
+      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable">Action</th>
+    </tr>
   </thead>
   <tbody>
   <ng-container *ngFor="let body of tables?.body?.cellValue; let i = index">
     <tr *ngIf="!body.isExpandable else expandable">
-      <td *ngFor="let row of body.rowValue">
-        <img *ngIf="row?.image" [src]="row?.image">
-        {{ row?.value }}
+      <td 
+        *ngFor="let row of body.rowValue"
+        [ngClass]="{'text-center': row?.value?.align=='center', 'text-left': row?.value?.align=='left', 'text-right': row?.value?.align=='right'}"
+      >
+        <span *ngIf="(row.badge && row.badge.status) else notBadge" class="badge bg-{{row.badge.bg}}">{{ row?.value?.value }}</span>
+        <ng-template #notBadge>{{ row?.value?.value }}</ng-template>
       </td>
       <td *ngIf="haveAction">
         <div class="row">
@@ -29,11 +36,36 @@
         </div>
       </td>
     </tr>
+    <ng-template #expandable>
+      <tr>
+        <td 
+          *ngFor="let row of body.rowValue"
+          [ngClass]="{'text-center': row?.value?.align=='center', 'text-left': row?.value?.align=='left', 'text-right': row?.value?.align=='right'}"
+        >
+          <ng-container *ngIf="row.expand else isNotExpandble">
+            <i class="pointer fas fa-chevron-right fa-1x pr-2"></i>{{ row?.value?.value }}
+          </ng-container>
+          <ng-template #isNotExpandble>
+            <span *ngIf="(row.badge && row.badge.status) else notBadge" class="badge bg-{{row.badge.bg}}">{{ row?.value?.value }}</span>
+            <ng-template #notBadge>{{ row?.value?.value }}</ng-template>
+          </ng-template>
+        </td>
+        <td *ngIf="haveAction">
+          <div class="row">
+            <div class="col-2">
+              <i *ngIf="this.tables.body?.isEditable" class="fas fa-edit text-secondary"></i>
+            </div>
+            <div class="col-2">
+              <i *ngIf="this.tables.body?.isDeleteable" class="far fa-trash-alt text-secondar2"></i>
+            </div>
+            <div class="custom-control custom-switch custom-switch-on-success col-2">
+              <input type="checkbox" class="custom-control-input" id="customSwitch{{i}}">
+              <label class="custom-control-label" for="customSwitch{{i}}"></label>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
   </ng-container>
-  <ng-template #expandable>
-    <tr>
-
-    </tr>
-  </ng-template>
   </tbody>
 </table>

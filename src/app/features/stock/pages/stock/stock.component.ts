@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, of, Subscription, switchMap } from 'rxjs';
+import { ActivatedRoute, Params } from '@angular/router';
+import { debounceTime, distinctUntilChanged, filter, iif, of, Subscription, switchMap } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
@@ -9,14 +9,15 @@ import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
 import { tokenKey } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
-import { IRow } from 'src/app/shared/models/table/i-table';
+import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 import { ModalService } from 'src/app/shared/serives/modal/modal.service';
 import { TableService } from 'src/app/shared/serives/table/table.service';
-import { tableStockId } from '../../config/constant';
+import { tableStockHeader, tableStockId } from '../../config/constant';
 import { AttributeType } from '../../models/attribute-type/attribute-type.model';
 import { SerializationType } from '../../models/serialization-type/serialization-type.model';
+import { Stock } from '../../models/stock/stock.model';
 import { StockService } from '../../services/stock/stock.service';
 
 @Component({
@@ -53,6 +54,7 @@ export class StockComponent implements OnInit, OnDestroy {
   public serializationTypes: SerializationType[] = [];
   private shopUuid: string = '';
   
+  public stocks: Stock[] = [];
   constructor(
     private notificationService: NotificationService,
     private tableService: TableService,
@@ -69,6 +71,7 @@ export class StockComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getUserData();
+    this.getStocks();
   }
 
   ngOnDestroy(): void {
@@ -92,7 +95,6 @@ export class StockComponent implements OnInit, OnDestroy {
   getUserData() {
     const token = this.localStorageService.getLocalStorage(tokenKey);
     const decodedToken = this.helperService.decodeJwtToken(token);
-    console.log(decodedToken);
     this.shopUuid = decodedToken.user.shop.shop_uuid;
   }
 
@@ -268,7 +270,6 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   saveStock(value: any) {
-    console.log(value.details);
     this.subscription.add(
       this.stockService.addStock(value, this.shopUuid).subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
@@ -279,5 +280,49 @@ export class StockComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+
+  getStocks() {
+    this.subscription.add(
+      this.activatedRoute.queryParams.pipe(
+        switchMap((params: Params) => {
+          const page: number = params['page'];
+          return iif(() => Boolean(page), this.stockService.getStocks(this.shopUuid, page), this.stockService.getStocks(this.shopUuid))
+        })
+      ).subscribe((response: ApiResponse) => {
+        this.getStockresponse(response);
+      })
+    )
+  }
+
+  getStockresponse(response: ApiResponse) {
+    console.log(response);
+    let table: ITable = {
+      id: this.tableId,
+      header: tableStockHeader,
+      body: null
+    }
+    if (response.status == responseStatus.success) {
+      this.rows = [];
+      let stocks: Stock[] = response.data;
+      stocks.forEach((stock: Stock) =>  {
+        let row: IRow = this.stockService.addTableRowValue(stock);
+        this.rows.push(row);
+      })
+      
+      let cells: ICell = {
+        cellValue: this.rows,
+        isEditable: false,
+        isDeleteable: false,
+        isSwitchable: false
+      }
+      table.body = cells;
+      this.tableService.setTableValue(table);
+      this.currentPage = response.data.currentPage;
+      this.lastPage = this.currentPage == 1 ? 0 : this.currentPage - 1;
+      this.nextPage = response.data.totalPages == this.currentPage ? this.currentPage : this.currentPage + 1;
+      this.totalPages = response.data.totalPages;
+      this.totalItems = response.data.totalItems;
+    }
   }
 }
