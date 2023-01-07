@@ -8,10 +8,9 @@
     </div>
     <div class="row mb-1">
       <div class="col-2">
-        <app-import [config]="importConfig" [id]="uniqueId"></app-import>
-      </div>
-      <div class="col-2">
-        <app-export [config]="exportConfig" [id]="uniqueId"></app-export>
+        <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueId)">
+          <i class="fas fa-plus"></i> Ajouter stock d'article
+        </button>
       </div>
     </div>
     <div class="card">
@@ -24,3 +23,125 @@
     </div>
   </div>
 </section>
+<app-modal [id]="uniqueId" size="x-large">
+  <div head>
+    <h4 class="modal-title">
+      Ajouter un stock d'article
+    </h4>
+  </div>
+  <div body>
+    <form [formGroup]="stockFormGroup">
+      <div class="row">
+        <div class="col-8 form-group">
+          <label for="item">Article *</label>
+          <input
+            type="text" 
+            id="item" 
+            class="form-control form-control-sm"
+            name="item" 
+            formControlName="item" 
+            [matAutocomplete]="auto"
+            (input)="getProductValueChange()"
+          >
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
+            <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize">
+              {{product.label}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div class="col-4 form-group">
+          <label for="quantity">Quantité *</label>
+          <input
+            type="number" 
+            id="quantity" 
+            class="form-control form-control-sm"
+            name="quantity" 
+            formControlName="quantity"
+            (input)="getQuantityValueChange()"
+          >
+        </div>
+      </div>
+      <ng-container formArrayName="details">
+        <div class="mb-2" *ngFor="let detail of detailField.controls; let i = index;" [formGroupName]="i">
+          <div class="card p-1">
+            <fieldset>
+              <legend class="attribute">Caractéristique(s)</legend>
+              <div class="row" formArrayName="attributes">
+                <div class="col-5 input-group" *ngFor="let attribute of getDetailAttributeField(i).controls;  let a = index;">
+                  <ng-container [formGroupName]="a">
+                    <select 
+                      class="form-control form-control-sm"
+                      [ngClass]="{'input-error':
+                        (attribute.get('attribute_type')?.invalid &&
+                        attribute.get('attribute_type')?.hasError('required') &&
+                        formError)
+                      }" 
+                      name="attribute_type" 
+                      formControlName="attribute_type"
+                    >
+                      <option value="" selected disabled hidden>Selectionner ici</option>
+                      <option *ngFor="let type of attributeTypes" [value]="type.attribute_type_id">{{type.attribute_type_label}}</option>
+                    </select>
+                    <input 
+                      type="text" 
+                      class="form-control form-control-sm" 
+                      [ngClass]="{'input-error':
+                        (attribute.get('attribute')?.invalid &&
+                        attribute.get('attribute')?.hasError('required') && 
+                        formError)
+                      }" 
+                      name="attribute" 
+                      formControlName="attribute"
+                    >
+                    <i class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeAttributeField(i, a)"></i>
+                  </ng-container>
+                </div>
+                <div class="col-2">
+                  <button class="btn btn-xs btn-primary m-1" *ngIf="isAddAttribute" (click)="addAttributeField(i)"><i class="fa fa-plus"></i> Ajouter</button>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend class="serialization">Sérialisation(s)</legend>
+              <div class="row" formArrayName="serializations">
+                <div class="col-5 input-group" *ngFor="let serialization of getDetailSerializationField(i).controls;  let b = index;">
+                  <ng-container [formGroupName]="b">
+                    <select 
+                      class="form-control form-control-sm" 
+                      [ngClass]="{'input-error':
+                        (serialization.get('type')?.invalid &&
+                        serialization.get('type')?.hasError('required') && 
+                        formError)
+                      }" 
+                      name="type" 
+                      formControlName="type"
+                    >
+                      <option value="" selected disabled hidden>Selectionner ici</option>
+                      <option *ngFor="let type of serializationTypes" [value]="type.serialization_type_id">{{type.label}}</option>
+                    </select>
+                    <input 
+                      type="text" 
+                      class="form-control form-control-sm" 
+                      [ngClass]="{'input-error':
+                        (serialization.get('value')?.invalid &&
+                        serialization.get('value')?.hasError('required') && 
+                        formError)
+                      }" 
+                      name="value" 
+                      formControlName="value"
+                    >
+                    <i class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeSerializationField(i, b)"></i>
+                  </ng-container>
+                </div>
+                <div class="col-2">
+                  <button class="btn btn-xs btn-primary m-1" *ngIf="isAddAttribute" (click)="addSerializationField(i)"><i class="fa fa-plus"></i> Ajouter</button>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </ng-container>
+    </form>
+  </div>
+  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="addStock()">Enregistrer</button>
+</app-modal>

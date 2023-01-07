@@ -5,6 +5,7 @@
   padding-right: 7.5px;
   display: grid;
   grid-gap: 10px;
+  z-index: 99999!important;
 }
 
 // .bg-transparent {
@@ -45,7 +46,7 @@
   display: flex;
   -ms-flex-pack: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 99999!important;
   animation: fadeIn ease-in-out .3s;
   color: #ced4da;
 }
