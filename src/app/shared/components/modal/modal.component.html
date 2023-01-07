@@ -1,5 +1,12 @@
-<div class="custom-modal" *ngIf="config?.visible">
-  <div class="custom-modal-dialog">
+<div *ngIf="config?.visible" class="custom-modal">
+  <div 
+    class="custom-modal-dialog" 
+    [ngClass]="{
+      'medium': 'custom-modal-md',
+      'large': 'custom-modal-lg',
+      'x-large': 'custom-modal-xl'
+    }[size]"
+  >
     <div class="modal-content">
       <div class="modal-header text-center">
         <ng-content select="[head]"></ng-content>

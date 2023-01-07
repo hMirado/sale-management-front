@@ -23,7 +23,7 @@
     </div>
   </div>
 </section>
-<app-modal [id]="uniqueId">
+<app-modal [id]="uniqueId" size="x-large">
   <div head>
     <h4 class="modal-title">
       Ajouter un stock d'article
@@ -61,24 +61,87 @@
           >
         </div>
       </div>
-      <ng-container formArrayName="detail">
-        <div class="mb-2" *ngFor="let attribute of detailField.controls; let i = index;" [formGroupName]="i">
+      <ng-container formArrayName="details">
+        <div class="mb-2" *ngFor="let detail of detailField.controls; let i = index;" [formGroupName]="i">
           <div class="card p-1">
-            <!-- <button *ngIf="detailField.length > 1" type="button" class="close" style="text-align: right; font-size:15px;" (click)="removeDetailField(i)">
-              <span aria-hidden="true">
-                <i class="fa fa-trash-alt"></i>
-              </span>
-            </button> -->
             <fieldset>
-              <legend class="attribute">Attribut(s)</legend>
+              <legend class="attribute">Caractéristique(s)</legend>
+              <div class="row" formArrayName="attributes">
+                <div class="col-5 input-group" *ngFor="let attribute of getDetailAttributeField(i).controls;  let a = index;">
+                  <ng-container [formGroupName]="a">
+                    <select 
+                      class="form-control form-control-sm"
+                      [ngClass]="{'input-error':
+                        (attribute.get('attribute_type')?.invalid &&
+                        attribute.get('attribute_type')?.hasError('required') &&
+                        formError)
+                      }" 
+                      name="attribute_type" 
+                      formControlName="attribute_type"
+                    >
+                      <option value="" selected disabled hidden>Selectionner ici</option>
+                      <option *ngFor="let type of attributeTypes" [value]="type.attribute_type_id">{{type.attribute_type_label}}</option>
+                    </select>
+                    <input 
+                      type="text" 
+                      class="form-control form-control-sm" 
+                      [ngClass]="{'input-error':
+                        (attribute.get('attribute')?.invalid &&
+                        attribute.get('attribute')?.hasError('required') && 
+                        formError)
+                      }" 
+                      name="attribute" 
+                      formControlName="attribute"
+                    >
+                    <i class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeAttributeField(i, a)"></i>
+                  </ng-container>
+                </div>
+                <div class="col-2">
+                  <button class="btn btn-xs btn-primary m-1" *ngIf="isAddAttribute" (click)="addAttributeField(i)"><i class="fa fa-plus"></i> Ajouter</button>
+                </div>
+              </div>
             </fieldset>
             <fieldset>
               <legend class="serialization">Sérialisation(s)</legend>
+              <div class="row" formArrayName="serializations">
+                <div class="col-5 input-group" *ngFor="let serialization of getDetailSerializationField(i).controls;  let b = index;">
+                  <ng-container [formGroupName]="b">
+                    <select 
+                      class="form-control form-control-sm" 
+                      [ngClass]="{'input-error':
+                        (serialization.get('type')?.invalid &&
+                        serialization.get('type')?.hasError('required') && 
+                        formError)
+                      }" 
+                      name="type" 
+                      formControlName="type"
+                    >
+                      <option value="" selected disabled hidden>Selectionner ici</option>
+                      <option *ngFor="let type of serializationTypes" [value]="type.serialization_type_id">{{type.label}}</option>
+                    </select>
+                    <input 
+                      type="text" 
+                      class="form-control form-control-sm" 
+                      [ngClass]="{'input-error':
+                        (serialization.get('value')?.invalid &&
+                        serialization.get('value')?.hasError('required') && 
+                        formError)
+                      }" 
+                      name="value" 
+                      formControlName="value"
+                    >
+                    <i class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeSerializationField(i, b)"></i>
+                  </ng-container>
+                </div>
+                <div class="col-2">
+                  <button class="btn btn-xs btn-primary m-1" *ngIf="isAddAttribute" (click)="addSerializationField(i)"><i class="fa fa-plus"></i> Ajouter</button>
+                </div>
+              </div>
             </fieldset>
           </div>
         </div>
       </ng-container>
     </form>
   </div>
-  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1">Ajouter</button>
+  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="addStock()">Enregistrer</button>
 </app-modal>

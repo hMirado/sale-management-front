@@ -22,4 +22,14 @@ export class StockService {
     let url = `${environment['store-service']}/attribute-type`;
     return this.apiService.doGet(url)
   }
+
+  getSerializationTypes(): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/type`;
+    return this.apiService.doGet(url)
+  }
+
+  addStock(value: any, shop: string): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/stock/${shop}`;
+    return this.apiService.doPost(url, value)
+  }
 }

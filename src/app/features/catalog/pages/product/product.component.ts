@@ -41,6 +41,9 @@ export class ProductComponent implements OnInit, OnDestroy {
   public searchCategories: Category[] = [];
   public formError: boolean = false;
   public modalConfirmationID: string = 'confirm-id';
+  public created: number = 0;
+  public error: number = 0;
+  public errorValues: any[] = [];
 
   constructor(
     private productService: ProductService,
@@ -257,9 +260,6 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  public created: number = 0;
-  public error: number = 0;
-  public errorValues: any[] = [];
   saveItems(products: Product[]) {
     this.subscription.add(
       this.productService.createMultiProduct(products).subscribe((response:ApiResponse) => {

@@ -58,3 +58,8 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance:textfield; /* Firefox */
 }
+
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 9999!important;
+}
