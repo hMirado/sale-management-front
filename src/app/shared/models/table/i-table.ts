@@ -13,9 +13,9 @@ export interface IHeader {
 
 export interface ICell {
   cellValue: IRow [];
-  isEditable: boolean;
-  isDeleteable: boolean;
-  isSwitchable: boolean;
+  isEditable?: boolean;
+  isDeleteable?: boolean;
+  isSwitchable?: boolean;
 }
 
 export interface IRow {
@@ -35,7 +35,7 @@ export interface IRowValue {
 }
 
 export interface IValue {
-  value: number | boolean | string;
+  value: any[];
   align?: 'center' | 'left' | 'right';
 }
 

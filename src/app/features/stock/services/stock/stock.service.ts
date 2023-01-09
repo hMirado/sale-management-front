@@ -43,15 +43,15 @@ export class StockService {
   addTableRowValue(value: Stock): IRow {
     return {
       id: value.stock_uuid,
-      isExpandable: value.product?.is_serializable as boolean,
+      isExpandable: (value.product?.is_serializable && value?.quantity > 0) as boolean,
       rowValue: [
         {
           id: value.stock_uuid,
           key: 'product', 
           type: 'simple',
-          expand: value.product?.is_serializable as boolean,
+          expand: (value.product?.is_serializable && value?.quantity > 0) as boolean,
           value: {
-            value: value?.product?.label as string,
+            value:[ value?.product?.label as string],
             align: 'left'
           }
         },
@@ -61,7 +61,7 @@ export class StockService {
           type: 'simple',
           expand: false,
           value: {
-            value: value?.product?.code as string,
+            value: [value?.product?.code as string],
             align: 'left'
           } 
         },
@@ -71,7 +71,7 @@ export class StockService {
           type: 'simple',
           expand: false,
           value: {
-            value: value?.quantity > 0 ? 'En Stock' : 'En rupture',
+            value: value?.quantity > 0 ? ['En Stock'] : ['En rupture'],
             align: 'center'
           },
           badge: {
@@ -85,7 +85,7 @@ export class StockService {
           type: 'simple',
           expand: false,
           value: {
-            value: value?.quantity ,
+            value: [value?.quantity] ,
             align: 'center'
           }
         },
@@ -95,7 +95,68 @@ export class StockService {
           type: 'simple',
           expand: false,
           value: {
-            value: '',
+            value: [''],
+            align: 'left'
+          }
+        }
+      ]
+    }
+  }
+
+  getProductSerialization(productUuid: string, shopUuid: string = '') {
+    const param = shopUuid != '' ? {shop: shopUuid} : null
+    const url = `${environment['store-service']}/serialization/${productUuid}`;
+    return this.apiService.doGet(url, param)
+  }
+
+  addTableRowSerializationValue(serialisationDisctinct: any): IRow {
+    return {
+      id: serialisationDisctinct['id'],
+      isExpandable: false,
+      rowValue: [
+        {
+          id: serialisationDisctinct['id'],
+          key: 'product', 
+          type: 'simple',
+          expand: false,
+          value: {
+            value: ['']
+          }
+        },
+        {
+          id: serialisationDisctinct['id'],
+          key: 'code', 
+          type: 'simple',
+          expand: false,
+          value: {
+            value: ['']
+          }
+        },
+        {
+          id: serialisationDisctinct['id'],
+          key: 'status', 
+          type: 'simple',
+          expand: false,
+          value: {
+            value: ['']
+          }
+        },
+        {
+          id: serialisationDisctinct['id'],
+          key: 'quantity', 
+          type: 'simple',
+          expand: false,
+          value: {
+            value: ['']
+          }
+        },
+        {
+          id: serialisationDisctinct['id'],
+          key: 'product', 
+          type: 'simple',
+          expand: false,
+          value: {
+            value: serialisationDisctinct['value'],
             align: 'left'
           }
         },

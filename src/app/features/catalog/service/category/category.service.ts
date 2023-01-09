@@ -58,7 +58,7 @@ export class CategoryService {
           type: 'simple',
           expand: false,
           value: {
-            value: value.label,
+            value: [value.label],
             align: 'left'
           },
         },
@@ -68,7 +68,7 @@ export class CategoryService {
           type: 'simple',
           expand: false,
           value: {
-            value: value.code.toUpperCase(),
+            value: [value.code.toUpperCase()],
             align: 'left'
           },
         }, 
@@ -78,7 +78,7 @@ export class CategoryService {
           type: 'simple',
           expand: false,
           value:  {
-            value: value.products ? value.products.length : 0,
+            value: value.products ? [value.products.length] : [0],
             align: 'center'
           },
         },

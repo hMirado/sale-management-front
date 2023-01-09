@@ -6,7 +6,6 @@ import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
-import { Shop } from 'src/app/features/setting/models/shop/shop.model';
 import { tokenKey } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
@@ -17,9 +16,14 @@ import { TableService } from 'src/app/shared/serives/table/table.service';
 import { tableStockHeader, tableStockId } from '../../config/constant';
 import { AttributeType } from '../../models/attribute-type/attribute-type.model';
 import { SerializationType } from '../../models/serialization-type/serialization-type.model';
+import { Serialization } from '../../models/serialization/serialization.model';
 import { Stock } from '../../models/stock/stock.model';
 import { StockService } from '../../services/stock/stock.service';
 
+export interface ISerializationDistinct {
+  id: string, 
+  value: string[]
+}
 @Component({
   selector: 'app-stock',
   templateUrl: './stock.component.html',
@@ -72,6 +76,7 @@ export class StockComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getUserData();
     this.getStocks();
+    this.getProductSerialization();
   }
 
   ngOnDestroy(): void {
@@ -119,6 +124,12 @@ export class StockComponent implements OnInit, OnDestroy {
    });
   }
 
+  clearForm() {
+    this.stockFormGroup.reset();
+    this.detailField.clear();
+    this.detailField.reset();
+  }
+
   get detailField(): FormArray {
     return this.stockFormGroup.get('details') as FormArray;
   }
@@ -144,7 +155,8 @@ export class StockComponent implements OnInit, OnDestroy {
     this.getDetailAttributeField(i).push(
       this.formBuilder.group({
         attribute_type: ['', Validators.required],
-        attribute: ['', Validators.required]
+        attribute: ['', Validators.required],
+        id: i
       })
     );
   }
@@ -161,7 +173,8 @@ export class StockComponent implements OnInit, OnDestroy {
     this.getDetailSerializationField(i).push(
       this.formBuilder.group({
         type: ['', Validators.required],
-        value: ['', Validators.required]
+        value: ['', Validators.required],
+        id: i
       })
     );
   }
@@ -212,8 +225,6 @@ export class StockComponent implements OnInit, OnDestroy {
   selectedValue(event: any) {
     let selectedOption = event.option.value;
     this.searchProducts = this.products.filter(x =>  x.label.toLowerCase().includes(selectedOption.toLowerCase()));
-    this.stockFormGroup.patchValue({'item': this?.searchProducts[0].product_id});
-    this.stockFormGroup.updateValueAndValidity();
     this.isAddAttribute = this.searchProducts[0].is_serializable;
     const quantity = this.stockFormGroup?.get('quantity');
     if (this.isAddAttribute && quantity?.value > 0) {
@@ -265,6 +276,8 @@ export class StockComponent implements OnInit, OnDestroy {
       this.formError = true;
     } else {
       this.formError = false;
+      this.stockFormGroup.patchValue({'item': this?.searchProducts[0].product_id});
+      this.stockFormGroup.updateValueAndValidity();
       this.saveStock(this.stockFormGroup.value)
     }
   }
@@ -272,9 +285,10 @@ export class StockComponent implements OnInit, OnDestroy {
   saveStock(value: any) {
     this.subscription.add(
       this.stockService.addStock(value, this.shopUuid).subscribe((response: ApiResponse) => {
-        if (response.status == responseStatus.success) {
+        this.clearForm();
+        if (response.status == responseStatus.created) {
           this.closeModal(this.uniqueId);
-          console.log(response);
+          this.getStocks();
         } else {
           this.closeModal(this.uniqueId);
         }
@@ -296,16 +310,16 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   getStockresponse(response: ApiResponse) {
-    console.log(response);
     let table: ITable = {
       id: this.tableId,
       header: tableStockHeader,
       body: null
     }
     if (response.status == responseStatus.success) {
+      
       this.rows = [];
-      let stocks: Stock[] = response.data;
-      stocks.forEach((stock: Stock) =>  {
+      this.stocks = response.data;
+      this.stocks.forEach((stock: Stock) =>  {
         let row: IRow = this.stockService.addTableRowValue(stock);
         this.rows.push(row);
       })
@@ -324,5 +338,64 @@ export class StockComponent implements OnInit, OnDestroy {
       this.totalPages = response.data.totalPages;
       this.totalItems = response.data.totalItems;
     }
+  }
+
+  getProductSerialization() {
+    this.subscription.add(
+      this.tableService.expandUiid$.pipe(
+        switchMap((uuid) => {
+          if (uuid && uuid != '') {
+            const stock = this.stocks.filter(x => x.stock_uuid == uuid);
+            const productUuid = stock[0]?.product?.product_uuid as string;
+            return this.stockService.getProductSerialization(productUuid, '');
+          } else {
+            return [];
+          }
+        })
+      )
+      .subscribe((response: ApiResponse) => {
+        this.getProductSerializationResponse(response);
+      })
+    )
+  }
+
+  getProductSerializationResponse(response: ApiResponse) {
+    if (response.status == responseStatus.success) {
+      const serializationGroup: Serialization[][] = response.data
+      let serialisationDisctinct: ISerializationDistinct[] = []
+      for (let index = 0; index < serializationGroup.length; index++) {
+        const serializations = serializationGroup[index];
+        let data: ISerializationDistinct = {
+          id: '',
+          value: []
+        };
+        serializations.forEach((serialization: Serialization) => {
+          const attribute_serialization = serialization.attribute_serialization;
+
+          if (attribute_serialization == data.id) {
+            data.value.push(`${serialization.serialization_type_label}: ${serialization.serialization_value}`)
+          } else {
+            data = {
+              id: serialization.attribute_serialization as string,
+              value: [`${serialization.serialization_type_label}: ${serialization.serialization_value}`]
+            }
+          }
+        })
+        serialisationDisctinct.push(data)
+      }
+      this.serializationValue(serialisationDisctinct);
+    }
+  }
+
+  serializationValue(values: ISerializationDistinct[]) {
+    let rows: IRow[] = []
+    values.forEach((value:ISerializationDistinct) => {
+      const row = this.stockService.addTableRowSerializationValue(value);
+      rows.push(row)
+    })
+    let cells: ICell = {
+      cellValue: rows
+    };
+    this.tableService.setExpandedValue(cells)
   }
 }

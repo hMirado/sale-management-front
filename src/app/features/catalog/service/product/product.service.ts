@@ -45,7 +45,7 @@ export class ProductService {
           type: 'simple',
           expand: false,
           value: {
-            value: value.label,
+            value: [value.label],
             align: 'left'
           },
         },
@@ -55,7 +55,7 @@ export class ProductService {
           type: 'simple',
           expand: false,
           value: {
-            value: value.code,
+            value: [value.code],
             align: 'left'
           },
         },
@@ -65,7 +65,7 @@ export class ProductService {
           type: 'simple',
           expand: false,
           value: {
-            value: value?.category ? value.category.label : '',
+            value: value?.category ? [value.category.label] : [''],
             align: 'left'
           },
         },
@@ -75,7 +75,7 @@ export class ProductService {
           type: 'simple',
           expand: false,
           value: {
-            value: `${value.ttc_price} MGA`,
+            value: [`${value.ttc_price} MGA`],
             align: 'right'
           },
         }

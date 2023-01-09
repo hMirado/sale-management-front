@@ -18,8 +18,10 @@
         *ngFor="let row of body.rowValue"
         [ngClass]="{'text-center': row?.value?.align=='center', 'text-left': row?.value?.align=='left', 'text-right': row?.value?.align=='right'}"
       >
-        <span *ngIf="(row.badge && row.badge.status) else notBadge" class="badge bg-{{row.badge.bg}}">{{ row?.value?.value }}</span>
-        <ng-template #notBadge>{{ row?.value?.value }}</ng-template>
+        <ng-container *ngFor="let value of row?.value?.value">
+          <span *ngIf="(row.badge && row.badge.status) else notBadge" class="badge bg-{{row.badge.bg}}">{{ value }}</span>
+          <ng-template #notBadge>{{ value }}</ng-template>
+        </ng-container>
       </td>
       <td *ngIf="haveAction">
         <div class="row">
@@ -37,13 +39,13 @@
       </td>
     </tr>
     <ng-template #expandable>
-      <tr>
+      <tr [class.tr-is-expanded]="expanded == body.id">
         <td 
           *ngFor="let row of body.rowValue"
           [ngClass]="{'text-center': row?.value?.align=='center', 'text-left': row?.value?.align=='left', 'text-right': row?.value?.align=='right'}"
         >
           <ng-container *ngIf="row.expand else isNotExpandble">
-            <i class="pointer fas fa-chevron-right fa-1x pr-2"></i>{{ row?.value?.value }}
+            <i class="pointer fas fa-{{expanded === body.id ? 'chevron-down' : 'chevron-right'}} fa-1x pr-2" (click)="expand(row.id)"></i>{{ row?.value?.value }}
           </ng-container>
           <ng-template #isNotExpandble>
             <span *ngIf="(row.badge && row.badge.status) else notBadge" class="badge bg-{{row.badge.bg}}">{{ row?.value?.value }}</span>
@@ -66,6 +68,21 @@
         </td>
       </tr>
     </ng-template>
+    <tr
+      [ngClass]="expanded == body.id ? 'isExpand' : 'isNotExpand'"
+      *ngFor="let expandValue of tableExpand?.cellValue; let i = index"
+    >
+    <td 
+      *ngFor="let expand of expandValue.rowValue"
+      [ngClass]="{'text-center': expand?.value?.align=='center', 'text-left': expand?.value?.align=='left', 'text-right': expand?.value?.align=='right'}"
+    >
+      <ng-container *ngFor="let value of expand?.value?.value">
+        <p style="margin: 0!important">
+          {{ value }}
+        </p>
+      </ng-container>
+    </td>
+    </tr>
   </ng-container>
   </tbody>
 </table>

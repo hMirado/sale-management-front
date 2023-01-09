@@ -24,5 +24,5 @@ export const tableStockHeader: IHeader[] = [
   {value: 'CODE ARTICLE', align: 'left'},
   {value: 'état', align: 'center'},
   {value: 'QUANTITE', align: 'center'},
-  {value: 'Numéro DE série', align: 'left'},
+  {value: 'Numéro DE série / IMEI', align: 'left'},
 ]
