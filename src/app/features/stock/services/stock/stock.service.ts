@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { ApiService } from 'src/app/core/services/api/api.service';
+import { IFilterFieldValue } from 'src/app/shared/models/i-filter/i-filter-field-value';
+import { ITableFilter, ITableFilterField, ITableFilterFieldValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { IRow } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
 import { Stock } from '../../models/stock/stock.model';
@@ -35,9 +37,16 @@ export class StockService {
     return this.apiService.doPost(url, value)
   }
 
-  getStocks(shop: string, page: number = 1): Observable<ApiResponse> {
+  getStocks(shop: string, _params: any = {}): Observable<ApiResponse> {
+    let params: any = { 
+      paginate: 1,
+      page: (_params['page'] && _params['page'] > 0) ? _params['page'] : 1
+    }
+    if (_params['keyword'] && _params['keyword'] != '' )params['keyword'] = _params['keyword'];
+    if (_params['status'] && _params['status'] != 'all' )params['status'] = _params['status'];
+    if (_params['serialization'] && _params['serialization'] != 'all' )params['serialization'] = _params['serialization'];
     let url = `${environment['store-service']}/stock/${shop}`;
-    return this.apiService.doGet(url)
+    return this.apiService.doGet(url, params)
   }
 
   addTableRowValue(value: Stock): IRow {
@@ -104,7 +113,11 @@ export class StockService {
   }
 
   getProductSerialization(productUuid: string, shopUuid: string = '') {
-    const param = shopUuid != '' ? {shop: shopUuid} : null
+    let param: any = {
+      is_slod: '0'
+    }
+    if ( shopUuid != '') param['shop'] = shopUuid;
+   
     const url = `${environment['store-service']}/serialization/${productUuid}`;
     return this.apiService.doGet(url, param)
   }
@@ -162,5 +175,29 @@ export class StockService {
         },
       ]
     }
+  }
+
+  filter(status: ITableFilterFieldValue[], serialization: ITableFilterFieldValue[]): ITableFilterField[] {
+    const fields: ITableFilterField[] = [
+      {
+        key: 'keyword',
+        label: "Mots clé",
+        type: 'input',
+        placeholder: 'Article / Code article'
+      },
+      {
+        key: 'status',
+        label: "Statut",
+        type: 'select',
+        value: status,
+      },
+      {
+        key: 'serialization',
+        label: "Sérialisé",
+        type: 'select',
+        value: serialization,
+      },
+    ]
+    return fields;
   }
 }

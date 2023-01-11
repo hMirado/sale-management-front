@@ -22,7 +22,7 @@ export const tableStockId: string = 'table-stock';
 export const tableStockHeader: IHeader[] = [
   {value: 'LABEL', align: 'left'},
   {value: 'CODE ARTICLE', align: 'left'},
-  {value: 'état', align: 'center'},
+  {value: 'STatuT', align: 'center'},
   {value: 'QUANTITE', align: 'center'},
   {value: 'Numéro DE série / IMEI', align: 'left'},
 ]

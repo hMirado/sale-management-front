@@ -8,10 +8,12 @@ import { NotificationService } from 'src/app/core/services/notification/notifica
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { tokenKey } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
+import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 import { ModalService } from 'src/app/shared/serives/modal/modal.service';
+import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
 import { TableService } from 'src/app/shared/serives/table/table.service';
 import { tableStockHeader, tableStockId } from '../../config/constant';
 import { AttributeType } from '../../models/attribute-type/attribute-type.model';
@@ -67,7 +69,8 @@ export class StockComponent implements OnInit, OnDestroy {
     private helperService: HelperService,
     private stockService: StockService,
     private formBuilder: FormBuilder,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private tableFilterService: TableFilterService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -77,6 +80,8 @@ export class StockComponent implements OnInit, OnDestroy {
     this.getUserData();
     this.getStocks();
     this.getProductSerialization();
+    this.stockFilter();
+    this.getFilterValue();
   }
 
   ngOnDestroy(): void {
@@ -296,12 +301,19 @@ export class StockComponent implements OnInit, OnDestroy {
     )
   }
 
-  getStocks() {
+  getStocks(nextPage: number = 1, _params: any = {}) {
     this.subscription.add(
       this.activatedRoute.queryParams.pipe(
         switchMap((params: Params) => {
           const page: number = params['page'];
-          return iif(() => Boolean(page), this.stockService.getStocks(this.shopUuid, page), this.stockService.getStocks(this.shopUuid))
+          let param: any = { 
+            paginate: 1,
+            page: Boolean(page) ? page: nextPage
+          }
+          if (_params['keyword'] && _params['keyword'] != '' )param['keyword'] = _params['keyword'];
+          if (_params['status'] && _params['status'] != 'all' )param['status'] = _params['status'];
+          if (_params['serialization'] && _params['serialization'] != 'all' )param['serialization'] = _params['serialization'];
+          return this.stockService.getStocks(this.shopUuid, param)
         })
       ).subscribe((response: ApiResponse) => {
         this.getStockresponse(response);
@@ -316,9 +328,8 @@ export class StockComponent implements OnInit, OnDestroy {
       body: null
     }
     if (response.status == responseStatus.success) {
-      
       this.rows = [];
-      this.stocks = response.data;
+      this.stocks = response.data.items;
       this.stocks.forEach((stock: Stock) =>  {
         let row: IRow = this.stockService.addTableRowValue(stock);
         this.rows.push(row);
@@ -397,5 +408,65 @@ export class StockComponent implements OnInit, OnDestroy {
       cellValue: rows
     };
     this.tableService.setExpandedValue(cells)
+  }
+
+  stockFilter() {
+    let stockFilter: ITableFilter = { id: 'stock-filter', title: '', fields: [] }
+    const status: ITableFilterFieldValue[] = [
+      {
+        key: 'all',
+        label: 'Tous',
+        value: 'all',
+        default: true
+      },
+      {
+        key: 'in',
+        label: 'En stock',
+        value: 'in'
+      },
+      {
+        key: 'out',
+        label: 'En rupture',
+        value: 'out'
+      },
+    ];
+    const serialization: ITableFilterFieldValue[] = [
+      {
+        key: 'all',
+        label: 'Tous',
+        value: 'all',
+        default: true
+      },
+      {
+        key: 'yes',
+        label: 'Oui',
+        value: 'yes'
+      },
+      {
+        key: 'no',
+        label: 'Non',
+        value: 'no'
+      },
+    ];
+
+    stockFilter.fields = this.stockService.filter(status, serialization);
+    this.tableFilterService.setFilterData(stockFilter)
+  }
+
+  private params: any = {}
+  getFilterValue() {
+    this.subscription.add(
+      this.tableFilterService.filterFormValue$.pipe(
+        filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'stock-filter'),
+        switchMap((filter: ITableFilterSearchValue|null) => {
+          this.rows = []
+          this.params['p'] = 0
+          filter?.value.forEach((value, i) => {
+            this.params[Object.keys(value)[0]] = value[Object.keys(value)[0]]
+          })
+          return this.stockService.getStocks(this.shopUuid, this.params)
+        })
+      ).subscribe((response: ApiResponse) => this.getStockresponse(response))
+    )
   }
 }
