@@ -44,28 +44,40 @@ export class ProductService {
           key: 'label',
           type: 'simple',
           expand: false,
-          value: value.label,
+          value: {
+            value: [value.label],
+            align: 'left'
+          },
         },
         {
           id: value.product_uuid,
           key: 'code',
           type: 'simple',
           expand: false,
-          value: value.code,
+          value: {
+            value: [value.code],
+            align: 'left'
+          },
         },
         {
           id: value.product_uuid,
           key: 'category',
           type: 'simple',
           expand: false,
-          value: value?.category ? value.category.label : '',
+          value: {
+            value: value?.category ? [value.category.label] : [''],
+            align: 'left'
+          },
         },
         {
           id: value.product_uuid,
           key: 'price',
           type: 'simple',
           expand: false,
-          value: `${value.ttc_price} MGA`,
+          value: {
+            value: [`${value.ttc_price} MGA`],
+            align: 'right'
+          },
         }
       ]
     }

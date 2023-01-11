@@ -20,8 +20,9 @@ export const exportStockConfig: IExport = {
 export const tableStockId: string = 'table-stock';
 
 export const tableStockHeader: IHeader[] = [
-  {value: 'CODE ARTICLE'},
-  {value: 'LABEL'},
-  {value: 'QUANTITE'},
-  {value: 'DATE dE CREATION'},
+  {value: 'LABEL', align: 'left'},
+  {value: 'CODE ARTICLE', align: 'left'},
+  {value: 'STatuT', align: 'center'},
+  {value: 'QUANTITE', align: 'center'},
+  {value: 'Numéro DE série / IMEI', align: 'left'},
 ]

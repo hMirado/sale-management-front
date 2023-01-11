@@ -8,13 +8,14 @@ export interface IHeader {
   value: string;
   collspan?: number;
   rowspan?: number;
+  align?: 'center' | 'left' | 'right';
 }
 
 export interface ICell {
   cellValue: IRow [];
-  isEditable: boolean;
-  isDeleteable: boolean;
-  isSwitchable: boolean;
+  isEditable?: boolean;
+  isDeleteable?: boolean;
+  isSwitchable?: boolean;
 }
 
 export interface IRow {
@@ -28,6 +29,17 @@ export interface IRowValue {
   key: string;
   type: 'simple' | 'input';
   expand: boolean;
-  value: number | boolean | string;
+  value: IValue;
   image?: string;
+  badge?: IBadge;
+}
+
+export interface IValue {
+  value: any[];
+  align?: 'center' | 'left' | 'right';
+}
+
+export interface IBadge {
+  status?: boolean
+  bg?: 'danger' | 'primary' | 'success' | 'warning'
 }

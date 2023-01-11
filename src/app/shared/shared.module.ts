@@ -21,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { RouterModule } from '@angular/router';
+import { TableFilterComponent } from './components/table-filter/table-filter.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { RouterModule } from '@angular/router';
     ModalComponent,
     InfoBoxComponent,
     TabsComponent,
-    TabComponent
+    TabComponent,
+    TableFilterComponent
   ],
   imports: [
     CommonModule,
@@ -67,7 +69,8 @@ import { RouterModule } from '@angular/router';
     MatTabsModule,
     MatIconModule,
     MatChipsModule,
-    MatRippleModule
+    MatRippleModule,
+    TableFilterComponent
   ]
 })
 export class SharedModule { }
