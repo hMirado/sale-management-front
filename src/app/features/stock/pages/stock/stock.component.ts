@@ -118,12 +118,14 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   closeModal(id: string) {
-    this.modalService.hideModal(id)
+    this.modalService.hideModal(id);
+    this.clearForm();
   }
 
   createForm() {
    this.stockFormGroup = this.formBuilder.group({
     item: ['', Validators.required],
+    price: ['', Validators.required],
     quantity: ['', Validators.required],
     details: this.formBuilder.array([])
    });
@@ -135,12 +137,18 @@ export class StockComponent implements OnInit, OnDestroy {
     this.detailField.reset();
   }
 
+  resetField() {
+    this.detailField.clear();
+    this.detailField.reset();
+  }
+
   get detailField(): FormArray {
     return this.stockFormGroup.get('details') as FormArray;
   }
 
   addDetailField() {
     let field = this.formBuilder.group({
+      price: ['', Validators.required],
       attributes:  this.formBuilder.array([]),
       serializations:  this.formBuilder.array([]),
     });
@@ -228,6 +236,7 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   selectedValue(event: any) {
+    this.resetField();
     let selectedOption = event.option.value;
     this.searchProducts = this.products.filter(x =>  x.label.toLowerCase().includes(selectedOption.toLowerCase()));
     this.isAddAttribute = this.searchProducts[0].is_serializable;
@@ -236,23 +245,24 @@ export class StockComponent implements OnInit, OnDestroy {
       this.addDetailField();
       this.addAttributeField(0);
       this.addSerializationField(0);
-    } else {
-      this.detailField.clear();
-      this.detailField.reset();
+      this.stockFormGroup.removeControl("price");
+    } else if (quantity?.value > 0 && !this.isAddAttribute) {
+      this.stockFormGroup.addControl("price", Validators.required);
     }
   }
 
   getQuantityValueChange() {
+    this.resetField();
     const quantity = this.stockFormGroup?.get('quantity');
      if (quantity?.value > 0 && this.isAddAttribute) {
       for (let i = 0; i < +quantity?.value; i++) {
         this.addDetailField();
         this.addAttributeField(i);
         this.addSerializationField(i);
+        this.stockFormGroup.removeControl("price");
       }
-    } else {
-      this.detailField.clear();
-      this.detailField.reset();
+    } else if (quantity?.value > 0 && !this.isAddAttribute) {
+      this.stockFormGroup.addControl("price", Validators.required);
     }
   }
 
