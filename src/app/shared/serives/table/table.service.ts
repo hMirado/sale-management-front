@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ICell, ITable } from '../../models/table/i-table';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { ICell, ITable } from '../../models/table/i-table';
 })
 export class TableService {
   public table$: BehaviorSubject<ITable|null> = new BehaviorSubject<ITable|null>(null);
-  public expandUiid$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  public expandUiid$: Subject<string> = new Subject<string>();
   public tableExpandedValue$: BehaviorSubject<ICell|null> = new BehaviorSubject<ICell|null>(null);
 
   constructor() { }

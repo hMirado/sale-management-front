@@ -35,12 +35,20 @@
   <div body>
     <form [formGroup]="stockFormGroup">
       <div class="row">
-        <div class="col-8 form-group">
+        <div 
+          [ngClass]="isAddAttribute ? 'col-8' : 'col-5'"
+          class="form-group"
+        >
           <label for="item">Article *</label>
           <input
             type="text" 
             id="item" 
             class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (this.stockFormGroup.get('item')?.invalid &&
+              this.stockFormGroup.get('item')?.hasError('required') &&
+              formError)
+            }" 
             name="item" 
             formControlName="item" 
             [matAutocomplete]="auto"
@@ -52,21 +60,72 @@
             </mat-option>
           </mat-autocomplete>
         </div>
-        <div class="col-4 form-group">
+        <div 
+          [ngClass]="isAddAttribute ? 'col-4' : 'col-3'"
+          class="form-group"
+        >
           <label for="quantity">Quantité *</label>
           <input
             type="number" 
             id="quantity" 
             class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (this.stockFormGroup.get('quantity')?.invalid &&
+              this.stockFormGroup.get('quantity')?.hasError('required') &&
+              formError)
+            }" 
             name="quantity" 
             formControlName="quantity"
             (input)="getQuantityValueChange()"
           >
         </div>
+        <ng-container *ngIf="!isAddAttribute">
+          <div 
+            [ngClass]="isAddAttribute ? 'col-0' : 'col-4'"
+            class="form-group"
+          >
+            <label for="quantity">Prix *</label>
+            <input
+              type="number" 
+              id="price" 
+              class="form-control form-control-sm"
+              [ngClass]="{'input-error':
+                (this.stockFormGroup.get('price')?.invalid &&
+                this.stockFormGroup.get('price')?.hasError('required') &&
+                formError)
+              }" 
+              name="price" 
+              formControlName="price"
+              (input)="getQuantityValueChange()"
+            >
+          </div>
+        </ng-container>
       </div>
       <ng-container formArrayName="details">
         <div class="mb-2" *ngFor="let detail of detailField.controls; let i = index;" [formGroupName]="i">
           <div class="card p-1">
+            <fieldset>
+              <legend class="attribute">Prix</legend>
+              <div class="row">
+                <div class="col-5 input-group" input-group>
+                  <input 
+                    type="number" 
+                    class="form-control form-control-sm"
+                    [ngClass]="{'input-error':
+                      (detail.get('price')?.invalid &&
+                      detail.get('price')?.hasError('required') &&
+                      formError)
+                    }" 
+                    name="price" 
+                    formControlName="price"
+                    placeholder="Prix TTC"
+                  >
+                  <div class="input-group-append" style="height: calc(1.8125rem + 2px);">
+                    <span class="input-group-text">MGA</span>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
             <fieldset>
               <legend class="attribute">Caractéristique(s)</legend>
               <div class="row" formArrayName="attributes">

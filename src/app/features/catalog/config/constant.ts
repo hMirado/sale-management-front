@@ -44,7 +44,7 @@ export const exportProductConfig: IExport = {
 export const tableProductId: string = 'table-product'
 
 export const tableProductHeader: IHeader[] = [
-  {value: 'ARTICLE', align: 'left'},
+  {value: 'LIBELLé', align: 'left'},
   {value: 'CODE', align: 'left'},
   {value: 'CATEGORIE', align: 'left'},
   {value: 'PRIX', align: 'right'},
