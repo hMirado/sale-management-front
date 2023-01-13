@@ -138,6 +138,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.categoryNumber = response.data;
           this.infoBoxCategoryCount =  {
             bg: 'bg-info',
+            icon :'fa-layer-group',
             number: this.categoryNumber,
             text: 'Catégorie(s) d\'article(s)'
           }

@@ -95,6 +95,7 @@ export class ProductComponent implements OnInit, OnDestroy {
           this.productNumber = response.data;
           this.infoBoxProductCount =  {
             bg: 'bg-info',
+            icon: ' fa-gamepad',
             number: this.productNumber,
             text: 'Total article(s)'
           }
@@ -180,7 +181,6 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.formBuilder.group({
         code: ['', Validators.required],
         label: ['', Validators.required],
-        ttcPrice: ['', Validators.required],
         isSerializable: false,
         category: ['', Validators.required]
       })
@@ -250,8 +250,6 @@ export class ProductComponent implements OnInit, OnDestroy {
         return {
           code: x.code,
           label: x.label,
-          ht_price: x.ttcPrice * 0.8,
-          ttc_price: x.ttcPrice,
           is_serializable: x.isSerializable,
           fk_category_id: this.categories.filter(category => category.label.toLowerCase == x.category.toLowerCase)[0].category_id
         }
