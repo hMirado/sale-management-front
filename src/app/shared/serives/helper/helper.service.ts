@@ -23,4 +23,15 @@ export class HelperService {
     const data = helper.decodeToken(token);
     return data;
   }
+
+  numberFormatDigit(value: number) {
+    return value.toLocaleString('fr-Fr', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
+  }
+
+  numberFormat(value: number) {
+    return value.toLocaleString('fr-Fr')
+  }
 }

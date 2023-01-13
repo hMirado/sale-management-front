@@ -2,22 +2,23 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { ApiService } from 'src/app/core/services/api/api.service';
+import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { environment } from 'src/environments/environment';
-import {IRow} from "../../../../shared/models/table/i-table";
-import {Product} from "../../models/product/product.model";
+import { IRow } from '../../../../shared/models/table/i-table';
+import { Product } from '../../models/product/product.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductService {
-
   constructor(
-    private apiService: ApiService
-  ) { }
+    private apiService: ApiService,
+    private helperService: HelperService
+  ) {}
 
   createProduct(data: {}): Observable<ApiResponse> {
     let url = `${environment['store-service']}/product`;
-    return this.apiService.doPost(url, data)
+    return this.apiService.doPost(url, data);
   }
 
   countProduct(): Observable<ApiResponse> {
@@ -29,12 +30,20 @@ export class ProductService {
     let url = `${environment['store-service']}/product`;
     let params = {
       paginate: 1,
-      page: page
-    }
-    return this.apiService.doGet(url, params)
+      page: page,
+    };
+    return this.apiService.doGet(url, params);
   }
 
   addTableRowValue(value: Product): IRow {
+    console.log(value);
+    const price =
+      value.high_price == value.low_price
+        ? this.helperService.numberFormat(value.high_price as number)
+        : this.helperService.numberFormat(value.low_price as number) +
+          ' - ' +
+          this.helperService.numberFormat(value.high_price as number);
+          
     return {
       id: value.product_uuid,
       isExpandable: false,
@@ -46,7 +55,7 @@ export class ProductService {
           expand: false,
           value: {
             value: [value.label],
-            align: 'left'
+            align: 'left',
           },
         },
         {
@@ -56,7 +65,7 @@ export class ProductService {
           expand: false,
           value: {
             value: [value.code],
-            align: 'left'
+            align: 'left',
           },
         },
         {
@@ -66,7 +75,7 @@ export class ProductService {
           expand: false,
           value: {
             value: value?.category ? [value.category.label] : [''],
-            align: 'left'
+            align: 'left',
           },
         },
         {
@@ -75,16 +84,16 @@ export class ProductService {
           type: 'simple',
           expand: false,
           value: {
-            value: [`${value.ttc_price} MGA`],
-            align: 'right'
+            value: [price],
+            align: 'right',
           },
-        }
-      ]
-    }
+        },
+      ],
+    };
   }
 
   createMultiProduct(products: Product[]): Observable<ApiResponse> {
     let url = `${environment['store-service']}/product`;
-    return this.apiService.doPost(url, products)
+    return this.apiService.doPost(url, products);
   }
 }
