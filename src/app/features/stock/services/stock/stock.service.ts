@@ -37,15 +37,17 @@ export class StockService {
     return this.apiService.doPost(url, value)
   }
 
-  getStocks(shop: string, _params: any = {}): Observable<ApiResponse> {
+  getStocks(shop: string = '', _params: any = {}): Observable<ApiResponse> {
     let params: any = { 
       paginate: 1,
       page: (_params['page'] && _params['page'] > 0) ? _params['page'] : 1
     }
+    if (_params['shop'] && _params['shop'] != 'all' )params['shop'] = _params['shop'];
     if (_params['keyword'] && _params['keyword'] != '' )params['keyword'] = _params['keyword'];
     if (_params['status'] && _params['status'] != 'all' )params['status'] = _params['status'];
     if (_params['serialization'] && _params['serialization'] != 'all' )params['serialization'] = _params['serialization'];
-    let url = `${environment['store-service']}/stock/${shop}`;
+
+    let url = `${environment['store-service']}/stock`;
     return this.apiService.doGet(url, params)
   }
 
@@ -177,13 +179,24 @@ export class StockService {
     }
   }
 
-  filter(status: ITableFilterFieldValue[], serialization: ITableFilterFieldValue[]): ITableFilterField[] {
+  getShops(): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/shop`;
+    return this.apiService.doGet(url);
+  }
+
+  filter(shop: ITableFilterFieldValue[], status: ITableFilterFieldValue[], serialization: ITableFilterFieldValue[]): ITableFilterField[] {
     const fields: ITableFilterField[] = [
       {
         key: 'keyword',
         label: "Mots clé",
         type: 'input',
         placeholder: 'Article / Code article'
+      },
+      {
+        key: 'shop',
+        label: "Shop",
+        type: 'select',
+        value: shop,
       },
       {
         key: 'status',
@@ -199,5 +212,12 @@ export class StockService {
       },
     ]
     return fields;
+  }
+
+  countStock(shop: string = ''): Observable<ApiResponse> {
+    let param: any = {}
+    if (shop != '') param['shop'] = shop;
+    const url = `${environment['store-service']}/stock/count`;
+    return this.apiService.doGet(url, param)
   }
 }

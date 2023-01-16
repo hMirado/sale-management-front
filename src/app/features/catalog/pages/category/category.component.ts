@@ -137,6 +137,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         if (response.status == responseStatus.success) {
           this.categoryNumber = response.data;
           this.infoBoxCategoryCount =  {
+            id: 'catalog',
             bg: 'bg-info',
             icon :'fa-layer-group',
             number: this.categoryNumber,
