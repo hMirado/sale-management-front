@@ -94,6 +94,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         if (response.status == responseStatus.success) {
           this.productNumber = response.data;
           this.infoBoxProductCount =  {
+            id: 'product',
             bg: 'bg-info',
             icon: ' fa-gamepad',
             number: this.productNumber,

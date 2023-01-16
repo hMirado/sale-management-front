@@ -2,8 +2,8 @@
 <section class="content">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-3">
-        INFO BOX
+      <div class="col-3" *ngFor="let box of infoBoxStock">
+        <app-info-box [data]="box" [id]="box['id']"></app-info-box>
       </div>
     </div>
     <div class="row mb-2">
