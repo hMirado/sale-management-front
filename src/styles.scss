@@ -37,16 +37,16 @@ $front-theme: mat.define-light-theme((
   cursor: pointer;
 }
 
-body {
-  font-family: "Open Sans";
-}
-
 .input-error {
   border: 1px solid #dc3545 !important;
 }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { 
+  margin: 0; 
+  //font-family: Roboto, "Helvetica Neue", sans-serif; 
+  font-family: Arial, Helvetica, "Liberation Sans", FreeSans, sans-serif;
+}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -62,4 +62,8 @@ input[type=number] {
 .cdk-overlay-container {
   position: fixed;
   z-index: 9999!important;
+}
+
+.cdk-overlay-pane {
+  max-height: 250px;
 }
