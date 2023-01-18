@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, iif, of, Subscription, switchMap } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
@@ -37,36 +37,29 @@ export class StockComponent implements OnInit, OnDestroy {
   public title: string = 'Stock d\'article';
   public breadCrumbs: BreadCrumb[] = [];
   private subscription = new Subscription();
-  
   public uniqueId: string = 'stock-id';
-
   public tableId: string = tableStockId
   private rows: IRow[] = [];
-
   public currentPage: number = 0;
   public lastPage: number = 0;
   public nextPage: number = 0;
   public totalPages: number = 0;
   public totalItems: number = 0;
-
   public products: Product[] = [];
   public searchProducts: Product[] = [];
-
   public stockFormGroup!: FormGroup;
   public formError: boolean = false;
-
   public isAddAttribute: boolean = false;
   public attributeTypes: AttributeType[] = [];
   public attributeTypeLabel: string = "Type d'attribut";
-
   public serializationTypes: SerializationType[] = [];
   private shopUuid: string = '';
   private shopFilter: string = '';
-  
   private params: any = {}
   public stocks: Stock[] = [];
+  public infoBoxStock: IInfoBox[] = [];
+
   constructor(
-    private notificationService: NotificationService,
     private tableService: TableService,
     private activatedRoute: ActivatedRoute,
     private modalService: ModalService,
@@ -506,8 +499,6 @@ export class StockComponent implements OnInit, OnDestroy {
     )
   }
 
-
-  public infoBoxStock: IInfoBox[] = [];
   countStock() {
     this.subscription.add(
       this.stockService.countStock().subscribe((response: ApiResponse) => {

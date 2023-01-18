@@ -6,24 +6,31 @@
         <app-info-box [data]="box" [id]="box['id']"></app-info-box>
       </div>
     </div>
-    <div class="row mb-2">
-      <div class="col-2">
-        <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueId)">
-          <i class="fas fa-plus"></i> Ajouter stock d'article
-        </button>
-      </div>
-    </div>
-    <div class="mb-2">
-      <app-table-filter id="stock-filter"></app-table-filter>
-    </div>
-    <div class="card">
-      <div class="card-body table-responsive p-0">
-        <app-table [id]="tableId"></app-table>
-      </div>
-      <div class="bg-white card-footer" *ngIf="currentPage > 0">
-        
-      </div>
-    </div>
+    <app-tabs>
+      <app-tab title="STOCK">
+        <div class="row mb-2">
+          <div class="col-2">
+            <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueId)">
+              <i class="fas fa-plus"></i> Ajouter stock
+            </button>
+          </div>
+        </div>
+        <div class="mb-2">
+          <app-table-filter id="stock-filter"></app-table-filter>
+        </div>
+        <div class="card">
+          <div class="card-body table-responsive p-0">
+            <app-table [id]="tableId"></app-table>
+          </div>
+          <div class="bg-white card-footer" *ngIf="currentPage > 0">
+            
+          </div>
+        </div>
+      </app-tab>
+      <app-tab title="TRANSFERT">
+        <app-transfert></app-transfert>
+      </app-tab>
+    </app-tabs>
   </div>
 </section>
 <app-modal [id]="uniqueId" size="x-large">
@@ -36,8 +43,8 @@
     <form [formGroup]="stockFormGroup">
       <div class="row">
         <div 
-          [ngClass]="isAddAttribute ? 'col-8' : 'col-5'"
-          class="form-group"
+          [ngClass]="isAddAttribute ? 'col-lg-8' : 'col-lg-5'"
+          class="form-group col-12"
         >
           <label for="item">Article *</label>
           <input
@@ -45,8 +52,8 @@
             id="item" 
             class="form-control form-control-sm"
             [ngClass]="{'input-error':
-              (this.stockFormGroup.get('item')?.invalid &&
-              this.stockFormGroup.get('item')?.hasError('required') &&
+              (stockFormGroup.get('item')?.invalid &&
+              stockFormGroup.get('item')?.hasError('required') &&
               formError)
             }" 
             name="item" 
@@ -61,8 +68,8 @@
           </mat-autocomplete>
         </div>
         <div 
-          [ngClass]="isAddAttribute ? 'col-4' : 'col-3'"
-          class="form-group"
+          [ngClass]="isAddAttribute ? 'col-lg-4' : 'col-lg-3'"
+          class="form-group col-12"
         >
           <label for="quantity">Quantité *</label>
           <input
@@ -81,8 +88,8 @@
         </div>
         <ng-container *ngIf="!isAddAttribute">
           <div 
-            [ngClass]="isAddAttribute ? 'col-0' : 'col-4'"
-            class="form-group"
+            [ngClass]="isAddAttribute ? 'col-0' : 'col-lg-4'"
+            class="form-group col-12"
           >
             <label for="quantity">Prix *</label>
             <input
@@ -178,7 +185,7 @@
                       name="type" 
                       formControlName="type"
                     >
-                      <option value="" selected disabled hidden>Selectionner ici</option>
+                      <option value="" selected disabled hidden>Sélectionner ici</option>
                       <option *ngFor="let type of serializationTypes" [value]="type.serialization_type_id">{{type.label}}</option>
                     </select>
                     <input 
