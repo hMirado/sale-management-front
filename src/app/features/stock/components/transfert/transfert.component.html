@@ -1,0 +1,123 @@
+<div class="row mb-2">
+  <div class="col-2">
+    <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueId)">
+      <i class="fas fa-exchange-alt"></i> Tranferer article
+    </button>
+  </div>
+</div>
+
+<app-modal [id]="uniqueId" size="x-large">
+  <div head>
+    <h4 class="modal-title">
+      Transfert d'un article en stock
+    </h4>
+  </div>
+  <div body>
+    <form [formGroup]="transferFormGroup">
+      <div class="row">
+        <div class="col-lg-4 col-12">
+          <label>Shop destinateur *</label>
+          <select
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (transferFormGroup.get('shopReceveir')?.invalid &&
+              transferFormGroup.get('shopReceveir')?.hasError('required') &&
+              formError
+              )
+            }" 
+            name="shopReceveir" 
+            formControlName="shopReceveir"
+          >
+            <option value="" selected disabled hidden>Sélectionner ici</option>
+            <option *ngFor="let shop of shops" [value]="shop?.shop_uuid">{{ shop?.shop_name }}</option>
+          </select>
+        </div>
+        <div class="col-lg-5 col-12">
+          <label>Article *</label>
+          <input
+            type="text" 
+            id="product" 
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (transferFormGroup.get('product')?.invalid &&
+              transferFormGroup.get('product')?.hasError('required')) &&
+              formError
+            }" 
+            name="product" 
+            formControlName="product" 
+            [matAutocomplete]="auto"
+            (input)="getProductValueChange()"
+          >
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
+            <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize">
+              {{product.label}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div class="col-lg-3 col-12">
+          <label for="quantity">Quantité *</label>
+          <input
+            type="number" 
+            id="quantity" 
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (this.transferFormGroup.get('quantity')?.invalid &&
+              this.transferFormGroup.get('quantity')?.hasError('required')) &&
+              formError
+            }" 
+            name="quantity" 
+            formControlName="quantity"
+            (input)="getQuantityValueChange()"
+          >
+        </div>
+      </div>
+      <ng-container formArrayName="serialization">
+        <div class="mt-2">
+          <div class="row" *ngFor="let field of serializationField.controls; let i = index;" [formGroupName]="i">
+            <div class="col-lg-1 col-12">
+              <button class="btn btn-xs btn-primary">{{ i + 1}}</button>
+            </div>
+            <div class="col-lg-5 col-12">
+              <div class="form-group row">
+                <label class="col-sm-5 col-form-label">Sérialisation</label>
+                <div class="col-sm-7">
+                  <select 
+                    class="form-control form-control-sm" 
+                    [ngClass]="{'input-error':
+                      (field.get('type')?.invalid &&
+                      field.get('type')?.hasError('required'))
+                    }" 
+                    name="type" 
+                    formControlName="type"
+                  >
+                    <option value="" selected disabled hidden>Sélectionner ici</option>
+                    <option *ngFor="let type of serializationTypes" [value]="type.serialization_type_id">{{type.label}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="form-group row">
+                <label class="col-sm-5 col-form-label text-center">Valeur</label>
+                <div class="col-sm-7">
+                  <input 
+                    type="text" 
+                    class="form-control form-control-sm" 
+                    [ngClass]="{'input-error':
+                      (field.get('value')?.invalid &&
+                      field.get('value')?.hasError('required')) &&
+                      formError
+                    }" 
+                    name="value" 
+                    formControlName="value"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </form>
+  </div>
+  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1">Enregistrer</button>
+</app-modal>
