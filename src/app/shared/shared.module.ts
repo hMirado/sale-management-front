@@ -16,12 +16,15 @@ import { ModalComponent } from './components/modal/modal.component';
 import { InfoBoxComponent } from './components/info-box/info-box.component';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { TabComponent } from './components/tabs/tab/tab.component';
+import { RouterModule } from '@angular/router';
+import { TableFilterComponent } from './components/table-filter/table-filter.component';
+
+
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
-import { RouterModule } from '@angular/router';
-import { TableFilterComponent } from './components/table-filter/table-filter.component';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,8 @@ import { TableFilterComponent } from './components/table-filter/table-filter.com
     MatTabsModule,
     MatIconModule,
     MatChipsModule,
-    MatRippleModule
+    MatRippleModule,
+    MatDividerModule
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -70,7 +74,8 @@ import { TableFilterComponent } from './components/table-filter/table-filter.com
     MatIconModule,
     MatChipsModule,
     MatRippleModule,
-    TableFilterComponent
+    TableFilterComponent,
+    MatDividerModule
   ]
 })
 export class SharedModule { }

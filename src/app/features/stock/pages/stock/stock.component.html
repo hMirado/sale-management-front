@@ -2,15 +2,15 @@
 <section class="content">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-3" *ngFor="let box of infoBoxStock">
+      <div class="col-2" *ngFor="let box of infoBoxStock">
         <app-info-box [data]="box" [id]="box['id']"></app-info-box>
       </div>
     </div>
     <app-tabs>
-      <app-tab title="STOCK">
+      <app-tab title="STOCK" [id]="stockId">
         <div class="row mb-2">
           <div class="col-2">
-            <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueId)">
+            <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(stockId)">
               <i class="fas fa-plus"></i> Ajouter stock
             </button>
           </div>
@@ -27,13 +27,13 @@
           </div>
         </div>
       </app-tab>
-      <app-tab title="TRANSFERT">
+      <app-tab title="ENVOI & RECEPTION" [id]="transferId">
         <app-transfert></app-transfert>
       </app-tab>
     </app-tabs>
   </div>
 </section>
-<app-modal [id]="uniqueId" size="x-large">
+<app-modal [id]="stockId" size="x-large">
   <div head>
     <h4 class="modal-title">
       Ajouter un stock d'article

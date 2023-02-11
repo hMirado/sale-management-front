@@ -17,6 +17,7 @@
       <div class="modal-footer justify-content-center">
         <button *ngIf="!singleButton" class="btn btn-sm btn-default ml-1 mr-1" (click)="closeModal()">Annuler</button>
         <ng-content select="[save]"></ng-content>
+        <ng-content select="[footer]"></ng-content>
       </div>
     </div>
   </div>

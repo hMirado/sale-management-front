@@ -34,7 +34,7 @@ export class TableComponent implements OnInit, OnDestroy {
       this.tableService.table$.subscribe((table: ITable|null) => {
         if (table && table.id === this.id) {
           this.tables = table;
-          this.haveAction = !!(table.body?.isEditable || table.body?.isSwitchable || table.body?.isDeleteable);
+          this.haveAction = !!(table.body?.isEditable || table.body?.isSwitchable || table.body?.isDeleteable || table.body?.isViewable);
         }
       })
     );
@@ -62,5 +62,9 @@ export class TableComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  setDetail(id: string) {
+    this.tableService.setDetailId(id);
   }
 }

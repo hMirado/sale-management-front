@@ -1,3 +1,6 @@
+import { Observable } from "rxjs";
+import { ApiResponse } from "src/app/core/models/api-response/api-response.model";
+
 export interface ITable {
   id: string;
   header: IHeader[];
@@ -16,6 +19,7 @@ export interface ICell {
   isEditable?: boolean;
   isDeleteable?: boolean;
   isSwitchable?: boolean;
+  isViewable?: boolean
 }
 
 export interface IRow {
@@ -27,11 +31,13 @@ export interface IRow {
 export interface IRowValue {
   id: string;
   key: string;
-  type: 'simple' | 'input';
+  type: 'simple' | 'input' | 'button';
   expand: boolean;
   value: IValue;
   image?: string;
   badge?: IBadge;
+  icon?: IIcon;
+  button?: IButton[]
 }
 
 export interface IValue {
@@ -41,5 +47,18 @@ export interface IValue {
 
 export interface IBadge {
   status?: boolean
-  bg?: 'danger' | 'primary' | 'success' | 'warning'
+  bg?: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+}
+
+export interface IIcon {
+  status: boolean;
+  icon: string;
+  color?: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+}
+
+export interface IButton {
+  text: string;
+  size: 'btn-xs';
+  bg: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+  action: void;
 }

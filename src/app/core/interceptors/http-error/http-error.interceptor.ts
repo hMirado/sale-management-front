@@ -29,7 +29,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
               this.notificationService.updateNotificationIsRemoved(true);
               this.showNotification(
                 "warning", 
-                `Votre session a expirée. Vous allez être rediriger vers la page d'authentification.`
+                `Votre session est expirée. Vous allez être rediriger vers la page d'authentification.`
               );
               this.localStorageService.clearLocalStorage();
               setTimeout( () => {
@@ -40,7 +40,14 @@ export class HttpErrorInterceptor implements HttpInterceptor {
               this.notificationService.updateNotificationIsRemoved(true);
               this.showNotification(
                 "warning", 
-                `Votre session a expirée. Vous allez être rediriger vers la page d'authentification.`
+                `Votre session est expirée. Vous allez être rediriger vers la page d'authentification.`
+              );
+              break;
+            case 400:
+              this.notificationService.updateNotificationIsRemoved(true);
+              this.showNotification(
+                "danger", 
+                error.error.notification
               );
               break;
             default:

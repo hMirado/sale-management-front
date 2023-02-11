@@ -36,7 +36,6 @@ export class ProductService {
   }
 
   addTableRowValue(value: Product): IRow {
-    console.log(value);
     const price =
       value.high_price == value.low_price
         ? this.helperService.numberFormat(value.high_price as number)
