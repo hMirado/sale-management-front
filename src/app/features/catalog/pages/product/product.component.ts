@@ -151,7 +151,7 @@ export class ProductComponent implements OnInit, OnDestroy {
    * @param type
    * @param message
    */
-   showNotification(type: string, message: string) {
+  showNotification(type: string, message: string) {
     this.notificationService.addNotification({
       type: type,
       message: message

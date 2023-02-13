@@ -34,4 +34,15 @@ export class HelperService {
   numberFormat(value: number) {
     return value.toLocaleString('fr-Fr')
   }
+
+  getDate(dateUTC: Date) {
+    const date = new Date(dateUTC);
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + date.getMonth()).slice(-2);
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const second = date.getSeconds();
+    return `${day}-${month}-${year} ${hours}:${minutes}:${second}`;
+  }
 }

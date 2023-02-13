@@ -9,6 +9,7 @@ export class TableService {
   public table$: BehaviorSubject<ITable|null> = new BehaviorSubject<ITable|null>(null);
   public expandUiid$: Subject<string> = new Subject<string>();
   public tableExpandedValue$: BehaviorSubject<ICell|null> = new BehaviorSubject<ICell|null>(null);
+  private detailId$: Subject<string> = new Subject<string>();
 
   constructor() { }
 
@@ -22,5 +23,13 @@ export class TableService {
 
   setExpandedValue(value: ICell) {
     this.tableExpandedValue$.next(value);
+  }
+
+  setDetailId(uuid: string) {
+    this.detailId$.next(uuid);
+  }
+
+  getDetailId() {
+    return this.detailId$;
   }
 }

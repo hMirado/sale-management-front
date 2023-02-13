@@ -42,7 +42,8 @@ export class StockService {
       paginate: 1,
       page: (_params['page'] && _params['page'] > 0) ? _params['page'] : 1
     }
-    if (_params['shop'] && _params['shop'] != 'all' )params['shop'] = _params['shop'];
+    if(shop != '') params['shop'] = shop;
+    else if (_params['shop'] && _params['shop'] != 'all' ) params['shop'] = _params['shop'];
     if (_params['keyword'] && _params['keyword'] != '' )params['keyword'] = _params['keyword'];
     if (_params['status'] && _params['status'] != 'all' )params['status'] = _params['status'];
     if (_params['serialization'] && _params['serialization'] != 'all' )params['serialization'] = _params['serialization'];
@@ -102,6 +103,16 @@ export class StockService {
         },
         {
           id: value.stock_uuid,
+          key: 'shop', 
+          type: 'simple',
+          expand: false,
+          value: {
+            value: [value?.shop?.shop_name],
+            align: 'left'
+          }
+        },
+        {
+          id: value.stock_uuid,
           key: 'serialization', 
           type: 'simple',
           expand: false,
@@ -115,12 +126,10 @@ export class StockService {
   }
 
   getProductSerialization(productUuid: string, shopUuid: string = '') {
-    let param: any = {
-      is_slod: '0'
-    }
+    let param: any = {is_slod: '0'}
     if ( shopUuid != '') param['shop'] = shopUuid;
    
-    const url = `${environment['store-service']}/serialization/${productUuid}`;
+    const url = `${environment['store-service']}/serialization/shop/product/${productUuid}`;
     return this.apiService.doGet(url, param)
   }
 
@@ -159,6 +168,15 @@ export class StockService {
         {
           id: serialisationDisctinct['id'],
           key: 'quantity', 
+          type: 'simple',
+          expand: false,
+          value: {
+            value: ['']
+          }
+        },
+        {
+          id: serialisationDisctinct['id'],
+          key: 'shop', 
           type: 'simple',
           expand: false,
           value: {
