@@ -54,7 +54,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
               console.error(['ERROR', request.url]);
               this.showNotification(
                 "danger", 
-                `Problème de connexion avec le serveur (${request.url}). Veuillez contacter le responsable si l'erreur persiste.`
+                `Problème de connexion avec le serveur. Veuillez contacter le responsable si l'erreur persiste.`
               )
               break;
           }

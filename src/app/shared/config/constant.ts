@@ -1,4 +1,6 @@
 export const tokenKey: string = 'token';
+export const tokenFromUI: string = "abcdefghijklmnopqrstuvwxy0123456789123456";
+export const userInfo: string = "pgu";
 export const tableFilter ={
   tableFilterFieldType:{
     select: 'select',
@@ -16,3 +18,5 @@ export const tableFilter ={
     product_stock: 'stock'
   }
 }
+export const ADMIN: string = 'ADMIN';
+export const SELLER: string = 'SELLER';

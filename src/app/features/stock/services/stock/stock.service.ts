@@ -202,19 +202,13 @@ export class StockService {
     return this.apiService.doGet(url);
   }
 
-  filter(shop: ITableFilterFieldValue[], status: ITableFilterFieldValue[], serialization: ITableFilterFieldValue[]): ITableFilterField[] {
+  filter(_shop: ITableFilterFieldValue[] = [], status: ITableFilterFieldValue[], serialization: ITableFilterFieldValue[]): ITableFilterField[] {
     const fields: ITableFilterField[] = [
       {
         key: 'keyword',
         label: "Mots clé",
         type: 'input',
         placeholder: 'Article / Code article'
-      },
-      {
-        key: 'shop',
-        label: "Shop",
-        type: 'select',
-        value: shop,
       },
       {
         key: 'status',
@@ -229,6 +223,16 @@ export class StockService {
         value: serialization,
       },
     ]
+
+    if (_shop.length > 0) {
+      const shop: ITableFilterField = {
+        key: 'shop',
+        label: "Shop",
+        type: 'select',
+        value: _shop,
+      };
+      fields.splice(1, 0, shop)
+    }
     return fields;
   }
 

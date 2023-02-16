@@ -28,10 +28,11 @@ export const authorizations = {
   },
   stock: {
     page: 'PAGE_STOCK',
-    // element: {
-    //   { authorization_key: 'PAGE_ELEMENT_STOCK_RECEIPT' },
-    //   { authorization_key: 'PAGE_ELEMENT_STOCK_REMOVAL' },
-    // }
+    element: {
+      add: 'PAGE_ELEMENT_STOCK_ADD',
+      import: 'PAGE_ELEMENT_STOCK_IMPORT',
+      transfer: 'PAGE_ELEMENT_STOCK_TRANSFER'
+    }
   },
   sale: {
     page: 'PAGE_SALE'

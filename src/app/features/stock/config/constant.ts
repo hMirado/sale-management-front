@@ -46,3 +46,5 @@ export const transferStatus = {
   validated: 'VALIDATED',
   canceled: 'CANCELED',
 }
+
+export const depotShopCode = "DEP"

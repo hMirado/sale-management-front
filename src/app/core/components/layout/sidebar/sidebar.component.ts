@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
-import { tokenKey } from 'src/app/shared/config/constant'
+import { tokenKey, userInfo } from 'src/app/shared/config/constant'
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { IAuthorization } from 'src/app/shared/models/i-authorization/i-authorization';
 import { Menu } from 'src/app/core/models/menu/menu.model';
@@ -28,9 +28,9 @@ export class SidebarComponent implements OnInit {
   }
 
   getUserData() {
-    const token = this.localStorageService.getLocalStorage(tokenKey);
-    const decodedToken = this.helperService.decodeJwtToken(token);
-    const userAuthorizations = decodedToken.user.role.authorizations;
+    const data = this.localStorageService.getLocalStorage(userInfo);
+    const user = JSON.parse(this.helperService.decrypt(data));
+    const userAuthorizations = user.role.authorizations;
     const authKey = userAuthorizations.map((auth: IAuthorization) => auth.authorization_key);
     this.getUserMenu(authKey)
   }

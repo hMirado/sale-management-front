@@ -8,7 +8,7 @@
     </div>
     <app-tabs>
       <app-tab title="STOCK" [id]="stockId">
-        <div class="row mb-2">
+        <div class="row mb-2" *ngIf="getAuthorization(authorizationStockAdd)">
           <div class="col-2">
             <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(stockId)">
               <i class="fas fa-plus"></i> Ajouter stock
@@ -27,7 +27,7 @@
           </div>
         </div>
       </app-tab>
-      <app-tab title="ENVOI & RECEPTION" [id]="transferId">
+      <app-tab *ngIf="getAuthorization(authorizationStockTransfer)" title="ENVOI & RECEPTION" [id]="transferId">
         <app-transfert></app-transfert>
       </app-tab>
     </app-tabs>
