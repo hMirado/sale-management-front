@@ -2,22 +2,23 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, iif, of, Subscription, switchMap } from 'rxjs';
-import { responseStatus } from 'src/app/core/config/constant';
+import { authorizations, responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
-import { tokenKey } from 'src/app/shared/config/constant';
+import { ADMIN, tokenKey, userInfo } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
+import { AuthorizationService } from 'src/app/shared/serives/authorization/authorization.service';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 import { ModalService } from 'src/app/shared/serives/modal/modal.service';
 import { TabService } from 'src/app/shared/serives/tab/tab.service';
 import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
 import { TableService } from 'src/app/shared/serives/table/table.service';
-import { tableStockHeader, tableStockId } from '../../config/constant';
+import { depotShopCode, tableStockHeader, tableStockId } from '../../config/constant';
 import { AttributeType } from '../../models/attribute-type/attribute-type.model';
 import { SerializationType } from '../../models/serialization-type/serialization-type.model';
 import { Serialization } from '../../models/serialization/serialization.model';
@@ -55,6 +56,9 @@ export class StockComponent implements OnInit, OnDestroy {
   private params: any = {}
   public stocks: Stock[] = [];
   public infoBoxStock: IInfoBox[] = [];
+  private userData: any;
+  public authorizationStockAdd: string = authorizations.stock.element.add;
+  public authorizationStockTransfer: string = authorizations.stock.element.transfer;
 
   constructor(
     private tableService: TableService,
@@ -65,7 +69,8 @@ export class StockComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private localStorageService: LocalStorageService,
     private tableFilterService: TableFilterService,
-    private tabService: TabService
+    private tabService: TabService,
+    private authorizationService: AuthorizationService,
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -98,9 +103,8 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   getUserData() {
-    const token = this.localStorageService.getLocalStorage(tokenKey);
-    const decodedToken = this.helperService.decodeJwtToken(token);
-    this.shopUuid = decodedToken.user.shop.shop_uuid;
+    const data = this.localStorageService.getLocalStorage(userInfo);
+    this.userData = JSON.parse(this.helperService.decrypt(data));
   }
 
   openModal(id: string) {
@@ -301,6 +305,7 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   saveStock(value: any) {
+    this.shopUuid = this.userData.shops.filter((shop: Shop) => shop.shop_code == depotShopCode)[0].shop_uuid
     this.subscription.add(
       this.stockService.addStock(value, this.shopUuid).subscribe((response: ApiResponse) => {
         this.clearForm();
@@ -348,8 +353,6 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   getStockresponse(response: ApiResponse) {
-    console.log(response);
-    
     let table: ITable = {
       id: this.tableId,
       header: tableStockHeader,
@@ -457,7 +460,6 @@ export class StockComponent implements OnInit, OnDestroy {
             )
           })
         }
-
         this.stockFilter(shopFilter);
       })
     );
@@ -502,7 +504,12 @@ export class StockComponent implements OnInit, OnDestroy {
       },
     ];
 
-    stockFilter.fields = this.stockService.filter(shop, status, serialization);
+    let _shop: ITableFilterFieldValue[] = []
+    if (this.userData.role.role_key == ADMIN) {
+      _shop = shop
+    }
+    
+    stockFilter.fields = this.stockService.filter(_shop, status, serialization);
     this.tableFilterService.setFilterData(stockFilter)
   }
 
@@ -544,5 +551,9 @@ export class StockComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+
+  getAuthorization(key: string) {
+    return this.authorizationService.getAuthorization(key)
   }
 }

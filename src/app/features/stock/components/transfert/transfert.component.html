@@ -26,8 +26,25 @@
   <div body>
     <form [formGroup]="transferFormGroup">
       <div class="row">
-        <div class="col-lg-4 col-12">
-          <label>Shop destinateur *</label>
+        <div class="col-lg-3 col-12">
+          <label>Shop d'origine *</label>
+          <select
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (transferFormGroup.get('shopSender')?.invalid &&
+              transferFormGroup.get('shopSender')?.hasError('required') &&
+              formError
+              )
+            }" 
+            name="shopSender" 
+            formControlName="shopSender"
+          >
+            <option value="" selected disabled hidden>Sélectionner ici</option>
+            <option *ngFor="let shop of shopsSender" [value]="shop?.shop_uuid">{{ shop?.shop_name }}</option>
+          </select>
+        </div>
+        <div class="col-lg-3 col-12">
+          <label>Shop récepteur *</label>
           <select
             class="form-control form-control-sm"
             [ngClass]="{'input-error':
@@ -40,10 +57,10 @@
             formControlName="shopReceiver"
           >
             <option value="" selected disabled hidden>Sélectionner ici</option>
-            <option *ngFor="let shop of shops" [value]="shop?.shop_uuid">{{ shop?.shop_name }}</option>
+            <option *ngFor="let shop of shopsReceiver" [value]="shop?.shop_uuid">{{ shop?.shop_name }}</option>
           </select>
         </div>
-        <div class="col-lg-5 col-12">
+        <div class="col-lg-4 col-12">
           <label>Article *</label>
           <input
             type="text" 
@@ -65,7 +82,7 @@
             </mat-option>
           </mat-autocomplete>
         </div>
-        <div class="col-lg-3 col-12">
+        <div class="col-lg-2 col-12">
           <label for="quantity">Quantité *</label>
           <input
             type="number" 
@@ -85,6 +102,21 @@
           <span *ngIf="quantityError" class="text-danger">
             Quantité indisponible en stock
           </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label for="">Commentaire</label>
+            <textarea 
+              class="form-control form-control-sm" 
+              rows="2"
+              id="quantity" 
+              name="commentary" 
+              formControlName="commentary"
+            >
+            </textarea>
+          </div>
         </div>
       </div>
       <ng-container formArrayName="serialization">
@@ -146,11 +178,11 @@
       Validation dl'article réçu
     </h4>
   </div>
-  <div body>
+  <div body *ngIf="transfer">
     <div class="row mb-3">
-      <div class="col-5">Article : {{ transfer?.product?.label }}</div>
-      <div class="col-3">Quantité : {{ transfer?.transfer_quantity }}</div>
-      <div class="col-4">Statut : {{ transfer?.transfer_status?.transfer_status_label?.toUpperCase() }}</div>
+      <div class="col-5">Article : {{ transfer.product.label }}</div>
+      <div class="col-3">Quantité : {{ transfer.transfer_quantity }}</div>
+      <div class="col-4">Statut : {{ transfer.transfer_status.transfer_status_label.toUpperCase() }}</div>
     </div>
     <ng-container *ngFor="let serialization of serializations; let i = index;">
       <div class="row" >

@@ -58,8 +58,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  getUserData(token : string) {
-    this.localStorageService.setLocalStorage(tokenKey, token);
+  getUserData(data: any) {
+    const cryted = this.helperService.encrypt(JSON.stringify(data['user']));
+    this.localStorageService.setLocalStorage(tokenKey, data['token']);
+    this.localStorageService.setLocalStorage('pgu', cryted);
     this.router.navigateByUrl('/');
   }
 }

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ExportService } from '../export/export.service';
 import { FileService } from '../file/file.service';
+import * as CryptoJS from 'crypto-js';
+import { tokenFromUI } from '../../config/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +46,15 @@ export class HelperService {
     const minutes = date.getMinutes();
     const second = date.getSeconds();
     return `${day}-${month}-${year} ${hours}:${minutes}:${second}`;
+  }
+
+  encrypt(data: string) {
+    let encrypted = CryptoJS.AES.encrypt(data, tokenFromUI);
+    return encrypted.toString();
+  }
+
+  decrypt(data: string) {
+    let decrypted = CryptoJS.AES.decrypt(data, tokenFromUI);
+    return decrypted.toString(CryptoJS.enc.Utf8)
   }
 }

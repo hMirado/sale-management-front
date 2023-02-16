@@ -6,7 +6,7 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
-import { tokenKey } from 'src/app/shared/config/constant';
+import { tokenKey, userInfo } from 'src/app/shared/config/constant';
 import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
@@ -34,7 +34,8 @@ export class TransfertComponent implements OnInit, OnDestroy {
   public products: Product[] = [];
   public searchProducts: Product[] = [];
   public serializationTypes: SerializationType[] = [];
-  public shops: Shop[] = [];
+  public shopsSender: Shop[] = [];
+  public shopsReceiver: Shop[] = [];
   private isSerializable: boolean = false;
   public formError: boolean = false;
   private quantityIsValid: Observable<boolean> = of(false);
@@ -77,9 +78,8 @@ export class TransfertComponent implements OnInit, OnDestroy {
   }
 
   getUserData() {
-    const token = this.localStorageService.getLocalStorage(tokenKey);
-    const decodedToken = this.helperService.decodeJwtToken(token);
-    this.userData = decodedToken.user;
+    const data = this.localStorageService.getLocalStorage(userInfo);
+    this.userData = JSON.parse(this.helperService.decrypt(data))
   }
 
   openModal(id: string) {
@@ -87,7 +87,8 @@ export class TransfertComponent implements OnInit, OnDestroy {
     if (id == this.transferId) {
       this.getProducts();
       this.getSerializationTypes();
-      this.getShops();
+      this.getShopSender();
+      this.getShopsReceiver();
     }
   }
 
@@ -100,10 +101,11 @@ export class TransfertComponent implements OnInit, OnDestroy {
     this.transferFormGroup = this.formBuilder.group({
       userSender: [this.userData?.user_uuid, Validators.required],
       userReceiver: [this.userData?.user_uuid, Validators.required],
-      shopSender: [this.userData?.shop?.shop_uuid, Validators.required],
+      shopSender: ['', Validators.required],
       shopReceiver: ['', Validators.required],
       product: ['', Validators.required],
       quantity: ['', Validators.required],
+      commentary: [''],
       serialization: this.formBuilder.array([])
     })
   }
@@ -166,11 +168,25 @@ export class TransfertComponent implements OnInit, OnDestroy {
     );
   }
 
-  getShops() {
+  getShopSender() {
+    if (this.userData.role.role_key == 'ADMIN') {
+      this.subscription.add(
+        this.transferService.getShops().subscribe((response: ApiResponse) => {
+          if (response.status == responseStatus.success) {
+            this.shopsSender = response.data;
+          }
+        })
+      );
+    } else {
+      this.shopsSender = this.userData.shops
+    }
+  }
+
+  getShopsReceiver() {
     this.subscription.add(
       this.transferService.getShops().subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
-          this.shops = response.data.filter((shop: Shop) => shop.shop_id != this.userData.shop.shop_id);
+          this.shopsReceiver = response.data;
         }
       })
     );
@@ -228,7 +244,8 @@ export class TransfertComponent implements OnInit, OnDestroy {
         debounceTime(500),
         switchMap((isValid: boolean) => {
           if (isValid) {
-            return this.transferService.getProductQuantity(this.userData.shop.shop_uuid, this.searchProducts[0].product_uuid)
+            const shopSender = this.transferFormGroup?.get('shopSender')?.value;
+            return this.transferService.getProductQuantity(shopSender, this.searchProducts[0].product_uuid)
           } else { 
             return []
           }
@@ -318,7 +335,8 @@ export class TransfertComponent implements OnInit, OnDestroy {
       this.rows = [];
       this.transfers = response.data.items;
       this.transfers.forEach((transfer: Transfer) => {
-        const row: IRow = this.transferService.getTableRowValue(transfer, this.userData.shop.shop_id);
+        const shopsIds = this.userData.shops.map((shop: Shop) => shop.shop_id);
+        const row: IRow = this.transferService.getTableRowValue(transfer, shopsIds);
         this.rows.push(row);
       })
       const cell: ICell = {

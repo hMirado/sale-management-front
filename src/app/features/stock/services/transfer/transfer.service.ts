@@ -66,7 +66,7 @@ export class TransferService {
     return this.apiService.doGet(url, param);
   }
 
-  getTableRowValue(value: Transfer, currentShop: number): IRow {
+  getTableRowValue(value: Transfer, userShopIds: number[]): IRow {
     const userSender = value.user_sender.last_name.toUpperCase() + ' ' + value.user_sender.first_name;
     const statusCode = value.transfer_status.transfer_status_code.toUpperCase();
     const userReceveir = (
@@ -129,7 +129,7 @@ export class TransferService {
           type: 'simple',
           expand: false,
           value: {
-            value: [ value.shop_sender.shop_id == currentShop ? 'ENVOI' : 'RECEPTION' ],
+            value: [ userShopIds.includes(value.shop_sender.shop_id) ? 'ENVOI' : 'RECEPTION' ],
             align: 'center'
           },
           badge: {
