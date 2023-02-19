@@ -7,7 +7,7 @@ export interface ITableFilter {
 export interface ITableFilterField {
   key: string;
   label: string;
-  type: 'input' | 'checkBox' | 'select' | 'switch';
+  type: 'input' | 'checkBox' | 'select' | 'switch' | 'autoComplete';
   placeholder?: string;
   value?: ITableFilterFieldValue[];
 }

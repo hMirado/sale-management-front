@@ -20,6 +20,22 @@
                 <option *ngFor="let value of selectValue[i]" [value]="value.value">{{ value.label }}</option>
               </select>
             </div>
+            <div *ngSwitchCase="'autoComplete'" class="col-sm-7">
+              <input
+                type="text" 
+                id="item" 
+                class="form-control form-control-sm"
+                name="fieldValue" 
+                formControlName="field" 
+                [matAutocomplete]="auto"
+                (input)="triggerValueChange(); filterSelectValue(i)"
+              >
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selectedValue($event, i)">
+                <mat-option *ngFor="let value of selectValue[i]" [value]="value" style="text-transform: capitalize">
+                  {{value.label}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
           </ng-container>
         </div>
       </div>

@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { ApiService } from 'src/app/core/services/api/api.service';
-import { IFilterFieldValue } from 'src/app/shared/models/i-filter/i-filter-field-value';
-import { ITableFilter, ITableFilterField, ITableFilterFieldValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
+import { ITableFilterField, ITableFilterFieldValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { IRow } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
 import { Stock } from '../../models/stock/stock.model';
@@ -213,13 +212,13 @@ export class StockService {
       {
         key: 'status',
         label: "Statut",
-        type: 'select',
+        type: 'autoComplete',
         value: status,
       },
       {
         key: 'serialization',
         label: "Sérialisé",
-        type: 'select',
+        type: 'autoComplete',
         value: serialization,
       },
     ]
@@ -228,7 +227,7 @@ export class StockService {
       const shop: ITableFilterField = {
         key: 'shop',
         label: "Shop",
-        type: 'select',
+        type: 'autoComplete',
         value: _shop,
       };
       fields.splice(1, 0, shop)
