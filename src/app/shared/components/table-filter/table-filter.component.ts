@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { debounceTime, filter, of, Subscription, switchMap } from 'rxjs';
+import { debounceTime, distinct, distinctUntilChanged, filter, of, pairwise, startWith, Subscription, switchMap } from 'rxjs';
 import { tableFilter } from '../../config/constant';
 import { ITableFilter, ITableFilterField, ITableFilterSearchValue } from '../../models/i-table-filter/i-table-filter';
 import { TableFilterService } from '../../serives/table-filter/table-filter.service';
@@ -16,16 +16,18 @@ export class TableFilterComponent implements OnInit, OnDestroy {
   public tableFilter = tableFilter;
   public filterFormGroup: FormGroup;
   public selectValue: any = [];
+  public allSelectValue: any = [];
   private subscription = new Subscription();
+  private isClicked: boolean = false;
   
   constructor(
     private formBuilder: FormBuilder,
     private tableFilterService: TableFilterService
     ) {
-      this.createForm();
     }
 
   ngOnInit(): void {
+    this.createForm();
     this.addField();
     this.filterValueChange();
   }
@@ -36,7 +38,8 @@ export class TableFilterComponent implements OnInit, OnDestroy {
 
   createForm() {
     this.filterFormGroup = this.formBuilder.group({
-      triggerValueChange: [false],
+      triggerValueChange: false,
+      id: this.id,
       fields: this.formBuilder.array([])
     })
   }
@@ -48,11 +51,10 @@ export class TableFilterComponent implements OnInit, OnDestroy {
   addField() {
     this.subscription.add(
       this.tableFilterService.filterData$.subscribe((filterData: ITableFilter | null) => {
-        this.filterFormGroup.reset();
+        //this.filterFormGroup.reset();
         this.fieldGroup.reset()
         this.fieldGroup.clear();
         if (filterData && filterData.id == this.id) {
-          this.filterFormGroup.addControl('id', new FormControl(filterData.id))
           filterData.fields.forEach((fields: ITableFilterField) => {
             let defaultValue = fields.value?.filter(value => value.default)[0];
             let childFormGroup = this.formBuilder.group({
@@ -60,9 +62,11 @@ export class TableFilterComponent implements OnInit, OnDestroy {
               label: [fields.label],
               type: [fields.type],
               placeholder: [fields.placeholder ? fields.placeholder : ''],
-              fieldValue: [defaultValue?.default ? defaultValue.value : '']
+              field: [defaultValue?.default ? defaultValue.label : ''],
+              fieldValue: [defaultValue?.default ? defaultValue.value : ''] //value
             });
             this.selectValue.push(fields.value ? fields.value : []);
+            this.allSelectValue.push(fields.value ? fields.value : []);
             this.fieldGroup.push(childFormGroup);
           })
         }
@@ -83,6 +87,7 @@ export class TableFilterComponent implements OnInit, OnDestroy {
         switchMap(value => {
           this.filterFormGroup.patchValue({triggerValueChange: false});
           this.filterFormGroup.updateValueAndValidity();
+          this.isClicked = false;
           let filterValue: ITableFilterSearchValue = { id: value.id, value: [] };
           this.chips = [];
           value.fields.forEach((field: any) => {
@@ -96,5 +101,33 @@ export class TableFilterComponent implements OnInit, OnDestroy {
         })
       ).subscribe(value => this.tableFilterService.setFilterFormValue(value))
     )
+  }
+
+
+  filterSelectValue(i: number) {
+    this.fieldGroup.at(i).valueChanges.pipe(
+      debounceTime(500),
+      startWith(null),
+      pairwise(),
+      filter(x => !this.isClicked),
+      switchMap(([prev, next]: [any, any]) => {
+        if(prev?.field.toLowerCase() != next?.field.toLowerCase()) return of(next?.field);
+        else return [];
+      })
+    ).subscribe(value => {
+      this.selectValue[i] = this.allSelectValue[i].filter((x: any) =>x.label.toLowerCase().includes(value.toLowerCase()));
+      if (value == '') this.selectValue[i] = this.allSelectValue[i];
+    })
+  }
+
+  selectedValue(event: any, i: number) {
+    this.isClicked = true;
+    const value = event.option.value
+    this.fieldGroup.at(i).patchValue({
+      field: value.label,
+      fieldValue: value.value
+    })
+    this.triggerValueChange();
+    this.filterValueChange();
   }
 }

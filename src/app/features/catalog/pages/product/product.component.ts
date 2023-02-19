@@ -65,7 +65,6 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.addFormField();
     this.cancel();
     this.getCategories();
-    //this.getCategoriesValueChange();
   }
 
   ngOnDestroy(): void {
@@ -143,7 +142,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.nextPage = response.data.totalPages == this.currentPage ? this.currentPage : this.currentPage + 1;
       this.totalPages = response.data.totalPages;
       this.totalItems = response.data.totalItems;
-    } else {}
+    }
   }
 
   /**

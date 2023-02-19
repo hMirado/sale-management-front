@@ -39,9 +39,10 @@ export class CategoryService {
     return this.apiService.doGet(url);
   }
 
-  getCategories(page: number = 1): Observable<ApiResponse> {
+  getCategories(paginate: number = 0, page: number = 1): Observable<ApiResponse> {
     let url = `${environment['store-service']}/category`;
     let params = {
+      paginate: paginate,
       page: page
     }
     return this.apiService.doGet(url, params)

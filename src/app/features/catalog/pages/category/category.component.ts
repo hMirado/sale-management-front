@@ -153,7 +153,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
       this.activatedRoute.queryParams.pipe(
         switchMap((params: Params) => {
           const page: number = params['page']
-          return iif(() => Boolean(page), this.categoryService.getCategories(page), this.categoryService.getCategories())
+          return iif(() => Boolean(page), this.categoryService.getCategories(1, page), this.categoryService.getCategories(1))
         })
       ).subscribe((response: ApiResponse) => this.getCategoriesResponse(response))
     )
@@ -167,7 +167,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
     if (response.status == responseStatus.success) {
       this.rows = [];
-      let categories: Category[] = response.data;
+      let categories: Category[] = response.data.items;
       categories.forEach((category: Category) => {
         let row: IRow = this.categoryService.addTableRowValue(category);
         this.rows.push(row);

@@ -19,7 +19,9 @@ import { TabComponent } from './components/tabs/tab/tab.component';
 import { RouterModule } from '@angular/router';
 import { TableFilterComponent } from './components/table-filter/table-filter.component';
 
-
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
@@ -54,7 +56,10 @@ import { MatDividerModule } from '@angular/material/divider';
     MatIconModule,
     MatChipsModule,
     MatRippleModule,
-    MatDividerModule
+    MatDividerModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -75,7 +80,10 @@ import { MatDividerModule } from '@angular/material/divider';
     MatChipsModule,
     MatRippleModule,
     TableFilterComponent,
-    MatDividerModule
+    MatDividerModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
   ]
 })
 export class SharedModule { }
