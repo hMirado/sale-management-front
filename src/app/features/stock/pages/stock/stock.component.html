@@ -23,7 +23,25 @@
             <app-table [id]="tableId"></app-table>
           </div>
           <div class="bg-white card-footer" *ngIf="currentPage > 0">
-            
+            <ul class="pagination pagination-sm m-0 float-right">
+              <li class="page-item" *ngIf="lastPage > 0">
+                <span class="page-link pointer" (click)="setQueryParams(lastPage)">&laquo;</span>
+              </li>
+              <li class="page-item" *ngIf="lastPage > 0">
+                <span class="page-link pointer" (click)="setQueryParams(lastPage)">{{ lastPage
+                  }}</span>
+              </li>
+              <li class="page-item">
+                <a class="page-link pointer bg-primary" [routerLink]="['/stock']" [queryParams]="{page: currentPage}">{{ currentPage }}</a>
+              </li>
+              <li class="page-item" *ngIf="nextPage == currentPage + 1">
+                <span class="page-link pointer" (click)="setQueryParams(nextPage)">{{ nextPage
+                  }}</span>
+              </li>
+              <li class="page-item" *ngIf="nextPage == currentPage + 1">
+                <span class="page-link pointer" (click)="setQueryParams(nextPage)">&raquo;</span>
+              </li>
+            </ul>
           </div>
         </div>
       </app-tab>
