@@ -1,6 +1,6 @@
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { registerLocaleData } from '@angular/common';
+import { HashLocationStrategy, LocationStrategy, registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 registerLocaleData(localeFr);
 
@@ -27,6 +27,9 @@ import { HttpErrorInterceptor } from './core/interceptors/http-error/http-error.
     AuthenticationModule
   ],
   providers: [
+    {
+      provide: LocationStrategy, useClass: HashLocationStrategy
+    },
     { 
       provide: LOCALE_ID,
       useValue: 'fr-FR'

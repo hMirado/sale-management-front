@@ -8,7 +8,7 @@ import { HeaderComponent } from './components/layout/header/header.component';
 import { FooterComponent } from './components/layout/footer/footer.component';
 import { SidebarComponent } from './components/layout/sidebar/sidebar.component';
 import { CoreComponent } from './core.component';
-import { NotificationComponent } from './components/notification/notification.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -17,8 +17,7 @@ import { NotificationComponent } from './components/notification/notification.co
     HeaderComponent,
     FooterComponent,
     SidebarComponent,
-    CoreComponent,
-    NotificationComponent
+    CoreComponent
   ],
   imports: [
     CommonModule,
@@ -26,6 +25,7 @@ import { NotificationComponent } from './components/notification/notification.co
     BrowserAnimationsModule,
     RouterModule,
     HttpClientModule,
+    SharedModule
   ]
 })
 export class CoreModule { }

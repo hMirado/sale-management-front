@@ -4,11 +4,14 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
+import { LoaderService } from 'src/app/core/services/loader/loader.service';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { tokenKey } from 'src/app/shared/config/constant';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 import { Login } from '../../models/login/login.model';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
+import { Notification } from '../../../../core/models/notification/notification.model';
 
 @Component({
   selector: 'app-login',
@@ -16,8 +19,10 @@ import { AuthenticationService } from '../../services/authentication/authenticat
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
+  public loading$ = this.loaderService.loading$;
   public loginForm!: FormGroup;
   public hasError: boolean = false;
+  public notifications: Notification[] = [];
   private subscription = new Subscription();
 
   constructor(
@@ -26,6 +31,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private localStorageService: LocalStorageService,
     private helperService: HelperService,
     private router: Router,
+    public loaderService: LoaderService,
+    private notificationService: NotificationService,
   ) {
     this.createForm();
   }
@@ -34,6 +41,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.addNotification()
   }
 
   createForm() {
@@ -63,5 +71,16 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.localStorageService.setLocalStorage(tokenKey, data['token']);
     this.localStorageService.setLocalStorage('pgu', cryted);
     this.router.navigateByUrl('/');
+  }
+
+
+  addNotification() {
+    this.subscription.add(
+      this.notificationService.notification$.subscribe((notification) => {
+        if (notification.message && notification.type != '') {
+          this.notifications.push(notification)
+        }
+      })
+    );
   }
 }
