@@ -4,7 +4,8 @@
 
 export const environment = {
   production: true,
-  'store-service': 'http://store-management-api.planetgame.mg'
+  //'store-service': 'http://store-management-api.planetgame.mg'
+  'store-service': 'http://127.0.0.1:3000'
 };
 
 /*
