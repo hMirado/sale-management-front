@@ -3,8 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  'store-service': 'http://localhost:3000'
+  production: true,
+  'store-service': 'http://store-management-api.planetgame.mg'
 };
 
 /*

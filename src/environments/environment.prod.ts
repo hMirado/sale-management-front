@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  'store-service': 'http://store-management-api.planetgame.mg'
 };
+//http://store-management-api.planetgame.mg/

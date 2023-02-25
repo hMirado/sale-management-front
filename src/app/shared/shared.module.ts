@@ -27,6 +27,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
+import { NotificationComponent } from '../core/components/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { MatDividerModule } from '@angular/material/divider';
     InfoBoxComponent,
     TabsComponent,
     TabComponent,
-    TableFilterComponent
+    TableFilterComponent,
+    NotificationComponent
   ],
   imports: [
     CommonModule,
@@ -84,6 +86,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
+    NotificationComponent
   ]
 })
 export class SharedModule { }
