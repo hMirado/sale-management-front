@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, Observable, of, Subscription, switchMap } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
-import { tokenKey, userInfo } from 'src/app/shared/config/constant';
+import { ADMIN, userInfo } from 'src/app/shared/config/constant';
 import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
@@ -50,7 +51,7 @@ export class TransfertComponent implements OnInit, OnDestroy {
   public totalPages: number = 0;
   public totalItems: number = 0;
   public serializations: Serialization[] = [];
-  public inProgress = transferStatus.inProgress
+  public inProgress = transferStatus.inProgress;
 
   constructor(
     private modalService: ModalService,
@@ -71,15 +72,24 @@ export class TransfertComponent implements OnInit, OnDestroy {
     this.getTab();
     this.openModalConfirmTransfer();
     this.getFilterValue();
+    this.cancel();
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
+  private currentShop: string = '';
+  private currentUser: string = '';
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
     this.userData = JSON.parse(this.helperService.decrypt(data))
+
+    this.currentShop = ''
+    if (this.userData.role.role_key != ADMIN) {
+      this.currentShop = this.userData.shops[0].shop_uuid;
+      this.currentUser = this.userData.user_uuid
+    }
   }
 
   openModal(id: string) {
@@ -106,16 +116,27 @@ export class TransfertComponent implements OnInit, OnDestroy {
       product: ['', Validators.required],
       quantity: ['', Validators.required],
       commentary: [''],
-      serialization: this.formBuilder.array([])
+      serialization: this.formBuilder.array([]),
+      trigger: [false]
     })
   }
 
+  trigger(status: boolean = true) {
+    this.transferFormGroup.patchValue({trigger: status});
+    this.transferFormGroup.updateValueAndValidity();
+  }
+
   clearForm() {
-    this.transferFormGroup.reset();
-    this.transferFormGroup.patchValue({
+    this.transferFormGroup.reset({
       userSender: this.userData?.user_uuid,
       userReceiver: this.userData?.user_uuid,
-      shopSender: this.userData?.shop?.shop_uuid
+      shopSender: '',
+      shopReceiver: '',
+      product: '',
+      quantity: '',
+      commentary: '',
+      serialization: this.formBuilder.array([]),
+      trigger: false
     });
     this.transferFormGroup.updateValueAndValidity();
     this.serializationField.clear();
@@ -197,12 +218,16 @@ export class TransfertComponent implements OnInit, OnDestroy {
     if (item) {
       this.subscription.add(
         item.valueChanges.pipe(
+          filter(value => {
+            return this.transferFormGroup.value['trigger']
+          }),
           distinctUntilChanged((prev, curr)=>{
             return prev.label === curr.label;
           }),
           debounceTime(500),
           filter(value => (value.length >= 3 || value == '') ),
           switchMap((product: string) => {
+            this.trigger(false);
             if (product == '') {
              return of(this.products)
             } else {
@@ -241,8 +266,12 @@ export class TransfertComponent implements OnInit, OnDestroy {
   getQuantityIsValid(quantity: number) {
     this.subscription.add(
       this.quantityIsValid.pipe(
+        filter(value => {
+          return this.transferFormGroup.value['trigger']
+        }),
         debounceTime(500),
         switchMap((isValid: boolean) => {
+          this.trigger(false);
           if (isValid) {
             const shopSender = this.transferFormGroup?.get('shopSender')?.value;
             return this.transferService.getProductQuantity(shopSender, this.searchProducts[0].product_uuid)
@@ -308,6 +337,14 @@ export class TransfertComponent implements OnInit, OnDestroy {
     )
   }
 
+  cancel() {
+    this.subscription.add(
+      this.modalService.isCanceled$.subscribe((isCanceled: boolean) => {
+        if (isCanceled) this.clearForm();
+      })
+    )
+  }
+
   getTab() {
     this.subscription.add(
       this.tabService.getTab().subscribe(tabId => {
@@ -321,7 +358,7 @@ export class TransfertComponent implements OnInit, OnDestroy {
 
   getTransfers() {
     this.subscription.add(
-      this.transferService.getTransfers().subscribe((response: ApiResponse) => this.getTransfersResponse(response))
+      this.transferService.getTransfers(this.currentShop, this.currentUser).subscribe((response: ApiResponse) => this.getTransfersResponse(response))
     )
   }
 
@@ -341,7 +378,7 @@ export class TransfertComponent implements OnInit, OnDestroy {
       })
       const cell: ICell = {
         cellValue: this.rows,
-        isViewable: true
+        isViewable: false
       }
       table.body = cell;
       this.tableService.setTableValue(table);
@@ -414,11 +451,11 @@ export class TransfertComponent implements OnInit, OnDestroy {
         filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'transfer-filter'),
         switchMap((filter: ITableFilterSearchValue|null) => {
           this.rows = []
-          this.params['p'] = 0
+          this.params['page'] = 1
           filter?.value.forEach((value, i) => {
             this.params[Object.keys(value)[0]] = value[Object.keys(value)[0]]
           })
-          return this.transferService.getTransfers('', '', this.params)
+          return this.transferService.getTransfers(this.currentShop, this.currentUser, this.params)
         })
       ).subscribe((response: ApiResponse) => this.getTransfersResponse(response))
     );
@@ -447,7 +484,6 @@ export class TransfertComponent implements OnInit, OnDestroy {
   getTransferResponse(response: ApiResponse) {
     if (response.status == responseStatus.success) {
       this.transfer = response.data;
-      console.log(this.transfer);
       if (this.transfer?.product.is_serializable) {
         this.serializations = response.data.product.serializations;
       }
@@ -467,6 +503,11 @@ export class TransfertComponent implements OnInit, OnDestroy {
   confirmResponse(response: ApiResponse) {
     this.getTransfers();
     this.closeModal('comfirm-id');
+  }
+
+  goToNextPage(page: number){
+    this.params['page'] = page;
+    this.transferService.getTransfers(this.currentShop, this.currentUser, this.params).subscribe((response: ApiResponse) => this.getTransfersResponse(response));
   }
 }
 

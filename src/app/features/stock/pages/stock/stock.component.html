@@ -22,7 +22,7 @@
           <div class="card-body table-responsive p-0">
             <app-table [id]="tableId"></app-table>
           </div>
-          <div class="bg-white card-footer" *ngIf="currentPage > 0">
+          <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
             <ul class="pagination pagination-sm m-0 float-right">
               <li class="page-item" *ngIf="lastPage > 0">
                 <span class="page-link pointer" (click)="setQueryParams(lastPage)">&laquo;</span>

@@ -22,7 +22,7 @@ export const tableCategoryId: string = 'table-category'
 export const tableCategoryHeader: IHeader[] = [
   {value: 'CATEGORIES', align: 'left'},
   {value: 'CODE', align: 'left'},
-  {value: 'ARTICLES', align: 'center'}
+  //{value: 'ARTICLES', align: 'center'}
 ]
 // end of category
 

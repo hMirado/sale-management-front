@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {debounceTime, iif, of, Subscription, switchMap} from 'rxjs';
+import {debounceTime, filter, iif, of, Subscription, switchMap} from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
@@ -16,6 +16,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalService } from 'src/app/shared/serives/modal/modal.service';
 import { Category } from '../../models/category/category.model';
 import { CategoryService } from '../../service/category/category.service';
+import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
+import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
 
 @Component({
   selector: 'app-product',
@@ -44,16 +46,17 @@ export class ProductComponent implements OnInit, OnDestroy {
   public created: number = 0;
   public error: number = 0;
   public errorValues: any[] = [];
+  private params: any = {};
 
   constructor(
     private productService: ProductService,
     private notificationService: NotificationService,
     private tableService: TableService,
-    private activatedRoute: ActivatedRoute,
     private helperService: HelperService,
     private formBuilder: FormBuilder,
     private modalService: ModalService,
     private categoryService: CategoryService,
+    private tableFilterService: TableFilterService
   ) {
     this.createForm();
   }
@@ -65,6 +68,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.addFormField();
     this.cancel();
     this.getCategories();
+    this.getFilterValue();
   }
 
   ngOnDestroy(): void {
@@ -106,12 +110,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   getProducts() {
     this.subscription.add(
-      this.activatedRoute.queryParams.pipe(
-        switchMap((params: Params) => {
-          const page: number = params['page']
-          return iif(() => Boolean(page), this.productService.getProducts(page), this.productService.getProducts())
-        })
-      ).subscribe((response: ApiResponse) => this.getProductsResponse(response))
+      this.productService.getProducts().subscribe((response: ApiResponse) => this.getProductsResponse(response))
     );
   }
 
@@ -130,9 +129,9 @@ export class ProductComponent implements OnInit, OnDestroy {
       });
       let cells: ICell = {
         cellValue: this.rows,
-        isEditable: true,
-        isDeleteable: true,
-        isSwitchable: true
+        isEditable: false,
+        isDeleteable: false,
+        isSwitchable: false
       };
       table.header = tableProductHeader;
       table.body = cells;
@@ -215,6 +214,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     if (response.status == responseStatus.success) {
       this.categories = response.data;
       this.searchCategories = response.data;
+      this.productFilter(this.categories);
     }
   }
 
@@ -282,5 +282,62 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.countProduct();
     this.getProducts();
     this.getCategories();
+  }
+
+  productFilter(categories: Category[]) {
+    const categorieFilter: ITableFilterFieldValue[] = [
+      {
+        key: 'category',
+        label: 'Tous',
+        value: 'all',
+        default: true
+      }, 
+      ...categories.map((category: Category) => {
+        const filter = {
+          key: 'category',
+          label: category.label,
+          value: category.category_uuid
+        }
+        return filter;
+      })
+    ];
+    
+    let filter: ITableFilter = { id: 'product-filter', title: '', fields: [] };
+    filter.fields = [
+      {
+        key: 'keyword',
+        label: "Mots clé",
+        type: 'input',
+        placeholder: 'Article / Code article'
+      },
+      {
+        key: 'category',
+        label: "Catégories",
+        type: 'autoComplete',
+        value: categorieFilter,
+      }
+    ];
+    this.tableFilterService.setFilterData(filter);
+  }
+
+  getFilterValue() {
+    this.subscription.add(
+      this.tableFilterService.filterFormValue$.pipe(
+        filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'product-filter'),
+        switchMap((filter: ITableFilterSearchValue|null) => {
+          this.rows = [];
+          this.params['page'] = 1
+          filter?.value.forEach((value, i) => {
+            this.params[Object.keys(value)[0]] = value[Object.keys(value)[0]]
+          })
+          return this.productService.getProducts(this.params)
+        })
+      ).subscribe((response: ApiResponse) => this.getProductsResponse(response))
+    );
+  }
+
+  goToNextPage(page: number){
+    this.params['page'] = page;
+    this.productService.getProducts(this.params).subscribe((response: ApiResponse) => this.getProductsResponse(response));
   }
 }

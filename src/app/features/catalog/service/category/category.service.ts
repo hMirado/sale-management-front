@@ -39,13 +39,14 @@ export class CategoryService {
     return this.apiService.doGet(url);
   }
 
-  getCategories(paginate: number = 0, page: number = 1): Observable<ApiResponse> {
+  getCategories(paginate: number = 0, page: number = 1, keyword: string = ''): Observable<ApiResponse> {
     let url = `${environment['store-service']}/category`;
-    let params = {
+    let params: any = {
       paginate: paginate,
       page: page
     }
-    return this.apiService.doGet(url, params)
+    if (keyword != '') params['keyword'] = keyword;
+    return this.apiService.doGet(url, params);
   }
 
   addTableRowValue(value: Category): IRow {
@@ -73,16 +74,16 @@ export class CategoryService {
             align: 'left'
           },
         }, 
-        {
-          id: value.category_uuid,
-          key: 'total',
-          type: 'simple',
-          expand: false,
-          value:  {
-            value: value.products ? [value.products.length] : [0],
-            align: 'center'
-          },
-        },
+        // {
+        //   id: value.category_uuid,
+        //   key: 'total',
+        //   type: 'simple',
+        //   expand: false,
+        //   value:  {
+        //     value: value.products ? [value.products.length] : [0],
+        //     align: 'center'
+        //   },
+        // },
       ]
     }
   }
