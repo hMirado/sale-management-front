@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {iif, Subscription, switchMap} from 'rxjs';
+import {filter, iif, Subscription, switchMap} from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
@@ -15,6 +15,8 @@ import {ModalService} from "../../../../shared/serives/modal/modal.service";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
+import { ITableFilter, ITableFilterField, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
+import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
 
 @Component({
   selector: 'app-category',
@@ -47,6 +49,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     private modalService: ModalService,
     private formBuilder: FormBuilder,
     private helperService: HelperService,
+    private tableFilterService: TableFilterService,
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -57,6 +60,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.getCategories();
     this.addLabel();
     this.cancel();
+    this.filter();
+    this.getFilterValue();
   }
 
   ngOnDestroy(): void {
@@ -174,9 +179,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
       });
       let cells: ICell = {
         cellValue: this.rows,
-        isEditable: true,
-        isDeleteable: true,
-        isSwitchable: true
+        isEditable: false,
+        isDeleteable: false,
+        isSwitchable: false
       };
       table.header = tableCategoryHeader;
       table.body = cells;
@@ -201,20 +206,39 @@ export class CategoryComponent implements OnInit, OnDestroy {
     })
   }
 
-  addFilterValue() {
-    const filter: IFilter = {
-      title: '',
-      fields: [
-        {
-          key: 'search',
-          label: 'Libéllé ou code article',
-          type: 'input'
-        }
-      ]
-    }
-  }
-
   openModal = () => {
     this.modalService.showModal(this.uniqueId)
+  }
+
+  filter() {
+    let categorieFilter: ITableFilter = { id: 'category-filter', title: '', fields: [] }
+    const fields: ITableFilterField[] = [
+      {
+        key: 'keyword',
+        label: "Mots clé",
+        type: 'input',
+        placeholder: 'Catégorie / Code catégorie'
+      }
+    ]
+    categorieFilter['fields'] = fields;
+    this.tableFilterService.setFilterData(categorieFilter)
+  }
+
+  private keyword: string = '';
+  getFilterValue() {
+    this.subscription.add(
+      this.tableFilterService.filterFormValue$.pipe(
+        filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'category-filter'),
+        switchMap((filter: ITableFilterSearchValue|null) => {
+          this.rows = []
+          this.keyword = filter?.value[0].keyword
+          return this.categoryService.getCategories(1, 1, this.keyword)
+        })
+      ).subscribe((response: ApiResponse) => this.getCategoriesResponse(response))
+    );
+  }
+
+  goToNextPage(page: number){
+    this.categoryService.getCategories(1, page, this.keyword).subscribe((response: ApiResponse) => this.getCategoriesResponse(response))
   }
 }

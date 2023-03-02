@@ -26,12 +26,14 @@ export class ProductService {
     return this.apiService.doGet(url);
   }
 
-  getProducts(page: number = 1): Observable<ApiResponse> {
+  getProducts(_params: any = {}): Observable<ApiResponse> {
     let url = `${environment['store-service']}/product`;
-    let params = {
+    let params: any = {
       paginate: 1,
-      page: page,
+      page: (_params['page'] && _params['page'] > 0) ? _params['page'] : 1
     };
+    if (_params['keyword'] && _params['keyword'] != '') params['search'] = _params['keyword'];
+    if (_params['category'] &&(_params['category'] != '' && _params['category'] != 'all')) params['category'] = _params['category'];
     return this.apiService.doGet(url, params);
   }
 
@@ -83,7 +85,7 @@ export class ProductService {
           type: 'simple',
           expand: false,
           value: {
-            value: [price],
+            value: [`${price} MGA`],
             align: 'right',
           },
         },

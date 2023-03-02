@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, filter, iif, of, Subscription, switchMap } from 'rxjs';
 import { authorizations, responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
@@ -63,6 +63,7 @@ export class StockComponent implements OnInit, OnDestroy {
   constructor(
     private tableService: TableService,
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private modalService: ModalService,
     private helperService: HelperService,
     private stockService: StockService,
@@ -74,6 +75,7 @@ export class StockComponent implements OnInit, OnDestroy {
   ) {
     this.addHeaderContent();
     this.createForm();
+    this.setQueryParams(1, true)
   }
 
   ngOnInit(): void {
@@ -82,6 +84,7 @@ export class StockComponent implements OnInit, OnDestroy {
     this.getProductSerialization();
     this.getShopFilter();
     this.getFilterValue();
+    this.cancel();
   }
 
   ngOnDestroy(): void {
@@ -300,6 +303,7 @@ export class StockComponent implements OnInit, OnDestroy {
       this.formError = false;
       this.stockFormGroup.patchValue({'item': this?.searchProducts[0].product_id});
       this.stockFormGroup.updateValueAndValidity();
+      this.clearForm()
       this.saveStock(this.stockFormGroup.value)
     }
   }
@@ -320,6 +324,14 @@ export class StockComponent implements OnInit, OnDestroy {
     )
   }
 
+  cancel() {
+    this.subscription.add(
+      this.modalService.isCanceled$.subscribe((status: boolean) => {
+        if (status) this.clearForm();
+      })
+    )
+  }
+
   getTab() {
     this.subscription.add(
       this.tabService.getTab().subscribe(tabId => {
@@ -332,7 +344,7 @@ export class StockComponent implements OnInit, OnDestroy {
     );
   }
 
-  getStocks(nextPage: number = 1, _params: any = {}) {
+  getStocks(nextPage: number = 1) {
     this.subscription.add(
       this.activatedRoute.queryParams.pipe(
         switchMap((params: Params) => {
@@ -341,9 +353,9 @@ export class StockComponent implements OnInit, OnDestroy {
             paginate: 1,
             page: Boolean(page) ? page: nextPage
           }
-          if (_params['keyword'] && _params['keyword'] != '' )param['keyword'] = _params['keyword'];
-          if (_params['status'] && _params['status'] != 'all' )param['status'] = _params['status'];
-          if (_params['serialization'] && _params['serialization'] != 'all' )param['serialization'] = _params['serialization'];
+          if (this.params['keyword'] && this.params['keyword'] != '' )param['keyword'] = this.params['keyword'];
+          if (this.params['status'] && this.params['status'] != 'all' )param['status'] = this.params['status'];
+          if (this.params['serialization'] && this.params['serialization'] != 'all' )param['serialization'] = this.params['serialization'];
           return this.stockService.getStocks(this.shopFilter, param)
         })
       ).subscribe((response: ApiResponse) => {
@@ -555,5 +567,23 @@ export class StockComponent implements OnInit, OnDestroy {
 
   getAuthorization(key: string) {
     return this.authorizationService.getAuthorization(key)
+  }
+
+  setQueryParams(page: number = 1, init: boolean = false){
+    let qParams: Params = {};
+    if (init) {
+      qParams = {}
+    } else {
+      qParams['page'] = page
+      if (this.params['keyword'] && this.params['keyword'] != '' )qParams['keyword'] = this.params['keyword'];
+      if (this.params['status'] && this.params['status'] != 'all' )qParams['status'] = this.params['status'];
+      if (this.params['serialization'] && this.params['serialization'] != 'all' )qParams['serialization'] = this.params['serialization'];
+    }
+
+    this.router.navigate([], {
+        relativeTo: this.activatedRoute,
+        queryParams: qParams,
+        queryParamsHandling: ''
+    });
   }
 }
