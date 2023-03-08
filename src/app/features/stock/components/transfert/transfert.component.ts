@@ -378,7 +378,7 @@ export class TransfertComponent implements OnInit, OnDestroy {
       })
       const cell: ICell = {
         cellValue: this.rows,
-        isViewable: false
+        isViewable: true
       }
       table.body = cell;
       this.tableService.setTableValue(table);
@@ -487,6 +487,8 @@ export class TransfertComponent implements OnInit, OnDestroy {
       if (this.transfer?.product.is_serializable) {
         this.serializations = response.data.product.serializations;
       }
+      console.log(this.transfer);
+      
       this.openModal('comfirm-id');
     }
   }

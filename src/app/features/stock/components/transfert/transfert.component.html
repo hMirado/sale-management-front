@@ -204,6 +204,19 @@
       <div class="col-3">Quantité : {{ transfer.transfer_quantity }}</div>
       <div class="col-4">Statut : {{ transfer.transfer_status.transfer_status_label.toUpperCase() }}</div>
     </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <textarea 
+            class="form-control form-control-sm" 
+            rows="2"
+            disabled
+          >
+          {{ transfer['transfer_commentary'] }}
+          </textarea>
+        </div>
+      </div>
+    </div>
     <ng-container *ngFor="let serialization of serializations; let i = index;">
       <div class="row" >
         <div class="col-5">{{ serialization.serialization_type?.label }}</div>

@@ -8,6 +8,7 @@ export class Transfer {
   transfer_id: number
   transfer_uuid: string;
   transfer_quantity: number;
+  transfer_commentary?: string;
   createdAt: Date;
   updatedAt: Date;
   transfer_status!: TransferStatus;
