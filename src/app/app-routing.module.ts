@@ -27,6 +27,10 @@ const routes: Routes = [
     loadChildren: () =>  import('./features/stock/stock.module').then(stock => stock.StockModule)
   },
   {
+    path: 'user',
+    loadChildren: () => import('./features/user/user.module').then(user => user.UserModule)
+  },
+  {
     path: 'error',
     loadChildren: () => import('./features/error/error.module').then(error => error.ErrorModule)
   },

@@ -18,7 +18,6 @@ import { TabsComponent } from './components/tabs/tabs.component';
 import { TabComponent } from './components/tabs/tab/tab.component';
 import { RouterModule } from '@angular/router';
 import { TableFilterComponent } from './components/table-filter/table-filter.component';
-
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -28,7 +27,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { NotificationComponent } from '../core/components/notification/notification.component';
-
+import { TableDyanmicComponent } from './components/table-dyanmic/table-dyanmic.component';
+import { RowComponent } from './components/table-dyanmic/row/row.component';
+import { TableHeaderComponent } from './components/table-dyanmic/table-header/table-header/table-header.component';
+import { MatStepperModule } from '@angular/material/stepper';
 @NgModule({
   declarations: [
     ButtonLeftMenuComponent,
@@ -47,7 +49,10 @@ import { NotificationComponent } from '../core/components/notification/notificat
     TabsComponent,
     TabComponent,
     TableFilterComponent,
-    NotificationComponent
+    NotificationComponent,
+    TableDyanmicComponent,
+    RowComponent,
+    TableHeaderComponent
   ],
   imports: [
     CommonModule,
@@ -86,7 +91,11 @@ import { NotificationComponent } from '../core/components/notification/notificat
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
-    NotificationComponent
+    NotificationComponent,
+    TableDyanmicComponent,
+    RowComponent,
+    TableHeaderComponent,
+    MatStepperModule
   ]
 })
 export class SharedModule { }

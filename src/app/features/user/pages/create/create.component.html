@@ -1,0 +1,27 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <mat-stepper linear #stepper>
+          <mat-step label="A propos" state="person">
+            <app-info-form></app-info-form>
+            <div>
+              <button class="btn btn-sm btn-primary" mat-button matStepperNext>Suivant</button>
+            </div>
+          </mat-step>
+          <mat-step label="Shop" state="location" [optional]="isValidUSer">
+            <app-shop-form></app-shop-form>
+          </mat-step>
+          <ng-template matStepperIcon="person">
+            <mat-icon>person</mat-icon>
+          </ng-template>
+          <ng-template matStepperIcon="location">
+            <mat-icon>location_on</mat-icon>
+          </ng-template>
+        </mat-stepper>
+      </div>
+    </div>
+  </div>
+</section>

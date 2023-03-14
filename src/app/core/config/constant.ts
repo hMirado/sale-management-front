@@ -99,9 +99,9 @@ export const appMenu: Menu[] = [
             url: '/test'
           },
           {
-            authorization: 'PAGE_STOCK',
+            authorization: 'PAGE_USER',
             label: 'Gestion des utilisateurs',
-            url: '/test'
+            url: '/user'
           },
         ]
       }
