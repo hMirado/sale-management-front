@@ -8,9 +8,16 @@ export class Shop {
   shop_box?: string;
   city!: string;
   status!: boolean;
-  shop_login!: string;
-  companyCompanyId!: number;
+  shop_login?: string;
+  companyCompanyId?: number;
   createdAt?: Date;
   updatedAt?: Date;
   company?: Company;
+  user_shop?: {
+    user_id: number;
+    shop_id: number;
+    is_current_shop: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+}
 }

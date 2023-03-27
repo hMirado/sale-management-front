@@ -23,13 +23,13 @@
     <div class="col-sm-4">
       <div class="form-group">
         <label for="">N° Télephone <span class="text-danger">*</span></label>
-        <input type="number" class="form-control form-control-sm" id="phone_number" formControlName="phone_number" (input)="triggerEvent()">
+        <input type="text" class="form-control form-control-sm" id="phone_number" formControlName="phone_number" (input)="triggerEvent()">
       </div>
     </div>
     <div class="col-sm-4">
       <div class="form-group">
-        <label for="">Shop <span class="text-danger">*</span></label>
-        <select class="form-control form-control-sm" id="role" formControlName="role" (change)="triggerEvent()">
+        <label for="">Rôle <span class="text-danger">*</span></label>
+        <select class="form-control form-control-sm" id="fk_role_id" formControlName="fk_role_id" (change)="triggerEvent()">
           <option selected disabled>Sélectionner ici</option>
           <option *ngFor="let role of roles" [value]="role.role_id">{{ role.role_name }}</option>
         </select>

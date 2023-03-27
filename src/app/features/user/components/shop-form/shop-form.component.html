@@ -1,1 +1,41 @@
-<p>shop-form works!</p>
+<form *ngIf="userCreated" [formGroup]="shopFormGroup">
+  <ng-container *ngIf="userCreated?.role?.role_key == 'ADMIN' else other">
+    <div class="row" formArrayName="shops">
+      <div class="col-4" *ngFor="let shop of shopField?.controls; let i = index" [formGroupName]="i">
+        <div class="form-group">
+          <div class="custom-control custom-checkbox" (click)="triggerEvent(true)">
+            <input
+              class="custom-control-input custom-control-input-primary custom-control-input-outline"
+              type="checkbox"
+              id="checkbox-{{i}}"
+              name="isCecked" 
+              formControlName="isCecked"
+            >
+            <label for="checkbox-{{i}}" class="custom-control-label">{{ shop.value['name'] }} - {{ shop.value['location'] }} </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #other>
+    <div class="row">
+      <div class="col-4" *ngFor="let shop of shops">
+        <div class="form-group">
+          <div class="custom-control custom-radio" (click)="triggerEvent(true)">
+            <input
+              class="custom-control-input custom-control-input-primary custom-control-input-outline"
+              type="radio"
+              id="radio-{{shop?.shop_id}}"
+              name="shops" 
+              formControlName="shops"
+              [value]="shop?.shop_id"
+            >
+            <label for="radio-{{shop?.shop_id}}" class="custom-control-label">
+              {{ shop?.shop_name }} -  {{ shop?.shop_location }} {{ shop.shop_box || '' }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</form>

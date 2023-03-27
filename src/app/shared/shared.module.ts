@@ -31,6 +31,7 @@ import { TableDyanmicComponent } from './components/table-dyanmic/table-dyanmic.
 import { RowComponent } from './components/table-dyanmic/row/row.component';
 import { TableHeaderComponent } from './components/table-dyanmic/table-header/table-header/table-header.component';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 @NgModule({
   declarations: [
     ButtonLeftMenuComponent,
@@ -95,7 +96,8 @@ import { MatStepperModule } from '@angular/material/stepper';
     TableDyanmicComponent,
     RowComponent,
     TableHeaderComponent,
-    MatStepperModule
+    MatStepperModule,
+    MatCheckboxModule
   ]
 })
 export class SharedModule { }

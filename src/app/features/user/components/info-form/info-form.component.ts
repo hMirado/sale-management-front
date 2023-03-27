@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { debounceTime, filter, Subscription, switchMap } from 'rxjs';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Role } from 'src/app/shared/models/role/role.model';
+import { User } from '../../models/user/user.model';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -45,7 +46,7 @@ export class InfoFormComponent implements OnInit, OnDestroy {
           Validators.maxLength(10),
         ]
       ],
-      role: ['', Validators.required],
+      fk_role_id: ['', Validators.required],
       trigger: false
     });
   }
@@ -75,11 +76,18 @@ export class InfoFormComponent implements OnInit, OnDestroy {
       ).subscribe((value: any) => {
         this.triggerEvent(false)
         if (
-          value['first_name'] && value['first_name'] != '' && value['last_name'] && value['last_name'] != '' &&
-          value['email'] && value['email'] != '' && value['phone_number'] && value['phone_number'] != '' &&
-          value['role'] && value['role'] != ''
+          (value['first_name'] && value['first_name'] != '') || (value['last_name'] && value['last_name'] != '') ||
+          (value['phone_number'] && value['phone_number'] != '') || (value['fk_role_id'] && value['fk_role_id'] != '')
         ) {
-          console.log(value);
+          const user: User = {
+            first_name: value['first_name'],
+            last_name: value['last_name'],
+            phone_number: value['phone_number'],
+            fk_role_id: value['fk_role_id']
+          }
+          this.userService.nextUserInfoValue(user);
+        } else {
+          this.userService.nextUserInfoValue(null);
         }
       })
     );

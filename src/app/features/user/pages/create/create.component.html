@@ -5,14 +5,26 @@
     <div class="row">
       <div class="col-12">
         <mat-stepper linear #stepper>
-          <mat-step label="A propos" state="person">
+          <mat-step label="A propos de l'utilisateur" state="person">
             <app-info-form></app-info-form>
             <div>
-              <button class="btn btn-sm btn-primary" mat-button matStepperNext>Suivant</button>
+              <button 
+                class="btn btn-sm btn-primary"
+                [class.btn-disabled] = "!isValidUserInfo"
+                mat-button 
+                matStepperNext
+              >
+                Suivant
+              </button>
             </div>
           </mat-step>
-          <mat-step label="Shop" state="location" [optional]="isValidUSer">
+          <mat-step label="Shop de rattachement" state="location" [optional]="isValidUserInfo">
             <app-shop-form></app-shop-form>
+            <div>
+              <button class="btn btn-sm btn-primary" mat-button matStepperPrevious>
+                Précédant
+              </button>
+            </div>
           </mat-step>
           <ng-template matStepperIcon="person">
             <mat-icon>person</mat-icon>

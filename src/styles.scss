@@ -67,3 +67,11 @@ input[type=number] {
 .cdk-overlay-pane {
   max-height: 250px;
 }
+
+.btn-disabled {
+  background-color: rgba(0, 0, 0, 0.54);
+  border-color: rgba(0, 0, 0, 0.54);
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: auto;
+}
