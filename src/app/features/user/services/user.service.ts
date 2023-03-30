@@ -16,33 +16,12 @@ export class UserService {
     private apiService: ApiService
   ) { }
 
-  getRoles(): Observable<ApiResponse> {
-    let url = `${environment['store-service']}/role`;
-    return this.apiService.doGet(url);
-  }
-
-  getShopByStatus(): Observable<ApiResponse> {
-    let url = `${environment['store-service']}/shop`;
-    return this.apiService.doGet(url, {status: true});
-  }
-
   nextUserInfoValue(value: User | null): void {
     this.userInfoValue.next(value);
   }
 
   getUserValue(): Observable<User | null> {
     return this.userInfoValue;
-  }
-
-  createUser(user: User): Observable<ApiResponse> {
-    let url = `${environment['store-service']}/user`;
-    return this.apiService.doPost(url, user);
-  }
-
-  getAllShop(): Observable<ApiResponse> {
-    const param = { status: true };
-    const url = `${environment['store-service']}/shop`;
-    return this.apiService.doGet(url, param);
   }
 
   nextUserCreated(userCreated: User): void {
@@ -59,5 +38,31 @@ export class UserService {
 
   getUserShop(): Observable<any | null> {
     return  this.userShop;
+  }
+
+  getRoles(): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/role`;
+    return this.apiService.doGet(url);
+  }
+
+  getShopByStatus(): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/shop`;
+    return this.apiService.doGet(url, {status: true});
+  }
+
+  createUser(user: User): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/user`;
+    return this.apiService.doPost(url, user);
+  }
+
+  getAllShop(): Observable<ApiResponse> {
+    const param = { status: true };
+    const url = `${environment['store-service']}/shop`;
+    return this.apiService.doGet(url, param);
+  }
+
+  addUserShop(value: {user: number, shops: number[]}): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/user/add-shop`;
+    return this.apiService.doPost(url, value);
   }
 }

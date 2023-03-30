@@ -27,7 +27,7 @@ export class ShopFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAllShop();
     this.getUserCreated();
-    this.shopFieldValueChange();
+    this.formGroupValueChange();
   }
 
   ngOnDestroy(): void {
@@ -48,13 +48,13 @@ export class ShopFormComponent implements OnInit, OnDestroy {
   }
 
   get shopField(): FormArray {
-    return this.shopFormGroup?.get('shops') as FormArray;
+    return this.shopFormGroup.get('shops') as FormArray;
   }
 
   addShop(id: number, name: string, location: string) {
     const field = this.formBuilder.group({
       id: [id, Validators.required],
-      isCecked: false,
+      isChecked: false,
       name: [name, Validators.required],
       location: [location, Validators.required],
     });
@@ -81,11 +81,10 @@ export class ShopFormComponent implements OnInit, OnDestroy {
             this.shops.forEach((shop: Shop) => {
               this.addShop(shop.shop_id, shop.shop_name, shop.shop_location + ' ' + (shop.shop_box || ''));
             });
+            this.shopsFieldValueChange();
           } else {
             this.shopFormGroup?.removeControl('shops');
             this.shopFormGroup.addControl('shops', this.formBuilder.control('', Validators.required));
-            console.log(this.shopFormGroup);
-            
           }
         }
       })
@@ -97,21 +96,35 @@ export class ShopFormComponent implements OnInit, OnDestroy {
     this.shopFormGroup.updateValueAndValidity();
   }
 
-  shopFieldValueChange() {
+  shopsFieldValueChange() {
     this.subscription.add(
-      this.shopField?.valueChanges.pipe(
+      this.shopField.valueChanges.pipe(
         filter(value => value && this.shopFormGroup.value['trigger'] && this.userCreated?.role?.role_key == 'ADMIN'),
         debounceTime(250)
       ).subscribe((values: any) => {
         this.shopFormGroup.controls['trigger'].setValue(false);
-        console.log(values);
         let ids: number[] = [];
         values.forEach((value: any) => {
-          if (value['isChecked']) ids.push(value['id']);
+           if (value['isChecked']) ids.push(value['id']);
         })
         const shopInfo = {
           user: this.userCreated.user_id,
           shops: ids
+        }
+        this.userService.nextUserShop(shopInfo);
+      })
+    );
+  }
+
+  formGroupValueChange() {
+    this.subscription.add(
+      this.shopFormGroup.valueChanges.pipe(
+        filter(value => value && this.shopFormGroup.value['trigger'] && this.userCreated?.role?.role_key != 'ADMIN'),
+        debounceTime(250)
+      ).subscribe((values: any) => {
+        const shopInfo = {
+          user: this.userCreated.user_id,
+          shops: [values['shops']]
         }
         this.userService.nextUserShop(shopInfo);
       })

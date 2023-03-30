@@ -5,24 +5,29 @@
     <div class="row">
       <div class="col-12">
         <mat-stepper linear #stepper>
-          <mat-step label="A propos de l'utilisateur" state="person">
+          <mat-step label="Information de l'utilisateur" state="person">
             <app-info-form></app-info-form>
             <div>
               <button 
                 class="btn btn-sm btn-primary"
                 [class.btn-disabled] = "!isValidUserInfo"
                 mat-button 
-                matStepperNext
+                (click)="createUser()"
               >
-                Suivant
+                Creer
               </button>
             </div>
           </mat-step>
-          <mat-step label="Shop de rattachement" state="location" [optional]="isValidUserInfo">
+          <mat-step label="Shop de rattachement" state="location">
             <app-shop-form></app-shop-form>
             <div>
-              <button class="btn btn-sm btn-primary" mat-button matStepperPrevious>
-                Précédant
+              <button 
+                class="btn btn-sm btn-primary" 
+                [class.btn-disabled] = "!isValidUserShop" 
+                mat-button 
+                (click)="addUserShop()"
+              >
+                Enregistrer
               </button>
             </div>
           </mat-step>
