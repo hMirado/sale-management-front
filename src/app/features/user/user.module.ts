@@ -9,14 +9,17 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { InfoFormComponent } from './components/info-form/info-form.component';
 import { ShopFormComponent } from './components/shop-form/shop-form.component';
-
+import { EditComponent } from './pages/edit/edit.component';
+import { ShopFormComponent as ShopFormEditComponent } from './components/edit/shop-form/shop-form.component';
 
 @NgModule({
   declarations: [
     ListComponent,
     CreateComponent,
     InfoFormComponent,
-    ShopFormComponent
+    ShopFormComponent,
+    EditComponent,
+    ShopFormEditComponent
   ],
   imports: [
     CommonModule,
@@ -30,6 +33,6 @@ import { ShopFormComponent } from './components/shop-form/shop-form.component';
       provide: STEPPER_GLOBAL_OPTIONS,
       useValue: {displayDefaultIndicatorType: false},
     },
-  ]
+  ],
 })
 export class UserModule { }

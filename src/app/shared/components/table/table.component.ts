@@ -67,4 +67,8 @@ export class TableComponent implements OnInit, OnDestroy {
   setDetail(id: string) {
     this.tableService.setDetailId(id);
   }
+
+  getLineId(action: string, id: string) {
+    this.tableService.setLineId({action: action, id: id})
+  }
 }

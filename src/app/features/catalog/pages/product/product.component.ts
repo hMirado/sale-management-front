@@ -6,7 +6,6 @@ import { NotificationService } from 'src/app/core/services/notification/notifica
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { tableProductHeader, tableProductId } from '../../config/constant';
 import { ProductService } from '../../service/product/product.service';
-import { ActivatedRoute, Params } from "@angular/router";
 import { TableService } from "../../../../shared/serives/table/table.service";
 import { ICell, IRow, ITable } from "../../../../shared/models/table/i-table";
 import { Product } from "../../models/product/product.model";
@@ -326,11 +325,9 @@ export class ProductComponent implements OnInit, OnDestroy {
         filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'product-filter'),
         switchMap((filter: ITableFilterSearchValue|null) => {
           this.rows = [];
-          this.params['page'] = 1
-          filter?.value.forEach((value, i) => {
-            this.params[Object.keys(value)[0]] = value[Object.keys(value)[0]]
-          })
-          return this.productService.getProducts(this.params)
+          this.params['page'] = 1;
+          this.params = { ...this.params, ... filter?.value };
+          return this.productService.getProducts(this.params);
         })
       ).subscribe((response: ApiResponse) => this.getProductsResponse(response))
     );

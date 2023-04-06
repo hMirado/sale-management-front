@@ -450,11 +450,9 @@ export class TransfertComponent implements OnInit, OnDestroy {
       this.tableFilterService.filterFormValue$.pipe(
         filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'transfer-filter'),
         switchMap((filter: ITableFilterSearchValue|null) => {
-          this.rows = []
-          this.params['page'] = 1
-          filter?.value.forEach((value, i) => {
-            this.params[Object.keys(value)[0]] = value[Object.keys(value)[0]]
-          })
+          this.rows = [];
+          this.params['page'] = 1;
+          this.params = { ...this.params, ... filter?.value }
           return this.transferService.getTransfers(this.currentShop, this.currentUser, this.params)
         })
       ).subscribe((response: ApiResponse) => this.getTransfersResponse(response))

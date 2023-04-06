@@ -88,14 +88,15 @@ export class TableFilterComponent implements OnInit, OnDestroy {
           this.filterFormGroup.patchValue({triggerValueChange: false});
           this.filterFormGroup.updateValueAndValidity();
           this.isClicked = false;
-          let filterValue: ITableFilterSearchValue = { id: value.id, value: [] };
+          let filterValue: ITableFilterSearchValue = { id: value.id, value: {} };
           this.chips = [];
           value.fields.forEach((field: any) => {
             const search = field.fieldValue === null ? '' : field.fieldValue;
             if (search != '') this.chips.push(search)
             let formValue: any = {};
-            formValue[field.key] = search;
-            filterValue.value.push(formValue);
+            //formValue[field.key] = search;
+
+            filterValue.value[field.key] = search;
           })
           return of(filterValue);
         })

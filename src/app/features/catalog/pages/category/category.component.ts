@@ -231,7 +231,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'category-filter'),
         switchMap((filter: ITableFilterSearchValue|null) => {
           this.rows = []
-          this.keyword = filter?.value[0].keyword
+          this.keyword = filter?.value['keyword']
           return this.categoryService.getCategories(1, 1, this.keyword)
         })
       ).subscribe((response: ApiResponse) => this.getCategoriesResponse(response))

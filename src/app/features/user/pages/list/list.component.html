@@ -3,6 +3,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-2">
+        <app-info-box [data]="infoBox" id="user"></app-info-box>
       </div>
     </div>
     <div class="row mb-1">
@@ -10,6 +11,35 @@
         <button class="btn btn-block btn-outline-primary btn-sm" (click)="goToCreateUser()">
           <i class="fas fa-plus"></i> Créer un utilisateur
         </button>
+      </div>
+    </div>
+    <div class="mb-2">
+      <app-table-filter [id]="'user-filter'"></app-table-filter>
+    </div>
+    <div class="card">
+      <div class="card-bod table-responsive p-0">
+        <app-table [id]="'user'"></app-table>
+      </div>
+      <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
+        <ul class="pagination pagination-sm m-0 float-right">
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="goToNextPage(lastPage)">&laquo;</span>
+          </li>
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="goToNextPage(lastPage)">{{ lastPage
+              }}</span>
+          </li>
+          <li class="page-item">
+            <a class="page-link pointer bg-primary">{{ currentPage }}</a>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="goToNextPage(nextPage)">{{ nextPage
+              }}</span>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="goToNextPage(nextPage)">&raquo;</span>
+          </li>
+        </ul>
       </div>
     </div>
   </div>

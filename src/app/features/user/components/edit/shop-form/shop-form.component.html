@@ -1,0 +1,64 @@
+<form *ngIf="user" [formGroup]="shopFormGroup">
+  <ng-container *ngIf="isAdmin else other">
+    <div class="row" formArrayName="shops">
+      <div class="col-sm-6 col-md-4 mb-3" *ngFor="let shop of shopField?.controls; let i = index" [formGroupName]="i">
+        <div class="form-group">
+          <div class="custom-control custom-checkbox">
+            <input 
+              class="custom-control-input custom-control-input-primary custom-control-input-outline"
+              type="checkbox" 
+              id="checkbox-{{i}}" 
+              name="isChecked" 
+              formControlName="isChecked"
+              [attr.disabled]="!isEditable ? '' : null"
+            >
+            <label for="checkbox-{{i}}" class="custom-control-label">
+              <div class="info-box">
+                <div class="info-box-content">
+                  <span class="info-box-text text-center text-muted">{{ shop.value['name'] }}</span>
+                  <span class="info-box-text text-center text-muted">{{ shop.value['location'] }}</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #other>
+    <div class="row">
+      <div class="col-sm-6 col-md-4 mb-3" *ngFor="let shop of shops">
+        <div class="form-group">
+          <div class="custom-control custom-radio">
+            <input 
+              class="custom-control-input custom-control-input-primary custom-control-input-outline" 
+              type="radio"
+              id="radio-{{shop?.shop_id}}" 
+              name="shops" formControlName="shops" 
+              [value]="shop?.shop_id"
+              [checked]="shop.shop_id == +selectedShopId" 
+              [attr.disabled]="!isEditable ? '' : null"
+            >
+            <label for="radio-{{shop?.shop_id}}" class="custom-control-label">
+              <div class="info-box">
+                <div class="info-box-content">
+                  <span class="info-box-text text-center text-muted">{{ shop?.shop_name }}</span>
+                  <span class="info-box-text text-center text-muted">{{  shop?.shop_location }} {{ shop.shop_box || '' }}</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <div class="mt-3 float-right" *ngIf="isEditable else disabledEdit">
+    <button class="btn btn-sm btn-outline-danger mr-1" (click)="cancelEdit()">Annuler</button>
+    <button class="btn btn-sm btn-outline-primary ml-1">Enregistrer</button>
+  </div>
+  <ng-template #disabledEdit>
+    <div class="mt-3 float-right">
+      <button class="btn btn-sm btn-default ml-1" (click)="enableEdit()">Modifier</button>
+    </div>
+  </ng-template>
+</form>

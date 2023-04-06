@@ -10,6 +10,7 @@ export class TableService {
   public expandUiid$: Subject<string> = new Subject<string>();
   public tableExpandedValue$: BehaviorSubject<ICell|null> = new BehaviorSubject<ICell|null>(null);
   private detailId$: Subject<string> = new Subject<string>();
+  private lineId$: Subject<any> = new Subject<any>();
 
   constructor() { }
 
@@ -31,5 +32,13 @@ export class TableService {
 
   getDetailId() {
     return this.detailId$;
+  }
+
+  setLineId(value: any) {
+    this.lineId$.next(value);
+  }
+
+  getlineId() {
+    return this.lineId$;
   }
 }

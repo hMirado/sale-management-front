@@ -21,5 +21,7 @@ export interface ITableFilterFieldValue {
 
 export interface ITableFilterSearchValue {
   id: string, 
-  value: any[]
+  value: {
+    [key: string]: any
+  }
 }

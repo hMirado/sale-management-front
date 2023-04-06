@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CoreComponent } from 'src/app/core/core.component';
 import { AuthenticationGuard } from 'src/app/shared/guards/authentication/authentication.guard';
 import { CreateComponent } from './pages/create/create.component';
+import { EditComponent } from './pages/edit/edit.component';
 import { ListComponent } from './pages/list/list.component';
 
 const routes: Routes = [
@@ -17,6 +18,10 @@ const routes: Routes = [
       {
         path: 'create',
         component: CreateComponent
+      },
+      {
+        path: 'edit/:uuid',
+        component: EditComponent
       },
       {
         path: '**',

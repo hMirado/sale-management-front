@@ -69,9 +69,17 @@ input[type=number] {
 }
 
 .btn-disabled {
-  background-color: rgba(0, 0, 0, 0.54);
-  border-color: rgba(0, 0, 0, 0.54);
+  background-color: rgba(0, 0, 0, 0.30);
+  border-color: rgba(0, 0, 0, 0.30);
+  color: #202224;
   opacity: 0.3;
   pointer-events: none;
   cursor: auto;
+}
+
+.page-action-btn {
+  width: 100%;
+  border-top: 1px rgb(119, 119, 119) solid;
+  padding-top: 4px;
+  text-align: center;
 }

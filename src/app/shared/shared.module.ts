@@ -32,6 +32,7 @@ import { RowComponent } from './components/table-dyanmic/row/row.component';
 import { TableHeaderComponent } from './components/table-dyanmic/table-header/table-header/table-header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TooltipComponent } from './components/tooltip/tooltip.component';
 @NgModule({
   declarations: [
     ButtonLeftMenuComponent,
@@ -53,7 +54,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     NotificationComponent,
     TableDyanmicComponent,
     RowComponent,
-    TableHeaderComponent
+    TableHeaderComponent,
+    TooltipComponent
   ],
   imports: [
     CommonModule,
@@ -97,7 +99,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     RowComponent,
     TableHeaderComponent,
     MatStepperModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    TooltipComponent
   ]
 })
 export class SharedModule { }

@@ -1,0 +1,90 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-2">
+        <button 
+          class="btn btn-default btn-sm btn-block" 
+          [ngClass]="{'custom-btn-active': currentMenu == menuInfo}" 
+          (click)="selectMenu(menuInfo)"
+        >
+          Information utilisateur
+        </button>
+        <button 
+        class="btn btn-default btn-sm btn-block" 
+        [ngClass]="{'custom-btn-active': currentMenu == menuShopRattached}" 
+        (click)="selectMenu(menuShopRattached)"
+        >
+          Shop de rattachement
+        </button>
+      </div>
+      <div class="col-10">
+        <ng-container *ngIf="currentMenu == menuInfo">
+          <h5 class="mb-4">
+            Information utilisateur
+            <br><small class="badge custom-badge-warning"><i class="fas fa-exclamation"> Cliquer sur le bouton modifier pour effectuer la modification des informations</i></small>
+          </h5>
+          <form [formGroup]="userFormGroup">
+            <div class="row">
+              <div class="col-4">
+                <div class="form-group">
+                  <label for="">Nom <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control form-control-sm" id="last_name" formControlName="last_name" [readonly]="!isEditable">
+                </div>
+              </div>
+              <div class="col-4">
+                <label for="">Prénom(s) <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" id="first_name" formControlName="first_name" [readonly]="!isEditable">
+              </div>
+              <div class="col-4">
+                <label for="">Email</label>
+                <input type="text" class="form-control form-control-sm" id="email" formControlName="email" [readonly]="!isEditable">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-4">
+                <div class="form-group">
+                  <label for="">N° Télephone <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control form-control-sm" id="phone_number" formControlName="phone_number" [readonly]="!isEditable">
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label for="">Rôle <span class="text-danger">*</span></label>
+                  <select class="form-control form-control-sm" id="fk_role_id" formControlName="fk_role_id" (change)="triggerEvent()" [attr.disabled]="!isEditable ? '' : null">
+                    <option selected disabled>Sélectionner ici</option>
+                    <option *ngFor="let role of roles" [value]="role.role_id">{{ role.role_name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="float-left">
+            <button 
+              class="btn btn-sm btn-outline-primary"
+              [ngClass]="{'btn-disabled': !isEditable}"
+            >
+              Réinitialiser mots de passe
+            </button>
+          </div>
+          <div class="mt-5 float-right page-action-btn" *ngIf="isEditable else disabledEdit">
+            <button class="btn btn-sm btn-outline-danger mr-1" (click)="cancelEdit()">Annuler</button>
+            <button class="btn btn-sm btn-outline-primary ml-1" (click)="saveEdit()">Enregistrer</button>
+          </div>
+          <ng-template #disabledEdit>
+            <div class="mt-5 float-right page-action-btn">
+              <button class="btn btn-sm btn-default ml-1" (click)="enableEdit()">Modifier</button>
+            </div>
+          </ng-template>
+        </ng-container>
+        <ng-container *ngIf="currentMenu == menuShopRattached">
+          <h5 class="mb-4">
+            Shop de rattachement
+            <br><small class="badge custom-badge-warning"><i class="fas fa-exclamation"> Cliquer sur le bouton modifier pour effectuer la modification du shop rattaché</i></small>
+          </h5>
+          <app-shop-form-edit [user]="user"></app-shop-form-edit>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</section>

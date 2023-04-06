@@ -1,0 +1,20 @@
+.custom-control {
+  text-align: justify;
+  padding-left: 0 !important;
+}
+
+.custom-control-label {
+  width: 70%;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-control-label::before {
+  top: 5.5rem !important;
+  left: 49% !important;
+}
+
+.custom-control-label::after {
+  top: 5.5rem !important;
+  left: 49% !important;
+}

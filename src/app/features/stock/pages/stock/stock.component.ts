@@ -530,11 +530,9 @@ export class StockComponent implements OnInit, OnDestroy {
       this.tableFilterService.filterFormValue$.pipe(
         filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'stock-filter'),
         switchMap((filter: ITableFilterSearchValue|null) => {
-          this.rows = []
-          this.params['p'] = 0
-          filter?.value.forEach((value, i) => {
-            this.params[Object.keys(value)[0]] = value[Object.keys(value)[0]]
-          })
+          this.rows = [];
+          this.params['p'] = 0;
+          this.params = { ...this.params, ... filter?.value }
           return this.stockService.getStocks(this.shopFilter, this.params)
         })
       ).subscribe((response: ApiResponse) => this.getStockresponse(response))

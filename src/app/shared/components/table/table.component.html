@@ -9,7 +9,7 @@
       >
         {{header.value}}
       </th>
-      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isViewable || this.tables?.body?.isViewable">Action</th>
+      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isViewable || this.tables?.body?.isViewable">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -32,26 +32,26 @@
       </td>
       <td *ngIf="haveAction">
         <div class="row">
-          <div *ngIf="this.tables?.body?.isEditable" class="col-2">
-            <button class="btn btn-sm btn-secondary">
-              <i class="pointer fas fa-edit"></i>
-            </button>
+          <div *ngIf="this.tables?.body?.isEditable" class="col-2 text-center">
+            <app-tooltip text="Modifier">
+              <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content (click)="getLineId('edit', body.id)"></i>
+            </app-tooltip>
           </div>
-          <div *ngIf="this.tables?.body?.isDeleteable" class="col-2">
-            <button class="btn btn-sm btn-secondary">
-              <i class="pointer far fa-trash-alt"></i>
-            </button>
+          <div *ngIf="this.tables?.body?.isDeleteable" class="col-2 text-center">
+            <app-tooltip text="Supprimer">
+              <i class="pointer far fa-trash-alt text-secondary" style="font-size:18px" content (click)="getLineId('delete', body.id)"></i>
+            </app-tooltip>
           </div>
-          <div *ngIf="this.tables?.body?.isSwitchable" class="col-2">
+          <div *ngIf="this.tables?.body?.isViewable" class="col-2 text-center">
+            <app-tooltip text="Détail">
+              <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content (click)="setDetail(body.id)"></i>
+            </app-tooltip>
+          </div>
+          <div *ngIf="this.tables?.body?.isSwitchable" class="col-2 text-center">
             <div class="custom-control custom-switch custom-switch-on-success col-2">
               <input type="checkbox" class="custom-control-input" id="customSwitch{{i}}">
               <label class="custom-control-label" for="customSwitch{{i}}"></label>
             </div>
-          </div>
-          <div *ngIf="this.tables?.body?.isViewable" class="col-2">
-            <button class="btn btn-sm btn-secondary" (click)="setDetail(body.id)">
-              <i class="pointer fas fa-eye fa-1x"></i>
-            </button>
           </div>
         </div>
       </td>
