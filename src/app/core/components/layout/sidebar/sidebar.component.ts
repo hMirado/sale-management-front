@@ -5,7 +5,7 @@ import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { IAuthorization } from 'src/app/shared/models/i-authorization/i-authorization';
 import { Menu } from 'src/app/core/models/menu/menu.model';
 import { appMenu } from 'src/app/core/config/constant'
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,6 +17,7 @@ export class SidebarComponent implements OnInit {
   public menuId: number = 0;
   public menuOpenId: number;
   public subMenuOpenId: number;
+  public user: any
   constructor(
     private localStorageService: LocalStorageService,
     private helperService: HelperService,
@@ -30,6 +31,7 @@ export class SidebarComponent implements OnInit {
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
     const user = JSON.parse(this.helperService.decrypt(data));
+    this.user = user;
     const userAuthorizations = user.role.authorizations;
     const authKey = userAuthorizations.map((auth: IAuthorization) => auth.authorization_key);
     this.getUserMenu(authKey)
@@ -45,7 +47,9 @@ export class SidebarComponent implements OnInit {
         const hasGroupName = menu.groupName ? true : false;
         this.addMenu(authKey, menu, i,hasGroupName);
       }
-      if (menu.authorization) this.menus.push(menu)
+      if (menu.authorization && authKey.includes(menu.authorization)) {
+        this.menus.push(menu)
+      }
     })
   }
 
@@ -61,23 +65,26 @@ export class SidebarComponent implements OnInit {
           this.menuOpenId = i+1;
           this.subMenuOpenId = 0;
         }
+        
         newMenu.subMenu = newMenu.subMenu?.filter(x => authKey.includes(x.authorization as string));
       }
       if (subMenu.subMenu && subMenu.subMenu.length > 0) {
         subMenu.subMenu = subMenu.subMenu.filter(x =>{
           if (x.url === route || x.url === route.substring(0, this.router.url.indexOf('?'))) {
             this.menuOpenId = 0;
-            this.subMenuOpenId = i+1;
+            this.subMenuOpenId = i; // i+1
           }
           return authKey.includes(x.authorization as string)
         });
-        newMenu.subMenu?.push(subMenu)
+        
+        if (subMenu.subMenu.length>0) newMenu.subMenu?.push(subMenu)
       }
     })
+    
     if (newMenu) this.menus.push(newMenu);
   }
 
-  public getMenuOpened(i: number = 0, j: number = 0){
+  getMenuOpened(i: number = 0, j: number = 0){
     this.menuOpenId = i;
     this.subMenuOpenId = j;
   }
