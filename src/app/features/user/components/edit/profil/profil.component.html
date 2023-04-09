@@ -1,0 +1,29 @@
+<div class="card-body" *ngIf="role">
+  <h5 class="">
+    Profil utilisateur
+    <br>
+    <small class="badge custom-badge-warning">
+      <i class="fas fa-exclamation"> L'utilisateur a le profil {{ role.role_name ?? profil.role_name }}
+      </i>
+    </small>
+  </h5>
+  <div class="row">
+    <ng-container *ngTemplateOutlet="recursion; context:{ list:  profil?.authorizations }"></ng-container>
+    <ng-template #recursion let-list="list">
+      <ul 
+        class="col-12 col-md-5" 
+        *ngFor="let auth of list"
+        [class.mt-3]="!auth.authorization_parent"
+      >
+        <li>
+          <span [ngClass]="{'no-parent': !auth.authorization_parent}">
+            {{ auth?.authorization_name }}
+          </span>
+          <ng-container *ngIf="auth.authorization_child.length > 0">
+            <ng-container *ngTemplateOutlet="recursion; context:{ list: auth?.authorization_child}"></ng-container>
+          </ng-container>
+        </li>
+      </ul>
+    </ng-template>
+  </div>
+</div>
