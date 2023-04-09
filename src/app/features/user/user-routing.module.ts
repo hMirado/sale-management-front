@@ -20,7 +20,7 @@ const routes: Routes = [
         component: CreateComponent
       },
       {
-        path: 'edit/:uuid',
+        path: 'detail/:uuid',
         component: EditComponent
       },
       {

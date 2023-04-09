@@ -4,6 +4,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { concatMap, filter, Subscription } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { Role } from 'src/app/shared/models/role/role.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
@@ -17,7 +18,7 @@ import { UserService } from '../../services/user.service';
 })
 export class EditComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
-  public title: string = 'Modification de l\'utilisateur';
+  public title: string = 'Détail de l\'utilisateur';
   public breadCrumbs: BreadCrumb[] = [];
   public user: User = {};
   public userFormGroup!: FormGroup;
@@ -29,12 +30,15 @@ export class EditComponent implements OnInit, OnDestroy {
   public isEditable: boolean = false;
   public menuInfo: string = 'info';
   public menuShopRattached: string = 'shop';
+  public menuProfil: string = 'profil';
   public currentMenu: string = this.menuInfo;
+  private userUuid: string = '';
 
   constructor(
     private activedRoute: ActivatedRoute,
     private userService: UserService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private notificationService: NotificationService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -61,7 +65,7 @@ export class EditComponent implements OnInit, OnDestroy {
         label: 'Liste des utilisateurs',
       },
       {
-        label: 'Modification de l\'utilisateur',
+        label: 'Détail de l\'utilisateur',
       }
     ]
   }
@@ -104,14 +108,14 @@ export class EditComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.activedRoute.paramMap.pipe(
         concatMap((params: ParamMap) => {
-          const uuid = params.get('uuid') as string;
-          return this.userService.getUserByUuid(uuid);
+          this.userUuid = params.get('uuid') as string;
+          return this.userService.getUserByUuid(this.userUuid);
         })
       ).subscribe((response: ApiResponse) => {
         this.user = response.status == responseStatus.success ? response.data : null; 
         if (this.user) {
           this.userFormGroup.patchValue({
-            user_uuid: this.user.user_uuid,
+            user_uuid: this.userUuid,
             first_name: this.user.first_name,
             last_name: this.user.last_name,
             email: this.user.email,
@@ -119,6 +123,7 @@ export class EditComponent implements OnInit, OnDestroy {
             fk_role_id: this.user.fk_role_id,
           });
           this.userFormGroup.updateValueAndValidity();
+          this.selectedRole = this.user.role as Role;
         }
       })
     );
@@ -145,15 +150,15 @@ export class EditComponent implements OnInit, OnDestroy {
 
   roleValueChange() {
     this.userFormGroup.get('fk_role_id')?.valueChanges.pipe(
-      //filter(value => value && this.userFormGroup.value['trigger'])
+      filter(value => value && this.isEditable /*&& this.userFormGroup.value['trigger']*/)
     ).subscribe(value => {
-      this.userFormGroup.get('trigger')?.setValue(false);
       this.selectedRole = this.roles.filter(role => role.role_id == value)[0];
     })
   }
 
   selectMenu(menu: string) {
     if (this.currentMenu != menu) this.currentMenu = menu;
+    this.isEditable = false;
   }
 
   cancelEdit() {
@@ -166,6 +171,19 @@ export class EditComponent implements OnInit, OnDestroy {
   }
 
   saveEdit() {
-    console.log(this.userFormGroup.value);
+    const value = this.userFormGroup.value;
+    this.subscription.add(
+      this.userService.updatUser(value).subscribe((response: ApiResponse) => {
+        this.showNotification('success', response.notification);
+        this.isEditable = false;
+      })
+    );
+  }
+
+  showNotification(type: string, message: string) {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
   }
 }

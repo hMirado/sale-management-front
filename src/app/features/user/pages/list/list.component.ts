@@ -107,7 +107,7 @@ export class ListComponent implements OnInit, OnDestroy {
       });
       let cells: ICell = {
         cellValue: rows,
-        isEditable: true
+        isViewable: true
       };
       table.body = cells;
       this.tableService.setTableValue(table);
@@ -154,7 +154,9 @@ export class ListComponent implements OnInit, OnDestroy {
   getLineId() {
     this.subscription.add(
       this.tableService.getlineId().subscribe((value: any) => {
-        if (value && value['action'] == 'edit') this.router.navigateByUrl(`/user/edit/${value['id']}`);
+        console.log(value);
+        
+        if (value && value['action'] == 'view') this.router.navigateByUrl(`/user/detail/${value['id']}`);
       })
     );
   }

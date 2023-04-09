@@ -11,6 +11,7 @@ import { InfoFormComponent } from './components/info-form/info-form.component';
 import { ShopFormComponent } from './components/shop-form/shop-form.component';
 import { EditComponent } from './pages/edit/edit.component';
 import { ShopFormComponent as ShopFormEditComponent } from './components/edit/shop-form/shop-form.component';
+import { ProfilComponent } from './components/edit/profil/profil.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ShopFormComponent as ShopFormEditComponent } from './components/edit/sh
     InfoFormComponent,
     ShopFormComponent,
     EditComponent,
-    ShopFormEditComponent
+    ShopFormEditComponent,
+    ProfilComponent
   ],
   imports: [
     CommonModule,

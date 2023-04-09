@@ -7,6 +7,7 @@ import { Role } from 'src/app/shared/models/role/role.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { IRow } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
+import { UserFormValue } from '../models/user-form-value/user-form-value';
 import { User } from '../models/user/user.model';
 
 @Injectable({
@@ -196,6 +197,21 @@ export class UserService {
 
   getUserByUuid(uuid: string): Observable<ApiResponse> {
     const url = `${environment['store-service']}/user/${uuid}`;
+    return this.apiService.doGet(url);
+  }
+
+  updatUser(user: UserFormValue): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/user/update`;
+    return this.apiService.doPut(url, user);
+  }
+
+  updateUserShop(shop: any): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/user/update-shop`;
+    return this.apiService.doPost(url, shop);
+  }
+
+  getRole(roleUuid: string): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/role/${roleUuid}`;
     return this.apiService.doGet(url);
   }
 }

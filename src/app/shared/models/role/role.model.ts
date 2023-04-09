@@ -1,3 +1,4 @@
+import { IAuthorization } from "../i-authorization/i-authorization";
 export class Role {
   role_id!: number;
   role_uuid!: string;
@@ -5,4 +6,5 @@ export class Role {
   role_name!: string;
   createdAt?: Date;
   updatedAt?: Date;
+  authorizations?: IAuthorization[]
 }

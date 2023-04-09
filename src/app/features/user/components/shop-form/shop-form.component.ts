@@ -122,10 +122,18 @@ export class ShopFormComponent implements OnInit, OnDestroy {
         filter(value => value && this.shopFormGroup.value['trigger'] && this.userCreated?.role?.role_key != 'ADMIN'),
         debounceTime(250)
       ).subscribe((values: any) => {
-        const shopInfo = {
-          user: this.userCreated.user_id,
-          shops: [values['shops']]
+        let shops = [values['shops']];
+        if ( values['shops'][0].id ) {
+          shops = values['shops'].map((shop: any) => {
+            if (shop['isChecked']) {
+              return shop['id']
+            }
+          }).filter((id: number) => id != undefined);
         }
+        const shopInfo = {
+          user: values['user'],
+          shops: shops
+        };
         this.userService.nextUserShop(shopInfo);
       })
     );
