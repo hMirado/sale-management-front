@@ -214,4 +214,9 @@ export class UserService {
     const url = `${environment['store-service']}/role/${roleUuid}`;
     return this.apiService.doGet(url);
   }
+
+  resetPassword(userUuid: string): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/user/${userUuid}/reset-password`;
+    return this.apiService.doPut(url);
+  }
 }

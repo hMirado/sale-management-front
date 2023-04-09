@@ -64,9 +64,10 @@
               </div>
             </form>
             <div class="float-left">
-              <button class="btn btn-sm btn-outline-primary" [ngClass]="{'btn-disabled': !isEditable}">
+              <button class="btn btn-sm btn-outline-primary" [ngClass]="{'btn-disabled': !isEditable}" (click)="resetPassword()">
                 Réinitialiser mots de passe
               </button>
+              <span class="ml-1" *ngIf="newPassword !=''"> Nouveau most de passe: <span class="text-danger">{{ newPassword }}</span></span>
             </div>
           </div>
           <div class="card-footer">

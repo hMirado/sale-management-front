@@ -163,6 +163,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
   cancelEdit() {
     this.isEditable = false;
+    this.newPassword = '';
     this.getUser();
   }
 
@@ -176,6 +177,19 @@ export class EditComponent implements OnInit, OnDestroy {
       this.userService.updatUser(value).subscribe((response: ApiResponse) => {
         this.showNotification('success', response.notification);
         this.isEditable = false;
+      })
+    );
+  }
+
+  public newPassword: string = '';
+  resetPassword() {
+    this.subscription.add(
+      this.userService.resetPassword(this.userUuid).subscribe((response: ApiResponse) => {
+        console.log(response);
+        this.newPassword = response.data['newPassword'];
+        this.showNotification('success', response.notification);
+        this.isEditable = false;
+        setTimeout(() => this.newPassword = '', 30000);
       })
     );
   }
