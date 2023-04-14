@@ -6,12 +6,11 @@ import { NotificationService } from 'src/app/core/services/notification/notifica
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { TableService } from 'src/app/shared/serives/table/table.service';
-import { tableCategoryHeader, tableCategoryId } from '../../config/constant';
-import { Category } from '../../models/category/category.model';
-import { CategoryService } from '../../service/category/category.service';
-import {ActivatedRoute, Params} from "@angular/router";
-import { IFilter } from 'src/app/shared/models/i-filter/i-filter';
-import {ModalService} from "../../../../shared/serives/modal/modal.service";
+import { tableCategoryHeader, tableCategoryId } from '../../../config/constant';
+import { Category } from '../../../models/category/category.model';
+import { CategoryService } from '../../../service/category/category.service';
+import {ActivatedRoute, Params, Router} from "@angular/router";
+import {ModalService} from "../../../../../shared/serives/modal/modal.service";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
@@ -19,11 +18,11 @@ import { ITableFilter, ITableFilterField, ITableFilterSearchValue } from 'src/ap
 import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
 
 @Component({
-  selector: 'app-category',
-  templateUrl: './category.component.html',
-  styleUrls: ['./category.component.scss']
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss']
 })
-export class CategoryComponent implements OnInit, OnDestroy {
+export class ListComponent implements OnInit, OnDestroy {
 
   public title: string = 'Catégories d\'articles';
   public breadCrumbs: BreadCrumb[] = [];
@@ -50,6 +49,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private helperService: HelperService,
     private tableFilterService: TableFilterService,
+    private router: Router
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -62,6 +62,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.cancel();
     this.filter();
     this.getFilterValue();
+    this.getLineId();
   }
 
   ngOnDestroy(): void {
@@ -168,7 +169,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     let table: ITable = {
       id: this.tableId,
       header: [],
-      body: null
+      body: null,
     }
     if (response.status == responseStatus.success) {
       this.rows = [];
@@ -179,9 +180,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
       });
       let cells: ICell = {
         cellValue: this.rows,
-        isEditable: false,
-        isDeleteable: false,
-        isSwitchable: false
+        isViewable: true,
       };
       table.header = tableCategoryHeader;
       table.body = cells;
@@ -240,5 +239,13 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   goToNextPage(page: number){
     this.categoryService.getCategories(1, page, this.keyword).subscribe((response: ApiResponse) => this.getCategoriesResponse(response))
+  }
+
+  getLineId() {
+    this.subscription.add(
+      this.tableService.getlineId().subscribe((value: any) => {
+        if (value && value['id'] != '' && value['action'] == 'view') this.router.navigateByUrl(`/catalog/category/${value['id']}`);
+      })
+    );
   }
 }

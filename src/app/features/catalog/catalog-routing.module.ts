@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CoreComponent } from 'src/app/core/core.component';
-import { CategoryComponent } from './pages/category/category.component';
 import { ProductComponent } from './pages/product/product.component';
 import { AuthenticationGuard } from 'src/app/shared/guards/authentication/authentication.guard';
+import { DetailComponent } from './detail/detail.component';
+import { ListComponent as CategoryListComponent } from './pages/category/list/list.component';
 
 const routes: Routes = [
   {
@@ -12,7 +13,20 @@ const routes: Routes = [
     children: [
       {
         path: 'category',
-        component: CategoryComponent
+        children: [
+          {
+            path: '',
+            component: CategoryListComponent
+          }, 
+          {
+            path: ':uuid',
+            component: DetailComponent
+          },
+          {
+            path: '**',
+            redirectTo : ''
+          },
+        ]
       },
       {
         path: 'product',
@@ -20,7 +34,14 @@ const routes: Routes = [
           {
             path: '',
             component: ProductComponent
-          }
+          },
+          {
+            path: '/:uuid'
+          },
+          {
+            path: '**',
+            redirectTo : ''
+          },
         ]
       }
     ],

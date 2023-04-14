@@ -35,7 +35,7 @@ export class CategoryService {
   }
 
   countCategories(): Observable<ApiResponse> {
-    let url = `${environment['store-service']}/category/count`;
+    let url = `${environment['store-service']}/category/statistic/count`;
     return this.apiService.doGet(url);
   }
 
