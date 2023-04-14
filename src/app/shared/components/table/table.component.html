@@ -9,7 +9,7 @@
       >
         {{header.value}}
       </th>
-      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isViewable || this.tables?.body?.isViewable">Actions</th>
+      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isViewable || this.tables?.body?.isViewable" class="text-center">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -31,7 +31,7 @@
         </ng-container>
       </td>
       <td *ngIf="haveAction">
-        <div class="row">
+        <div class="row justify-content-center">
           <div *ngIf="this.tables?.body?.isEditable" class="col-2 text-center">
             <app-tooltip text="Modifier">
               <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content (click)="getLineId('edit', body.id)"></i>

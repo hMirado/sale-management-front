@@ -297,13 +297,14 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   addStock() {
+    console.log(this.stockFormGroup);
+    
     if (!this.stockFormGroup.valid) {
       this.formError = true;
     } else {
       this.formError = false;
       this.stockFormGroup.patchValue({'item': this?.searchProducts[0].product_id});
       this.stockFormGroup.updateValueAndValidity();
-      this.clearForm()
       this.saveStock(this.stockFormGroup.value)
     }
   }

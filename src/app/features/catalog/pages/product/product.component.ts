@@ -128,9 +128,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       });
       let cells: ICell = {
         cellValue: this.rows,
-        isEditable: false,
-        isDeleteable: false,
-        isSwitchable: false
+        isViewable: true,
       };
       table.header = tableProductHeader;
       table.body = cells;
