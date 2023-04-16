@@ -29,7 +29,6 @@ export class ProfilComponent implements OnInit, OnDestroy {
   getProfil() {
     this.subscription.add(
       this.userService.getRole(this.role.role_uuid).subscribe((response: ApiResponse) => {
-        console.log(response.data);
         this.profil = response.data;
       })
     );

@@ -35,6 +35,7 @@ export class TableComponent implements OnInit, OnDestroy {
         if (table && table.id === this.id) {
           this.tables = table;
           this.haveAction = !!(table.body?.isEditable || table.body?.isSwitchable || table.body?.isDeleteable || table.body?.isViewable);
+          this.expand('');
         }
       })
     );

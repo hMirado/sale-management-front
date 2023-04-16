@@ -43,7 +43,7 @@
             </app-tooltip>
           </div>
           <div *ngIf="this.tables?.body?.isViewable" class="col-2 text-center">
-            <app-tooltip text="Détail">
+            <app-tooltip text="Voir détails">
               <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content (click)="getLineId('view', body.id)"></i>
             </app-tooltip>
           </div>
@@ -73,21 +73,27 @@
           </ng-template>
         </td>
         <td *ngIf="haveAction">
-          <div class="row">
-            <div *ngIf="this.tables?.body?.isEditable" class="col-2">
-              <i class="pointer fas fa-edit text-warning"></i>
+          <div class="row justify-content-center">
+            <div *ngIf="this.tables?.body?.isEditable" class="col-2 text-center">
+              <app-tooltip text="Modifier">
+                <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content (click)="getLineId('edit', body.id)"></i>
+              </app-tooltip>
             </div>
-            <div *ngIf="this.tables?.body?.isDeleteable" class="col-2">
-              <i class="pointer far fa-trash-alt text-danger"></i>
+            <div *ngIf="this.tables?.body?.isDeleteable" class="col-2 text-center">
+              <app-tooltip text="Supprimer">
+                <i class="pointer far fa-trash-alt text-secondary" style="font-size:18px" content (click)="getLineId('delete', body.id)"></i>
+              </app-tooltip>
             </div>
-            <div *ngIf="this.tables?.body?.isSwitchable" class="col-2">
+            <div *ngIf="this.tables?.body?.isViewable" class="col-2 text-center">
+              <app-tooltip text="Voir détails">
+                <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content (click)="getLineId('view', body.id)"></i>
+              </app-tooltip>
+            </div>
+            <div *ngIf="this.tables?.body?.isSwitchable" class="col-2 text-center">
               <div class="custom-control custom-switch custom-switch-on-success col-2">
                 <input type="checkbox" class="custom-control-input" id="customSwitch{{i}}">
                 <label class="custom-control-label" for="customSwitch{{i}}"></label>
               </div>
-            </div>
-            <div *ngIf="this.tables?.body?.isViewable" class="col-2">
-              <i class="pointer fas fa-eye text-info"></i>
             </div>
           </div>
         </td>
@@ -97,16 +103,17 @@
       [ngClass]="expanded == body.id ? 'isExpand' : 'isNotExpand'"
       *ngFor="let expandValue of tableExpand?.cellValue; let i = index"
     >
-    <td 
-      *ngFor="let expand of expandValue.rowValue"
-      [ngClass]="{'text-center': expand?.value?.align=='center', 'text-left': expand?.value?.align=='left', 'text-right': expand?.value?.align=='right'}"
-    >
-      <ng-container *ngFor="let value of expand?.value?.value">
-        <p style="margin: 0!important">
-          {{ value }}
-        </p>
-      </ng-container>
-    </td>
+      <td 
+        *ngFor="let expand of expandValue.rowValue"
+        [ngClass]="{'text-center': expand?.value?.align=='center', 'text-left': expand?.value?.align=='left', 'text-right': expand?.value?.align=='right'}"
+      >
+        <ng-container *ngFor="let value of expand?.value?.value">
+          <p style="margin: 0!important">
+            {{ value }}
+          </p>
+        </ng-container>
+      </td>
+      <td *ngIf="haveAction"></td>
     </tr>
   </ng-container>
   </tbody>
