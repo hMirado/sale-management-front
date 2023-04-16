@@ -1,0 +1,13 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+
+<section class="content" *ngIf="product">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12 col-md-3">IMAGE</div>
+      <div class="col-sm-12 col-md-9">
+        <app-product-information [information]="product" (newInformationEvent)="getProductNewValue($event)"></app-product-information>
+        <app-product-price [information]="product"></app-product-price>
+      </div>
+    </div>
+  </div>
+</section>

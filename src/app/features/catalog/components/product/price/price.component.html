@@ -1,0 +1,34 @@
+<fieldset>
+  <legend>Prix <span style="font-size: 13px;">(TTC en MGA)</span></legend>
+  <form class="row m-1" [formGroup]="priceFormgroup">
+    <div class="col-12 form-check text-left">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        id="allShop"
+        name="allShop"
+        formControlName="allShop"
+        (input)="triggerEvent()"
+      >
+      <label class="form-check-label" for="serializable">Tous les shops</label>
+    </div>
+    <ng-container formArrayName="prices">
+      <div class="col-sm-12 col-md-4 form-group" *ngFor="let price of priceField.controls; let i = index;" [formGroupName]="i">
+        <label for="">{{price.value['shopName']}}</label>
+        <input
+          type="number"
+          class="form-control form-control-sm"
+          name="ttcPrice"
+          formControlName="ttcPrice"
+          [readOnly]="(i > 0 && isAllShop)"
+        >
+      </div>
+    </ng-container>
+  </form>
+  <div class="card-footer">
+    <div class="float-right" >
+      <button class="btn btn-sm btn-outline-danger mr-1" (click)="cancel()">Annuler</button>
+      <button class="btn btn-sm btn-outline-primary ml-1" (click)="savePrice()">Enregistrer</button>
+    </div>
+  </div>
+</fieldset>
