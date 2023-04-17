@@ -20,9 +20,9 @@ export const exportCategoryConfig: IExport = {
 export const tableCategoryId: string = 'table-category'
 
 export const tableCategoryHeader: IHeader[] = [
-  {value: 'CATEGORIES'},
-  {value: 'CODE'},
-  {value: 'ARTICLES'}
+  {value: 'CATEGORIES', align: 'left'},
+  {value: 'CODE', align: 'left'},
+  //{value: 'ARTICLES', align: 'center'}
 ]
 // end of category
 
@@ -44,9 +44,10 @@ export const exportProductConfig: IExport = {
 export const tableProductId: string = 'table-product'
 
 export const tableProductHeader: IHeader[] = [
-  {value: 'ARTICLE'},
-  {value: 'CODE'},
-  {value: 'CATEGORIE'},
-  {value: 'PRIX'},
+  {value: 'CODE', align: 'left'},
+  {value: 'LIBELLé', align: 'left'},
+  {value: 'CATEGORIE', align: 'left'},
+  {value: 'SHOP', align: 'left'},
+  {value: 'PRIX (MGA)', align: 'right'},
 ]
 //end of product

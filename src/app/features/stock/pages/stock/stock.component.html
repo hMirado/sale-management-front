@@ -2,28 +2,56 @@
 <section class="content">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-3">
-        INFO BOX
+      <div class="col-2" *ngFor="let box of infoBoxStock">
+        <app-info-box [data]="box" [id]="box['id']"></app-info-box>
       </div>
     </div>
-    <div class="row mb-1">
-      <div class="col-2">
-        <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueId)">
-          <i class="fas fa-plus"></i> Ajouter stock d'article
-        </button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body table-responsive p-0">
-        <app-table [id]="tableId"></app-table>
-      </div>
-      <div class="bg-white card-footer" *ngIf="currentPage > 0">
-        
-      </div>
-    </div>
+    <app-tabs>
+      <app-tab title="STOCK" [id]="stockId">
+        <div class="row mb-2" *ngIf="getAuthorization(authorizationStockAdd)">
+          <div class="col-2">
+            <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(stockId)">
+              <i class="fas fa-plus"></i> Ajouter stock
+            </button>
+          </div>
+        </div>
+        <div class="mb-2">
+          <app-table-filter [id]="'stock-filter'"></app-table-filter>
+        </div>
+        <div class="card">
+          <div class="card-body table-responsive p-0">
+            <app-table [id]="tableId"></app-table>
+          </div>
+          <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
+            <ul class="pagination pagination-sm m-0 float-right">
+              <li class="page-item" *ngIf="lastPage > 0">
+                <span class="page-link pointer" (click)="setQueryParams(lastPage)">&laquo;</span>
+              </li>
+              <li class="page-item" *ngIf="lastPage > 0">
+                <span class="page-link pointer" (click)="setQueryParams(lastPage)">{{ lastPage
+                  }}</span>
+              </li>
+              <li class="page-item">
+                <a class="page-link pointer bg-primary" [routerLink]="['/stock']" [queryParams]="{page: currentPage}">{{ currentPage }}</a>
+              </li>
+              <li class="page-item" *ngIf="nextPage == currentPage + 1">
+                <span class="page-link pointer" (click)="setQueryParams(nextPage)">{{ nextPage
+                  }}</span>
+              </li>
+              <li class="page-item" *ngIf="nextPage == currentPage + 1">
+                <span class="page-link pointer" (click)="setQueryParams(nextPage)">&raquo;</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </app-tab>
+      <app-tab *ngIf="getAuthorization(authorizationStockTransfer)" title="ENVOI & RECEPTION" [id]="transferId">
+        <app-transfert></app-transfert>
+      </app-tab>
+    </app-tabs>
   </div>
 </section>
-<app-modal [id]="uniqueId" size="x-large">
+<app-modal [id]="stockId" size="x-large">
   <div head>
     <h4 class="modal-title">
       Ajouter un stock d'article
@@ -32,12 +60,20 @@
   <div body>
     <form [formGroup]="stockFormGroup">
       <div class="row">
-        <div class="col-8 form-group">
+        <div 
+          [ngClass]="isAddAttribute ? 'col-lg-8' : 'col-lg-5'"
+          class="form-group col-12"
+        >
           <label for="item">Article *</label>
           <input
             type="text" 
             id="item" 
             class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (stockFormGroup.get('item')?.invalid &&
+              stockFormGroup.get('item')?.hasError('required') &&
+              formError)
+            }" 
             name="item" 
             formControlName="item" 
             [matAutocomplete]="auto"
@@ -49,21 +85,72 @@
             </mat-option>
           </mat-autocomplete>
         </div>
-        <div class="col-4 form-group">
+        <div 
+          [ngClass]="isAddAttribute ? 'col-lg-4' : 'col-lg-3'"
+          class="form-group col-12"
+        >
           <label for="quantity">Quantité *</label>
           <input
             type="number" 
             id="quantity" 
             class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (this.stockFormGroup.get('quantity')?.invalid &&
+              this.stockFormGroup.get('quantity')?.hasError('required') &&
+              formError)
+            }" 
             name="quantity" 
             formControlName="quantity"
             (input)="getQuantityValueChange()"
           >
         </div>
+        <ng-container *ngIf="!isAddAttribute">
+          <div 
+            [ngClass]="isAddAttribute ? 'col-0' : 'col-lg-4'"
+            class="form-group col-12"
+          >
+            <label for="quantity">Prix *</label>
+            <input
+              type="number" 
+              id="price" 
+              class="form-control form-control-sm"
+              [ngClass]="{'input-error':
+                (this.stockFormGroup.get('price')?.invalid &&
+                this.stockFormGroup.get('price')?.hasError('required') &&
+                formError)
+              }" 
+              name="price" 
+              formControlName="price"
+              (input)="getQuantityValueChange()"
+            >
+          </div>
+        </ng-container>
       </div>
       <ng-container formArrayName="details">
         <div class="mb-2" *ngFor="let detail of detailField.controls; let i = index;" [formGroupName]="i">
           <div class="card p-1">
+            <fieldset>
+              <legend class="attribute">Prix</legend>
+              <div class="row">
+                <div class="col-5 input-group" input-group>
+                  <input 
+                    type="number" 
+                    class="form-control form-control-sm"
+                    [ngClass]="{'input-error':
+                      (detail.get('price')?.invalid &&
+                      detail.get('price')?.hasError('required') &&
+                      formError)
+                    }" 
+                    name="price" 
+                    formControlName="price"
+                    placeholder="Prix TTC"
+                  >
+                  <div class="input-group-append" style="height: calc(1.8125rem + 2px);">
+                    <span class="input-group-text">MGA</span>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
             <fieldset>
               <legend class="attribute">Caractéristique(s)</legend>
               <div class="row" formArrayName="attributes">
@@ -116,7 +203,7 @@
                       name="type" 
                       formControlName="type"
                     >
-                      <option value="" selected disabled hidden>Selectionner ici</option>
+                      <option value="" selected disabled hidden>Sélectionner ici</option>
                       <option *ngFor="let type of serializationTypes" [value]="type.serialization_type_id">{{type.label}}</option>
                     </select>
                     <input 

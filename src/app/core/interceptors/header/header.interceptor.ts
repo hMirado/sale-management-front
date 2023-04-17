@@ -19,7 +19,7 @@ export class HeaderInterceptor implements HttpInterceptor {
     private localStorageService: LocalStorageService
   ) {}
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.localStorageService.getLocalStorage(tokenKey)
     const headers = new HttpHeaders({
       "Accept": "Application/json",

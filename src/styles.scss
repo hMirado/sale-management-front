@@ -37,16 +37,22 @@ $front-theme: mat.define-light-theme((
   cursor: pointer;
 }
 
-body {
-  font-family: "Open Sans";
-}
-
 .input-error {
   border: 1px solid #dc3545 !important;
 }
 
+.input-error-message {
+  color: #dc3545;
+  text-align: justify;
+  font-size: 11px;
+}
+
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { 
+  margin: 0; 
+  //font-family: Roboto, "Helvetica Neue", sans-serif; 
+  font-family: Arial, Helvetica, "Liberation Sans", FreeSans, sans-serif;
+}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -62,4 +68,30 @@ input[type=number] {
 .cdk-overlay-container {
   position: fixed;
   z-index: 9999!important;
+}
+
+.cdk-overlay-pane {
+  max-height: 250px;
+}
+
+.btn-disabled {
+  background-color: rgba(0, 0, 0, 0.30);
+  border-color: rgba(0, 0, 0, 0.30);
+  color: #202224;
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: auto;
+}
+
+.page-action-btn {
+  width: 100%;
+  border-top: 1px rgb(119, 119, 119) solid;
+  padding-top: 4px;
+  text-align: center;
+}
+
+.card-footer {
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(255, 255, 255, 0);
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
 }

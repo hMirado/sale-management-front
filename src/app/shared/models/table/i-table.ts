@@ -1,3 +1,6 @@
+import { Observable } from "rxjs";
+import { ApiResponse } from "src/app/core/models/api-response/api-response.model";
+
 export interface ITable {
   id: string;
   header: IHeader[];
@@ -8,13 +11,15 @@ export interface IHeader {
   value: string;
   collspan?: number;
   rowspan?: number;
+  align?: 'center' | 'left' | 'right';
 }
 
 export interface ICell {
   cellValue: IRow [];
-  isEditable: boolean;
-  isDeleteable: boolean;
-  isSwitchable: boolean;
+  isEditable?: boolean;
+  isDeleteable?: boolean;
+  isSwitchable?: boolean;
+  isViewable?: boolean
 }
 
 export interface IRow {
@@ -26,8 +31,34 @@ export interface IRow {
 export interface IRowValue {
   id: string;
   key: string;
-  type: 'simple' | 'input';
+  type: 'simple' | 'input' | 'button';
   expand: boolean;
-  value: number | boolean | string;
+  value: IValue;
   image?: string;
+  badge?: IBadge;
+  icon?: IIcon;
+  button?: IButton[]
+}
+
+export interface IValue {
+  value: any[];
+  align?: 'center' | 'left' | 'right';
+}
+
+export interface IBadge {
+  status?: boolean
+  bg?: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+}
+
+export interface IIcon {
+  status: boolean;
+  icon: string;
+  color?: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+}
+
+export interface IButton {
+  text: string;
+  size: 'btn-xs';
+  bg: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+  action: void;
 }

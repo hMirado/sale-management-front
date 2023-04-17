@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
-import { tokenKey } from 'src/app/shared/config/constant';
+import { tokenKey, userInfo } from 'src/app/shared/config/constant';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 import { Product } from '../../models/product/product.model';
@@ -35,10 +35,8 @@ export class SaleComponent implements OnInit, OnDestroy {
   }
 
   getUserData() {
-    const token = this.localStorageService.getLocalStorage(tokenKey);
-    const decodedToken = this.helperService.decodeJwtToken(token);
-    console.log(decodedToken);
-    this.userData = decodedToken.user;
+    const data = this.localStorageService.getLocalStorage(userInfo);
+    this.userData = JSON.parse(this.helperService.decrypt(data));
   }
 
   getProducts() {

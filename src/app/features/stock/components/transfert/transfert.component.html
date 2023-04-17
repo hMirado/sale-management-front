@@ -1,0 +1,232 @@
+<div class="row mb-2">
+  <div class="col-2">
+    <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(transferId)">
+      <i class="fas fa-exchange-alt"></i> Envoyer article
+    </button>
+  </div>
+</div>
+<div class="mb-2">
+  <app-table-filter id="transfer-filter"></app-table-filter>
+</div>
+<div class="card">
+  <div class="card-body table-responsive p-0">
+    <app-table [id]="tableId"></app-table>
+  </div>
+  <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
+    <ul class="pagination pagination-sm m-0 float-right">
+      <li class="page-item" *ngIf="lastPage > 0">
+        <span class="page-link pointer" (click)="goToNextPage(lastPage)">&laquo;</span>
+      </li>
+      <li class="page-item" *ngIf="lastPage > 0">
+        <span class="page-link pointer" (click)="goToNextPage(lastPage)">{{ lastPage
+          }}</span>
+      </li>
+      <li class="page-item">
+        <a class="page-link pointer bg-primary">{{ currentPage }}</a>
+      </li>
+      <li class="page-item" *ngIf="nextPage == currentPage + 1">
+        <span class="page-link pointer" (click)="goToNextPage(nextPage)">{{ nextPage
+          }}</span>
+      </li>
+      <li class="page-item" *ngIf="nextPage == currentPage + 1">
+        <span class="page-link pointer" (click)="goToNextPage(nextPage)">&raquo;</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<app-modal [id]="transferId" size="x-large">
+  <div head>
+    <h4 class="modal-title">
+      Envoi d'un article vers un autre boutique
+    </h4>
+  </div>
+  <div body>
+    <form [formGroup]="transferFormGroup">
+      <div class="row">
+        <div class="col-lg-3 col-12">
+          <label>Shop d'origine *</label>
+          <select
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (transferFormGroup.get('shopSender')?.invalid &&
+              transferFormGroup.get('shopSender')?.hasError('required') &&
+              formError
+              )
+            }" 
+            name="shopSender" 
+            formControlName="shopSender"
+          >
+            <option value="" selected disabled hidden>Sélectionner ici</option>
+            <option *ngFor="let shop of shopsSender" [value]="shop?.shop_uuid">{{ shop?.shop_name }}</option>
+          </select>
+        </div>
+        <div class="col-lg-3 col-12">
+          <label>Shop récepteur *</label>
+          <select
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (transferFormGroup.get('shopReceiver')?.invalid &&
+              transferFormGroup.get('shopReceiver')?.hasError('required') &&
+              formError
+              )
+            }" 
+            name="shopReceiver" 
+            formControlName="shopReceiver"
+          >
+            <option value="" selected disabled hidden>Sélectionner ici</option>
+            <option *ngFor="let shop of shopsReceiver" [value]="shop?.shop_uuid">{{ shop?.shop_name }}</option>
+          </select>
+        </div>
+        <div class="col-lg-4 col-12">
+          <label>Article *</label>
+          <input
+            type="text" 
+            id="product" 
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (transferFormGroup.get('product')?.invalid &&
+              transferFormGroup.get('product')?.hasError('required')) &&
+              formError
+            }" 
+            name="product" 
+            formControlName="product" 
+            [matAutocomplete]="auto"
+            (change)="trigger()"
+            (input)="getProductValueChange()"
+          >
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
+            <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize">
+              {{product.label}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div class="col-lg-2 col-12">
+          <label for="quantity">Quantité *</label>
+          <input
+            type="number" 
+            id="quantity" 
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (
+                (this.transferFormGroup.get('quantity')?.invalid &&
+                this.transferFormGroup.get('quantity')?.hasError('required')) &&
+                formError
+              ) || quantityError
+            }" 
+            name="quantity" 
+            formControlName="quantity"
+            (change)="trigger()"
+            (input)="getQuantityValueChange()"
+          >
+          <span *ngIf="quantityError" class="text-danger">
+            Quantité indisponible en stock
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label for="">Commentaire</label>
+            <textarea 
+              class="form-control form-control-sm" 
+              rows="2"
+              id="quantity" 
+              name="commentary" 
+              formControlName="commentary"
+            >
+            </textarea>
+          </div>
+        </div>
+      </div>
+      <ng-container formArrayName="serialization">
+        <div class="mt-2">
+          <div class="row" *ngFor="let field of serializationField.controls; let i = index;" [formGroupName]="i">
+            <div class="col-lg-1 col-12">
+              <button class="btn btn-xs btn-primary">{{ i + 1}}</button>
+            </div>
+            <div class="col-lg-5 col-12">
+              <div class="form-group row">
+                <label class="col-sm-5 col-form-label">Sérialisation</label>
+                <div class="col-sm-7">
+                  <select 
+                    class="form-control form-control-sm" 
+                    [ngClass]="{'input-error':
+                      (field.get('type')?.invalid ||
+                      field.get('type')?.hasError('required')) &&
+                      serializationInvalid
+                    }" 
+                    name="type" 
+                    formControlName="type"
+                  >
+                    <option value="" selected disabled hidden>Sélectionner ici</option>
+                    <option *ngFor="let type of serializationTypes" [value]="type.serialization_type_id">{{type.label}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="form-group row">
+                <label class="col-sm-5 col-form-label text-center">Valeur</label>
+                <div class="col-sm-7">
+                  <input 
+                    type="text" 
+                    class="form-control form-control-sm" 
+                    [ngClass]="{'input-error':
+                      (field.get('value')?.invalid || field.get('value')?.hasError('required'))
+                      && serializationInvalid
+                    }" 
+                    name="value" 
+                    formControlName="value"
+                    (input)="checkSerializationValue(i)"
+                    (blur)="checkSerializationValue(i)"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </form>
+  </div>
+  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="createTransfer()">Enregistrer</button>
+</app-modal>
+
+<app-modal [id]="'comfirm-id'">
+  <div head>
+    <h4 class="modal-title">
+      Validation dl'article réçu
+    </h4>
+  </div>
+  <div body *ngIf="transfer">
+    <div class="row mb-3">
+      <div class="col-5">Article : {{ transfer.product.label }}</div>
+      <div class="col-3">Quantité : {{ transfer.transfer_quantity }}</div>
+      <div class="col-4">Statut : {{ transfer.transfer_status.transfer_status_label.toUpperCase() }}</div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <textarea 
+            class="form-control form-control-sm" 
+            rows="2"
+            disabled
+          >
+          {{ transfer['transfer_commentary'] }}
+          </textarea>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngFor="let serialization of serializations; let i = index;">
+      <div class="row" >
+        <div class="col-5">{{ serialization.serialization_type?.label }}</div>
+        <div class="col-7"> : {{ serialization.serialization_value }}</div>
+      </div>
+      <mat-divider *ngIf="i > 0 && serialization.attribute_serialization != serializations[i-1].attribute_serialization"></mat-divider>
+    </ng-container>
+  </div>
+  <div footer>
+    <button class="btn btn-sm btn-danger ml-1 mr-1" *ngIf="transfer?.transfer_status?.transfer_status_code == inProgress" (click)="confirm(false)">Réfuser</button>
+    <button class="btn btn-sm btn-primary ml-1 mr-1" *ngIf="transfer?.transfer_status?.transfer_status_code == inProgress" (click)="confirm(true)">Confirmer</button>
+  </div>
+</app-modal>
