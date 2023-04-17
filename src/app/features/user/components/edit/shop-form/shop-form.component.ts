@@ -74,8 +74,6 @@ export class ShopFormComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.userService.getAllShop().subscribe((response: ApiResponse) => {
         this.shops = response.data;
-        console.log(this.user);
-        
         if (
           this.userRole?.role_key == 'ADMIN' || 
           (this.userRole == undefined && this.user?.role?.role_key == 'ADMIN')
@@ -117,8 +115,6 @@ export class ShopFormComponent implements OnInit, OnDestroy {
         }
       }).filter((id: number) => id != undefined);
     }
-    console.log(shops);
-    
     const shopInfo = {
       user: value['user'],
       shops: shops

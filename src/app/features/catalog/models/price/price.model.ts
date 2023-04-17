@@ -6,4 +6,5 @@ export class Price {
   createdAt?: Date;
   updatedAt?: Date;
   fk_product_id!: number;
+  fk_shop_id!: number;
 }

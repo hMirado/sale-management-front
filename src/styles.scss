@@ -41,6 +41,12 @@ $front-theme: mat.define-light-theme((
   border: 1px solid #dc3545 !important;
 }
 
+.input-error-message {
+  color: #dc3545;
+  text-align: justify;
+  font-size: 11px;
+}
+
 html, body { height: 100%; }
 body { 
   margin: 0; 

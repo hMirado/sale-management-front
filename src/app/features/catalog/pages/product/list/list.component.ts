@@ -1,29 +1,32 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {debounceTime, filter, iif, of, Subscription, switchMap} from 'rxjs';
+import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription, debounceTime, switchMap, of, filter } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { ADMIN, userInfo } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
-import { tableProductHeader, tableProductId } from '../../config/constant';
-import { ProductService } from '../../service/product/product.service';
-import { TableService } from "../../../../shared/serives/table/table.service";
-import { ICell, IRow, ITable } from "../../../../shared/models/table/i-table";
-import { Product } from "../../models/product/product.model";
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
+import { ITableFilterFieldValue, ITableFilter, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
+import { IRow, ITable, ICell } from 'src/app/shared/models/table/i-table';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
 import { ModalService } from 'src/app/shared/serives/modal/modal.service';
-import { Category } from '../../models/category/category.model';
-import { CategoryService } from '../../service/category/category.service';
-import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
+import { TableService } from 'src/app/shared/serives/table/table.service';
+import { tableProductId, tableProductHeader } from '../../../config/constant';
+import { Category } from '../../../models/category/category.model';
+import { Product } from '../../../models/product/product.model';
+import { CategoryService } from '../../../service/category/category.service';
+import { ProductService } from '../../../service/product/product.service';
 
 @Component({
-  selector: 'app-product',
-  templateUrl: './product.component.html',
-  styleUrls: ['./product.component.scss']
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss']
 })
-export class ProductComponent implements OnInit, OnDestroy {
+export class ListComponent implements OnInit, OnDestroy {
   public title: string = 'Articles';
   public breadCrumbs: BreadCrumb[] = [];
   private subscription = new Subscription();
@@ -46,6 +49,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   public error: number = 0;
   public errorValues: any[] = [];
   private params: any = {};
+  private userData: any;
 
   constructor(
     private productService: ProductService,
@@ -55,7 +59,9 @@ export class ProductComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private modalService: ModalService,
     private categoryService: CategoryService,
-    private tableFilterService: TableFilterService
+    private router: Router,
+    private tableFilterService: TableFilterService,
+    private localStorageService: LocalStorageService,
   ) {
     this.createForm();
   }
@@ -68,6 +74,9 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.cancel();
     this.getCategories();
     this.getFilterValue();
+    this.getUserData();
+    this.getPriceValue();
+    this.getTableAction();
   }
 
   ngOnDestroy(): void {
@@ -153,6 +162,10 @@ export class ProductComponent implements OnInit, OnDestroy {
     })
   }
 
+  createProduct() {
+    this.router.navigateByUrl('catalog/product/create');
+  }
+
   openModal(id: string) {
     this.modalService.showModal(id)
   }
@@ -178,7 +191,8 @@ export class ProductComponent implements OnInit, OnDestroy {
         code: ['', Validators.required],
         label: ['', Validators.required],
         isSerializable: false,
-        category: ['', Validators.required]
+        category: ['', Validators.required],
+        price: ['', Validators.required]
       })
     )
   }
@@ -248,7 +262,8 @@ export class ProductComponent implements OnInit, OnDestroy {
           code: x.code,
           label: x.label,
           is_serializable: x.isSerializable,
-          fk_category_id: this.categories.filter(category => category.label.toLowerCase == x.category.toLowerCase)[0].category_id
+          fk_category_id: this.categories.filter(category => category.label.toLowerCase == x.category.toLowerCase)[0].category_id,
+          price: x.price
         }
       })
       this.saveItems(products);
@@ -334,5 +349,43 @@ export class ProductComponent implements OnInit, OnDestroy {
   goToNextPage(page: number){
     this.params['page'] = page;
     this.productService.getProducts(this.params).subscribe((response: ApiResponse) => this.getProductsResponse(response));
+  }
+
+  getPriceValue() {
+    this.subscription.add(
+      this.tableService.expandUiid$.pipe(
+        switchMap((uuid: string) => {
+          const shop = this.userData.role.role_key != ADMIN ? this.userData.shops[0].shop_id : ''
+          if (uuid && uuid != '') {
+            return this.productService.getProductPrice(uuid, shop);
+          } else {
+            return []
+          }
+        })
+      ).subscribe((response: ApiResponse) => {
+        let rows: IRow[] = []
+        response.data.forEach((price: any) => {
+          const row = this.productService.getPriceRow(price);
+          rows.push(row)
+        })
+        let cells: ICell = {
+          cellValue: rows
+        };
+        this.tableService.setExpandedValue(cells)
+      })
+    )
+  }
+
+  getUserData() {
+    const data = this.localStorageService.getLocalStorage(userInfo);
+    this.userData = JSON.parse(this.helperService.decrypt(data));
+  }
+
+  getTableAction() {
+    this.subscription.add(
+      this.tableService.getlineId().subscribe((value: any) => {
+        if (value && value['id'] != '' && value['action'] == 'view') this.router.navigateByUrl(`/catalog/product/detail/${value['id']}`);
+      })
+    );
   }
 }

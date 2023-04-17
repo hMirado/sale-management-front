@@ -297,8 +297,6 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   addStock() {
-    console.log(this.stockFormGroup);
-    
     if (!this.stockFormGroup.valid) {
       this.formError = true;
     } else {
