@@ -79,6 +79,14 @@ export class DetailComponent implements OnInit, OnDestroy {
     );
   }
 
+  editPrice(value: any) {
+    this.subscription.add(
+      this.productService.updatePrice(value).subscribe((response: ApiResponse) => {
+        this.showNotification('success', response.notification)
+      })
+    );
+  }
+
   showNotification(type: string, message: string) {
     this.notificationService.addNotification({
       type: type,

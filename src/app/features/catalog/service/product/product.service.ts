@@ -74,6 +74,11 @@ export class ProductService {
     return this.apiService.doGet(url);
   }
 
+  updatePrice(value: any): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/price`;
+    return this.apiService.doPut(url, value);
+  }
+
   addTableRowValue(value: Product): IRow {
     return {
       id: value.product_uuid,

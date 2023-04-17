@@ -8,6 +8,7 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { ShopService } from 'src/app/features/setting/services/shop/shop.service';
 import { Price } from '../../../models/price/price.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
 
 @Component({
   selector: 'app-product-price',
@@ -16,15 +17,17 @@ import { Shop } from 'src/app/features/setting/models/shop/shop.model';
 })
 export class PriceComponent implements OnInit, OnDestroy {
   @Input() information!: Product;
-  @Output() priceEvent = new EventEmitter<ProductFormValue>();
+  @Output() priceEvent = new EventEmitter<any>();
   public priceFormgroup: FormGroup;
   private subscription = new Subscription;
   public isAllShop: boolean = false;
+  public formError: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private productService: ProductService,
-    private shopService: ShopService
+    private shopService: ShopService,
+    private notificationService: NotificationService
   ) {
   }
 
@@ -113,15 +116,35 @@ export class PriceComponent implements OnInit, OnDestroy {
     )
   }
 
-  savePrice() {
-    console.log(
-      this.priceFormgroup
-    );
+  public isEditable: boolean = false;
+  enableEdit() {
+    this.isEditable = true
   }
 
-  cancel() {
+  cancelEdit() {
     this.priceField.reset();
     this.priceField.clear();
     this.getShops();
+  }
+
+  savePrice() {
+    if (!this.priceFormgroup.valid) {
+      this.formError = true
+    } else {
+      this.formError = true
+      const value = {
+        product: this.priceFormgroup.value['product'],
+        prices: this.priceFormgroup.value['prices']
+      }
+      this.priceEvent.emit(value);
+      this.isEditable = false;
+    }
+  }
+
+  showNotification(type: string, message: string) {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
   }
 }
