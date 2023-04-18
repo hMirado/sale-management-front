@@ -47,8 +47,7 @@ export class StockComponent implements OnInit, OnDestroy {
   public searchProducts: Product[] = [];
   public stockFormGroup!: FormGroup;
   public formError: boolean = false;
-  public isAddAttribute: boolean = false;
-  public attributeTypes: AttributeType[] = [];
+  public isSerializable: boolean = false;
   public attributeTypeLabel: string = "Type d'attribut";
   public serializationTypes: SerializationType[] = [];
   private shopUuid: string = '';
@@ -114,7 +113,6 @@ export class StockComponent implements OnInit, OnDestroy {
     this.modalService.showModal(id);
     if (id == this.stockId) {
       this.getProducts();
-      this.getAttributeType();
       this.getSerializationTypes();
     }
   }
@@ -126,75 +124,48 @@ export class StockComponent implements OnInit, OnDestroy {
 
   createForm() {
    this.stockFormGroup = this.formBuilder.group({
-    item: ['', Validators.required],
-    price: ['', Validators.required],
+    product: ['', Validators.required],
+    shop: ['', Validators.required],
     quantity: ['', Validators.required],
-    details: this.formBuilder.array([])
+    serializations: this.formBuilder.array([])
    });
   }
 
   clearForm() {
     this.stockFormGroup.reset();
-    this.detailField.clear();
-    this.detailField.reset();
+    this.serializationField.clear();
+    this.serializationField.reset();
   }
 
   resetField() {
-    this.detailField.clear();
-    this.detailField.reset();
+    this.serializationField.clear();
+    this.serializationField.reset();
   }
 
-  get detailField(): FormArray {
-    return this.stockFormGroup.get('details') as FormArray;
+  get serializationField(): FormArray {
+    return this.stockFormGroup.get('serializations') as FormArray;
   }
 
-  addDetailField() {
-    let field = this.formBuilder.group({
-      price: ['', Validators.required],
-      attributes:  this.formBuilder.array([]),
-      serializations:  this.formBuilder.array([]),
-    });
-    this.detailField.push(field)
-  }
-
-  removeDetailField(i: number) {
-    this.detailField.removeAt(i);
-  }
-
-  getDetailAttributeField(i: number): FormArray {
-    return this.detailField.at(i).get('attributes') as FormArray;
-  }
-
-  addAttributeField(i: number) {
-    this.getDetailAttributeField(i).push(
-      this.formBuilder.group({
-        attribute_type: ['', Validators.required],
-        attribute: ['', Validators.required],
-        id: i
-      })
-    );
-  }
-
-  removeAttributeField(i: number, a: number) {
-    this.getDetailAttributeField(i).removeAt(a);
+  addSerializationField() {
+    let field = this.formBuilder.array([])
+    this.serializationField.push(field)
   }
   
-  getDetailSerializationField(i: number): FormArray {
-    return this.detailField.at(i).get('serializations') as FormArray;
+  getField(i: number): FormArray {
+    return this.serializationField.at(i) as FormArray;
   }
 
-  addSerializationField(i: number) {
-    this.getDetailSerializationField(i).push(
+  addField(i: number) {
+    this.getField(i).push(
       this.formBuilder.group({
         type: ['', Validators.required],
         value: ['', Validators.required],
-        id: i
       })
     );
   }
 
   removeSerializationField(i: number, a: number) {
-    this.getDetailSerializationField(i).removeAt(a);
+    this.getField(i).removeAt(a);
   }
 
   getProducts(){
@@ -211,7 +182,7 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   getProductValueChange() {
-    const item = this.stockFormGroup?.get('item');
+    const item = this.stockFormGroup?.get('product');
     if (item) {
       this.subscription.add(
         item.valueChanges.pipe(
@@ -236,54 +207,29 @@ export class StockComponent implements OnInit, OnDestroy {
     }
   }
 
+  public quantity: number = 0;
   selectedValue(event: any) {
     this.resetField();
-    this.addPriceValidator();
     let selectedOption = event.option.value;
     this.searchProducts = this.products.filter(x =>  x.label.toLowerCase().includes(selectedOption.toLowerCase()));
-    this.isAddAttribute = this.searchProducts[0].is_serializable;
-    const quantity = this.stockFormGroup?.get('quantity');
-    if (this.isAddAttribute && quantity?.value > 0) {
-      this.stockFormGroup
-      this.addDetailField();
-      this.addAttributeField(0);
-      this.addSerializationField(0);
-      this.removePriceValidator();
+    this.isSerializable = this.searchProducts[0].is_serializable;
+    this.quantity = +this.stockFormGroup?.get('quantity')?.value;
+    if (this.isSerializable && this.quantity > 0) {
+      this.stockFormGroup;
+      this.addSerializationField();
+      this.addField(0);
     }
   }
 
   getQuantityValueChange() {
     this.resetField();
-    this.addPriceValidator();
-    const quantity = this.stockFormGroup?.get('quantity');
-     if (quantity?.value > 0 && this.isAddAttribute) {
-      this.removePriceValidator();
-      for (let i = 0; i < +quantity?.value; i++) {
-        this.addDetailField();
-        this.addAttributeField(i);
-        this.addSerializationField(i);
+    this.quantity  = this.stockFormGroup?.get('quantity')?.value;
+     if (this.quantity > 0 && this.isSerializable) {
+      for (let i = 0; i < +this.quantity; i++) {
+        this.addSerializationField();
+        this.addField(i);
       }
     }
-  }
-
-  removePriceValidator() {
-    this.stockFormGroup?.get('price')?.clearValidators();
-    this.stockFormGroup?.get('price')?.updateValueAndValidity();
-  }
-
-  addPriceValidator() {
-    this.stockFormGroup?.get('price')?.setValidators([Validators.required]);
-    this.stockFormGroup?.get('price')?.updateValueAndValidity();
-  }
-
-  getAttributeType() {
-    this.subscription.add(
-      this.stockService.getAttributeTypes().subscribe((response: ApiResponse) => {
-        if (response.status == responseStatus.success) {
-          this.attributeTypes = response.data;
-        }
-      })
-    )
   }
 
   getSerializationTypes() {
@@ -297,20 +243,22 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   addStock() {
+    this.shopUuid = this.userData.shops.filter((shop: Shop) => shop.shop_code == depotShopCode)[0].shop_uuid;
+    this.stockFormGroup.patchValue({  shop: this.shopUuid });
+    this.stockFormGroup.updateValueAndValidity();
+    
     if (!this.stockFormGroup.valid) {
       this.formError = true;
     } else {
       this.formError = false;
-      this.stockFormGroup.patchValue({'item': this?.searchProducts[0].product_id});
-      this.stockFormGroup.updateValueAndValidity();
+      this.stockFormGroup.get('product')?.setValue(this?.searchProducts[0].product_uuid)
       this.saveStock(this.stockFormGroup.value)
     }
   }
 
   saveStock(value: any) {
-    this.shopUuid = this.userData.shops.filter((shop: Shop) => shop.shop_code == depotShopCode)[0].shop_uuid
     this.subscription.add(
-      this.stockService.addStock(value, this.shopUuid).subscribe((response: ApiResponse) => {
+      this.stockService.addStock(value).subscribe((response: ApiResponse) => {
         this.clearForm();
         if (response.status == responseStatus.created) {
           this.closeModal(this.stockId);

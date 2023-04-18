@@ -31,8 +31,8 @@ export class StockService {
     return this.apiService.doGet(url)
   }
 
-  addStock(value: any, shop: string): Observable<ApiResponse> {
-    let url = `${environment['store-service']}/stock/${shop}`;
+  addStock(value: any): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/stock`;
     return this.apiService.doPost(url, value)
   }
 
