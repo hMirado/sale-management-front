@@ -31,8 +31,8 @@ export class StockService {
     return this.apiService.doGet(url)
   }
 
-  addStock(value: any, shop: string): Observable<ApiResponse> {
-    let url = `${environment['store-service']}/stock/${shop}`;
+  addStock(value: any): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/stock`;
     return this.apiService.doPost(url, value)
   }
 
@@ -125,7 +125,7 @@ export class StockService {
   }
 
   getProductSerialization(productUuid: string, shopUuid: string = '') {
-    let param: any = {is_slod: '0'}
+    let param: any = {is_sold: false}
     if ( shopUuid != '') param['shop'] = shopUuid;
    
     const url = `${environment['store-service']}/serialization/shop/product/${productUuid}`;

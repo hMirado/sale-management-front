@@ -108,7 +108,8 @@ export class ShopFormComponent implements OnInit, OnDestroy {
   editUserShop() {
     const value = this.shopFormGroup.value;
     let shops = [value['shops']];
-    if ( value['shops'][0].id ) {
+    
+    if ( typeof( value['shops']) == 'object' && value['shops'][0].id ) {
       shops = value['shops'].map((shop: any) => {
         if (shop['isChecked']) {
           return shop['id']

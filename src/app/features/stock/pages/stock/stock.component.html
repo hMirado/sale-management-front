@@ -51,31 +51,28 @@
     </app-tabs>
   </div>
 </section>
-<app-modal [id]="stockId" size="x-large">
+<app-modal [id]="stockId" size="medium">
   <div head>
     <h4 class="modal-title">
-      Ajouter un stock d'article
+      Ajout stock
     </h4>
   </div>
   <div body>
     <form [formGroup]="stockFormGroup">
       <div class="row">
-        <div 
-          [ngClass]="isAddAttribute ? 'col-lg-8' : 'col-lg-5'"
-          class="form-group col-12"
-        >
+        <div class="form-group col-12 col-lg-10">
           <label for="item">Article *</label>
           <input
             type="text" 
-            id="item" 
+            id="product" 
             class="form-control form-control-sm"
             [ngClass]="{'input-error':
-              (stockFormGroup.get('item')?.invalid &&
-              stockFormGroup.get('item')?.hasError('required') &&
+              (stockFormGroup.get('product')?.invalid &&
+              stockFormGroup.get('product')?.hasError('required') &&
               formError)
             }" 
-            name="item" 
-            formControlName="item" 
+            name="product" 
+            formControlName="product" 
             [matAutocomplete]="auto"
             (input)="getProductValueChange()"
           >
@@ -85,10 +82,7 @@
             </mat-option>
           </mat-autocomplete>
         </div>
-        <div 
-          [ngClass]="isAddAttribute ? 'col-lg-4' : 'col-lg-3'"
-          class="form-group col-12"
-        >
+        <div class="form-group col-12 col-lg-2">
           <label for="quantity">Quantité *</label>
           <input
             type="number" 
@@ -104,95 +98,18 @@
             (input)="getQuantityValueChange()"
           >
         </div>
-        <ng-container *ngIf="!isAddAttribute">
-          <div 
-            [ngClass]="isAddAttribute ? 'col-0' : 'col-lg-4'"
-            class="form-group col-12"
-          >
-            <label for="quantity">Prix *</label>
-            <input
-              type="number" 
-              id="price" 
-              class="form-control form-control-sm"
-              [ngClass]="{'input-error':
-                (this.stockFormGroup.get('price')?.invalid &&
-                this.stockFormGroup.get('price')?.hasError('required') &&
-                formError)
-              }" 
-              name="price" 
-              formControlName="price"
-              (input)="getQuantityValueChange()"
-            >
-          </div>
-        </ng-container>
       </div>
-      <ng-container formArrayName="details">
-        <div class="mb-2" *ngFor="let detail of detailField.controls; let i = index;" [formGroupName]="i">
+      <ng-container formArrayName="serializations">
+        <small class="mb-2 badge custom-badge-warning" *ngIf="isSerializable && quantity > 0">
+          <i class="fas fa-exclamation">
+            Veuillez ajouter les numéros de série
+          </i>
+        </small>
+        <div class="mb-2" *ngFor="let detail of serializationField.controls; let i = index;" [formGroupName]="i">
           <div class="card p-1">
-            <fieldset>
-              <legend class="attribute">Prix</legend>
               <div class="row">
-                <div class="col-5 input-group" input-group>
-                  <input 
-                    type="number" 
-                    class="form-control form-control-sm"
-                    [ngClass]="{'input-error':
-                      (detail.get('price')?.invalid &&
-                      detail.get('price')?.hasError('required') &&
-                      formError)
-                    }" 
-                    name="price" 
-                    formControlName="price"
-                    placeholder="Prix TTC"
-                  >
-                  <div class="input-group-append" style="height: calc(1.8125rem + 2px);">
-                    <span class="input-group-text">MGA</span>
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend class="attribute">Caractéristique(s)</legend>
-              <div class="row" formArrayName="attributes">
-                <div class="col-5 input-group" *ngFor="let attribute of getDetailAttributeField(i).controls;  let a = index;">
-                  <ng-container [formGroupName]="a">
-                    <select 
-                      class="form-control form-control-sm"
-                      [ngClass]="{'input-error':
-                        (attribute.get('attribute_type')?.invalid &&
-                        attribute.get('attribute_type')?.hasError('required') &&
-                        formError)
-                      }" 
-                      name="attribute_type" 
-                      formControlName="attribute_type"
-                    >
-                      <option value="" selected disabled hidden>Selectionner ici</option>
-                      <option *ngFor="let type of attributeTypes" [value]="type.attribute_type_id">{{type.attribute_type_label}}</option>
-                    </select>
-                    <input 
-                      type="text" 
-                      class="form-control form-control-sm" 
-                      [ngClass]="{'input-error':
-                        (attribute.get('attribute')?.invalid &&
-                        attribute.get('attribute')?.hasError('required') && 
-                        formError)
-                      }" 
-                      name="attribute" 
-                      formControlName="attribute"
-                    >
-                    <i class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeAttributeField(i, a)"></i>
-                  </ng-container>
-                </div>
-                <div class="col-2">
-                  <button class="btn btn-xs btn-primary m-1" *ngIf="isAddAttribute" (click)="addAttributeField(i)"><i class="fa fa-plus"></i> Ajouter</button>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend class="serialization">Sérialisation(s)</legend>
-              <div class="row" formArrayName="serializations">
-                <div class="col-5 input-group" *ngFor="let serialization of getDetailSerializationField(i).controls;  let b = index;">
-                  <ng-container [formGroupName]="b">
+                <div class="col-12 input-group" *ngFor="let serialization of getField(i).controls;  let b = index;" [formGroupName]="b">
+                  <ng-container >
                     <select 
                       class="form-control form-control-sm" 
                       [ngClass]="{'input-error':
@@ -210,21 +127,20 @@
                       type="text" 
                       class="form-control form-control-sm" 
                       [ngClass]="{'input-error':
-                        (serialization.get('value')?.invalid &&
-                        serialization.get('value')?.hasError('required') && 
+                        (serialization.get('serialization')?.invalid &&
+                        serialization.get('serialization')?.hasError('required') && 
                         formError)
                       }" 
-                      name="value" 
-                      formControlName="value"
+                      name="serialization" 
+                      formControlName="serialization"
                     >
-                    <i class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeSerializationField(i, b)"></i>
+                    <i *ngIf="b > 0" class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeSerializationField(i, b)"></i>
                   </ng-container>
                 </div>
                 <div class="col-2">
-                  <button class="btn btn-xs btn-primary m-1" *ngIf="isAddAttribute" (click)="addSerializationField(i)"><i class="fa fa-plus"></i> Ajouter</button>
+                  <button class="btn btn-xs btn-primary m-1" *ngIf="getField(i).length < 4" (click)="addField(i)"><i class="fa fa-plus"></i> Ajouter</button>
                 </div>
               </div>
-            </fieldset>
           </div>
         </div>
       </ng-container>

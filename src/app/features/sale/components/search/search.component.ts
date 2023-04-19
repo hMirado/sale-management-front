@@ -48,8 +48,6 @@ export class SearchComponent implements OnInit, OnDestroy {
         filter(value => value.triggerEvent),
         debounceTime(1000),
         switchMap(value => {
-          console.log(value);
-          
           return []
         })
       ).subscribe()

@@ -185,7 +185,6 @@ export class EditComponent implements OnInit, OnDestroy {
   resetPassword() {
     this.subscription.add(
       this.userService.resetPassword(this.userUuid).subscribe((response: ApiResponse) => {
-        console.log(response);
         this.newPassword = response.data['newPassword'];
         this.showNotification('success', response.notification);
         this.isEditable = false;

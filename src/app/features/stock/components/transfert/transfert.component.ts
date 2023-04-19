@@ -484,8 +484,6 @@ export class TransfertComponent implements OnInit, OnDestroy {
       if (this.transfer?.product.is_serializable) {
         this.serializations = response.data.product.serializations;
       }
-      console.log(this.transfer);
-      
       this.openModal('comfirm-id');
     }
   }
