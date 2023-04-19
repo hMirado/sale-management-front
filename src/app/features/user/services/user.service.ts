@@ -140,7 +140,7 @@ export class UserService {
 
   getTableRowValue(user: User): IRow {
     const name = user.last_name?.toUpperCase() + ' ' + user.first_name;
-    const shop = user.shops?.map((shop: Shop) => shop.shop_name);
+    const shop = user.shops?.map((shop: Shop) => shop.shop_name) as any[];
     
     return {
       id: user.user_uuid as string,
@@ -172,7 +172,7 @@ export class UserService {
           type: 'simple',
           expand: false,
           value: {
-            value: [shop],
+            value: (shop.length > 2) ? ['. . .'] : shop,
             align: 'left'
           }
         },

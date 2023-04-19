@@ -125,7 +125,7 @@ export class StockService {
   }
 
   getProductSerialization(productUuid: string, shopUuid: string = '') {
-    let param: any = {is_slod: '0'}
+    let param: any = {is_sold: false}
     if ( shopUuid != '') param['shop'] = shopUuid;
    
     const url = `${environment['store-service']}/serialization/shop/product/${productUuid}`;

@@ -58,6 +58,7 @@ export class StockComponent implements OnInit, OnDestroy {
   private userData: any;
   public authorizationStockAdd: string = authorizations.stock.element.add;
   public authorizationStockTransfer: string = authorizations.stock.element.transfer;
+  public quantity: number = 0;
 
   constructor(
     private tableService: TableService,
@@ -75,10 +76,10 @@ export class StockComponent implements OnInit, OnDestroy {
     this.addHeaderContent();
     this.createForm();
     this.setQueryParams(1, true)
+    this.getUserData();
   }
 
   ngOnInit(): void {
-    this.getUserData();
     this.getTab();
     this.getProductSerialization();
     this.getShopFilter();
@@ -106,7 +107,13 @@ export class StockComponent implements OnInit, OnDestroy {
 
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
-    this.userData = JSON.parse(this.helperService.decrypt(data));
+    this.userData = JSON.parse(this.helperService.decrypt(data));    
+    this.shopFilter = ''
+    if (this.userData.role.role_key != ADMIN) {
+      console.log('ato');
+      
+      this.shopFilter = this.userData.shops[0].shop_uuid;
+    }
   }
 
   openModal(id: string) {
@@ -159,7 +166,7 @@ export class StockComponent implements OnInit, OnDestroy {
     this.getField(i).push(
       this.formBuilder.group({
         type: ['', Validators.required],
-        value: ['', Validators.required],
+        serialization: ['', Validators.required],
       })
     );
   }
@@ -207,7 +214,6 @@ export class StockComponent implements OnInit, OnDestroy {
     }
   }
 
-  public quantity: number = 0;
   selectedValue(event: any) {
     this.resetField();
     let selectedOption = event.option.value;
@@ -348,7 +354,9 @@ export class StockComponent implements OnInit, OnDestroy {
           if (uuid && uuid != '') {
             const stock = this.stocks.filter(x => x.stock_uuid == uuid);
             const productUuid = stock[0]?.product?.product_uuid as string;
-            return this.stockService.getProductSerialization(productUuid, stock[0].shop?.shop_uuid);
+            
+            const shop = this.shopFilter != '' ? this.shopFilter : (this.params['shop'] != '' ? this.params['shop'] : '') 
+            return this.stockService.getProductSerialization(productUuid, shop);
           } else {
             return [];
           }
@@ -362,27 +370,20 @@ export class StockComponent implements OnInit, OnDestroy {
 
   getProductSerializationResponse(response: ApiResponse) {
     if (response.status == responseStatus.success) {
-      const serializationGroup: Serialization[][] = response.data
-      let serialisationDisctinct: any[] = []
+      const serializationGroup: Serialization[][] = response.data;
+      let serialization: any[] = [] 
       for (let index = 0; index < serializationGroup.length; index++) {
         const serializations = serializationGroup[index];
-        let data: any = {};
-        serializations.forEach((serialization: Serialization) => {
-          const attribute_serialization = serialization.attribute_serialization;
-          const _serialization = serialization.serialization_type_label + ': ' + serialization.serialization_value
-          const value = {
-            uniqueId: attribute_serialization,
-            value: [_serialization]
-          }
-          if (data['uniqueId'] != attribute_serialization) {
-            data = value
-          } else {
-            data['value'].push(_serialization);
-          }
+        const value = serializations.map((_serialization: Serialization) => {
+          return `${_serialization.label} ${_serialization.serialization_value}`
+        });
+        serialization.push({
+          id: serializations[0].group_id,
+          value: value
         })
-        serialisationDisctinct.push(data)
       }
-      this.serializationValue(serialisationDisctinct);
+      
+      this.serializationValue(serialization);
     }
   }
 
@@ -479,7 +480,9 @@ export class StockComponent implements OnInit, OnDestroy {
         switchMap((filter: ITableFilterSearchValue|null) => {
           this.rows = [];
           this.params['p'] = 0;
-          this.params = { ...this.params, ... filter?.value }
+          this.params = { ...this.params, ... filter?.value };
+          
+          console.log(this.params);
           return this.stockService.getStocks(this.shopFilter, this.params)
         })
       ).subscribe((response: ApiResponse) => this.getStockresponse(response))

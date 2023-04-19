@@ -127,12 +127,12 @@
                       type="text" 
                       class="form-control form-control-sm" 
                       [ngClass]="{'input-error':
-                        (serialization.get('value')?.invalid &&
-                        serialization.get('value')?.hasError('required') && 
+                        (serialization.get('serialization')?.invalid &&
+                        serialization.get('serialization')?.hasError('required') && 
                         formError)
                       }" 
-                      name="value" 
-                      formControlName="value"
+                      name="serialization" 
+                      formControlName="serialization"
                     >
                     <i *ngIf="b > 0" class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeSerializationField(i, b)"></i>
                   </ng-container>

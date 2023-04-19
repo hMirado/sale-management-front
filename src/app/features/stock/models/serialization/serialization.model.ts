@@ -15,8 +15,9 @@ export class Serialization {
   serialization_type?: SerializationType;
   shop?: Shop;
   product?: Product;
-  serialization_type_code?: string;
-  serialization_type_label?: string;
-  isSold?: boolean;
-  isInTransfer?: boolean;
+  code?: string;
+  label?: string;
+  is_sold?: boolean;
+  is_in_transfer?: boolean;
+  group_id: string;
 }
