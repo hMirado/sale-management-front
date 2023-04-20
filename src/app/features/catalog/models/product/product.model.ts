@@ -7,8 +7,6 @@ export class Product {
   product_uuid!: string;
   code!: string;
   label!: string;
-  low_price?: number;
-  high_price?: number;
   is_serializable!: boolean;
   createdAt?: Date;
   updatedAt?: Date;

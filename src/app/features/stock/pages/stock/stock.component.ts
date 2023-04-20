@@ -57,7 +57,7 @@ export class StockComponent implements OnInit, OnDestroy {
   public infoBoxStock: IInfoBox[] = [];
   private userData: any;
   public authorizationStockAdd: string = authorizations.stock.element.add;
-  public authorizationStockTransfer: string = authorizations.stock.element.transfer;
+  public authorizationStockTransfer: string = "authorizations.stock.element.transfer";
   public quantity: number = 0;
 
   constructor(

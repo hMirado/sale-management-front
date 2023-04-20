@@ -29,7 +29,12 @@ export const authorizations = {
     element: {
       add: 'PAGE_ELEMENT_STOCK_ADD',
       import: 'PAGE_ELEMENT_STOCK_IMPORT',
-      transfer: 'PAGE_ELEMENT_STOCK_TRANSFER'
+    }
+  },
+  transfer: {
+    page: 'PAGE_TRANSFER',
+    element: {
+      create: 'PAGE_ELEMENT_CREATE_NEW_TRANSFER'
     }
   },
   sale: {
@@ -72,10 +77,20 @@ export const appMenu: Menu[] = [
     ]
   }, 
   {
-    authorization: 'PAGE_STOCK',
     icon: 'fas fa-warehouse',
     label: 'Stock',
-    url: '/stock'
+    subMenu: [
+      {
+        authorization: 'PAGE_STOCK',
+        label: 'Stock',
+        url: '/stock'
+      },
+      {
+        authorization: 'PAGE_STOCK',
+        label: 'Transfert d\'article',
+        url: '/transfer'
+      }
+    ]
   },
   {
     groupName: 'MON ENTREPRISE',

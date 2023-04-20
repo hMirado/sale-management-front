@@ -15,7 +15,7 @@ import { TransfertComponent } from './components/transfert/transfert.component';
 @NgModule({
   declarations: [
     StockComponent,
-    TransfertComponent
+    TransfertComponent,
   ],
   imports: [
     CommonModule,
