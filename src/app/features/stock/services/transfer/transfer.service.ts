@@ -83,17 +83,15 @@ export class TransferService {
         {
           id: value.transfer_uuid,
           key: 'date',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [ 
+          value: [{
+            type: 'simple',
+            value: 
               `Créer le ${this.helperService.getDate(value?.createdAt)}`,
-              updatedDate
-            ],
             align: 'left'
-          }
+          }]
         },
-        {
+        /*{
           id: value.transfer_uuid,
           key: 'product',
           type: 'simple',
@@ -180,7 +178,7 @@ export class TransferService {
              ],
             align: 'left'
           }
-        }
+        }*/
       ]
     }
   }

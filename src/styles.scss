@@ -83,6 +83,13 @@ input[type=number] {
   cursor: auto;
 }
 
+.selected {
+  background-color: rgba(0, 0, 0, 0.20);
+  border-color: rgba(0, 0, 0, 0.20);
+  color: #202224;
+  opacity: 0.2;
+}
+
 .page-action-btn {
   width: 100%;
   border-top: 1px rgb(119, 119, 119) solid;

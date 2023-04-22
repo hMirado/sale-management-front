@@ -53,13 +53,14 @@
   </div>
 </section>
 
-<app-modal [id]="productId">
+<app-modal [id]="productId" size="large">
   <div head>
     <h4 class="modal-title">
       Sélectionner les artciles
     </h4>
   </div>
   <div body>
-    <app-item-selection></app-item-selection>
+    <app-item-selection [id]="productId"></app-item-selection>
   </div>
+  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="validateSelectedProduct()">Enregistrer</button>
 </app-modal>

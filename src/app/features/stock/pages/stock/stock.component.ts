@@ -80,9 +80,10 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getTab();
-    this.getProductSerialization();
+    this.getStocks();
+    this.countStock();
     this.getShopFilter();
+    this.getProductSerialization();
     this.getFilterValue();
     this.cancel();
   }
@@ -110,8 +111,6 @@ export class StockComponent implements OnInit, OnDestroy {
     this.userData = JSON.parse(this.helperService.decrypt(data));    
     this.shopFilter = ''
     if (this.userData.role.role_key != ADMIN) {
-      console.log('ato');
-      
       this.shopFilter = this.userData.shops[0].shop_uuid;
     }
   }
@@ -283,18 +282,6 @@ export class StockComponent implements OnInit, OnDestroy {
         if (status) this.clearForm();
       })
     )
-  }
-
-  getTab() {
-    this.subscription.add(
-      this.tabService.getTab().subscribe(tabId => {
-        if (tabId == this.stockId) {
-          this.getStocks();
-          this.countStock();
-          this.getShopFilter();
-        }
-      })
-    );
   }
 
   getStocks(nextPage: number = 1) {
@@ -499,13 +486,13 @@ export class StockComponent implements OnInit, OnDestroy {
               bg: 'bg-info',
               icon: ' fa-shopping-bag',
               number: response.data.in,
-              text: 'Article en stock'
+              text: 'En stock'
             },{
               id: 'out-stock',
               bg: 'bg-danger',
               icon: ' fa-exclamation',
               number: response.data.out,
-              text: 'Article en rupture'
+              text: 'En rupture'
             }
           ]
         }

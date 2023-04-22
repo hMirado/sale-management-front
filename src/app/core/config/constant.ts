@@ -82,7 +82,7 @@ export const appMenu: Menu[] = [
     subMenu: [
       {
         authorization: 'PAGE_STOCK',
-        label: 'Stock',
+        label: 'Réception',
         url: '/stock'
       },
       {

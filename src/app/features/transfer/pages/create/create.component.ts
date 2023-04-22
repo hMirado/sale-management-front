@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subscription, map, of, startWith } from 'rxjs';
+import { Observable, Subscription, filter, map, of, startWith, switchMap } from 'rxjs';
 import { userInfo, ADMIN } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
@@ -12,6 +12,9 @@ import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { ITable } from 'src/app/shared/models/table/i-table';
 import { tableProductHeader } from '../../config/constant';
 import { TableService } from 'src/app/shared/serives/table/table.service';
+import { ItemSelectionService } from 'src/app/shared/serives/item-selection/item-selection.service';
+import { ITableFilter, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
+import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 
 @Component({
@@ -41,7 +44,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     private helperService: HelperService,
     private modalService: ModalService,
     private  transferService: TransferService,
-    private tableService: TableService
+    private tableService: TableService,
+    private itemSelectionService: ItemSelectionService,
+    private tableFilterService: TableFilterService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -53,13 +58,16 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.searchShopSender();
     this.searchShopReceiver();
     this.initProductTableSelected();
+    this.getProductFilterValue();
+    this.getSelectedProduct();
+    this.getCancelSelectedProduct()
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
-  addHeaderContent() {
+  addHeaderContent(): void {
     this.breadCrumbs = [
       {
         url: '/',
@@ -76,7 +84,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     ]
   }
 
-  createForm() {
+  createForm(): void {
     this.informationForm = this.formBuilder.group({
       userSender: ['', Validators.required],
       shopSender: ['', Validators.required],
@@ -99,7 +107,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.informationForm.updateValueAndValidity();
   }
 
-  getAllShop() {
+  getAllShop(): void {
     this.subscription.add(
       this.transferService.getShops().subscribe((response: ApiResponse) => {
         this.shops = response.data;
@@ -113,7 +121,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   // matAutoComplete for sender site
-  searchShopSender() {
+  searchShopSender(): void {
     this.informationForm.controls['shopSender'].valueChanges.pipe(
       startWith<string | Shop | any>(''),
       map(value => typeof value === 'string' ? value : value.shop_name),
@@ -127,12 +135,12 @@ export class CreateComponent implements OnInit, OnDestroy {
     })
   }
 
-  displayShopSender(shop: Shop) {
+  displayShopSender(shop: Shop): string {
     return shop.shop_name
   }
 
   // matAutoComplete for receiver site
-  searchShopReceiver() {
+  searchShopReceiver(): void {
     this.informationForm.controls['shopReceiver'].valueChanges.pipe(
       startWith<string | Shop | any>(''),
       map(value => typeof value === 'string' ? value : value.shop_name),
@@ -146,26 +154,68 @@ export class CreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  displayShopReceiver(shop: Shop) {
+  displayShopReceiver(shop: Shop): string {
     return shop.shop_name;
   }
 
-  initProductTableSelected() {
+  initProductTableSelected(): void {
     this.tableService.setTableValue(this.table);
   }
 
-  openModal(id: string) {
+  openModal(id: string): void {
     if (id === this.productId && this.informationForm.valid) {
-      console.log(this.informationForm.value);
       this.getProductInStock();
     }
     this.modalService.showModal(id);
   }
 
-  getProductInStock() {
+  closeModal(id: string) {
+    this.modalService.hideModal(id);
+  }
+
+  getProductInStock(): void {
     this.subscription.add(
-      this.transferService.getProductsInStock(this.informationForm.value['shopSender']['shop_uuid']).subscribe((response: ApiResponse) => {
-        console.log(response);
+      this.transferService.getProductsInStock(this.informationForm.value['shopSender']['shop_uuid']).subscribe((response: ApiResponse) => this.getProductResponse(response))
+    )
+  }
+
+  getProductResponse(response: ApiResponse) {
+    const products = {id: this.productId, products: response.data};
+    this.itemSelectionService.setProducts(products);
+  }
+
+  getProductFilterValue(): void {
+    this.subscription.add(
+      this.tableFilterService.filterFormValue$.pipe(
+        filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == this.productId),
+        switchMap((filter: ITableFilterSearchValue|null) => {
+          const search = filter?.value['keyword']
+          return this.transferService.getProductsInStock(this.informationForm.value['shopSender']['shop_uuid'], search);
+        })
+      ).subscribe((response: ApiResponse) => this.getProductResponse(response))
+    );
+  }
+
+  validateSelectedProduct() {
+    this.itemSelectionService.setValidateSelectedProduct(true);
+  }
+
+  public selectedProducts: Product[] = [];
+  getSelectedProduct() {
+    this.subscription.add(
+      this.itemSelectionService.getSelectedProducts().pipe(
+        filter((value: any) => value && value['id'] == this.productId)
+      ).subscribe((value: any) => {
+        this.selectedProducts = value['products'];
+        this.closeModal(this.productId);
+      })
+    );
+  }
+
+  getCancelSelectedProduct() {
+    this.subscription.add(
+      this.modalService.isCanceled$.subscribe((status: boolean) => {
+        if(status) this.itemSelectionService.setCancelSelectedProduct(true);
       })
     )
   }

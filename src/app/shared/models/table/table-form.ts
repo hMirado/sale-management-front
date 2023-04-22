@@ -1,4 +1,4 @@
-export interface ITable {
+export interface TableForm {
   id: string;
   header: IHeader[];
   body: ICell|null;
@@ -28,18 +28,18 @@ export interface IRow {
 export interface IRowValue {
   id: string;
   key: string;
-  expand: boolean;
-  value: IValue[];
-  image?: string;
-}
-
-export interface IValue {
   type: 'simple' | 'input' | 'button';
-  value: string;
-  align?: 'center' | 'left' | 'right';
+  expand: boolean;
+  value: IValue;
+  image?: string;
   badge?: IBadge;
   icon?: IIcon;
   button?: IButton[]
+}
+
+export interface IValue {
+  value: any[];
+  align?: 'center' | 'left' | 'right';
 }
 
 export interface IBadge {

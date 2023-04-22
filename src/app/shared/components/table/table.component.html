@@ -1,4 +1,4 @@
-<table class="table table-hover text-nowrap">
+<table class="table table-hover text-nowrap" [formGroup]="tableFormGroup">
   <thead>
     <tr>
       <th 
@@ -12,39 +12,49 @@
       <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isViewable || this.tables?.body?.isViewable" class="text-center">Actions</th>
     </tr>
   </thead>
-  <tbody>
-  <ng-container *ngFor="let body of tables?.body?.cellValue; let i = index">
-    <tr *ngIf="!body.isExpandable else expandable">
-      <td 
-        *ngFor="let row of body.rowValue"
-        [ngClass]="{'text-center': row?.value?.align=='center', 'text-left': row?.value?.align=='left', 'text-right': row?.value?.align=='right'}"
-      >
-        <ng-container *ngFor="let value of row?.value?.value">
-          <span *ngIf="(row.badge && row.badge.status) else notBadge" class="badge bg-{{row.badge.bg}}">
-            <i *ngIf="row?.icon?.status" class="{{ row?.icon?.icon }} text-{{ row?.icon?.color }}"></i> {{ value }}
-          </span>
-          <ng-template #notBadge>
-            <p style="margin-bottom: 0;">
-              <i *ngIf="row?.icon?.status" class="{{ row?.icon?.icon }} text-{{ row?.icon?.color }}"></i> {{ value }}
-            </p>
-          </ng-template>
-        </ng-container>
-      </td>
+  <tbody formArrayName="fieldGroup">
+  <ng-container *ngFor="let field of fieldGroup().controls; let i = index">
+    <tr [formGroupName]="i">
+      <ng-container formArrayName="parentField">
+        <td 
+          *ngFor="let parent of parentField(i).controls; let j = index"
+          [formGroupName]="j"
+          >
+          <div 
+            class="row" 
+            formArrayName="childField" 
+          >
+            <ng-container class="col" *ngIf="parent.value['expand']">
+              <i class="pointer fas fa-{{expanded === parent.value['childID'] ? 'chevron-down' : 'chevron-right'}} fa-1x mt-1 pr-2" (click)="expand(parent.value['childID'])"></i>
+            </ng-container>
+            <div 
+            class="col"
+              *ngFor="let child of childField(i, j).controls; let k = index"
+              [ngClass]="{'text-left' : child.value['align'] == 'left', 'text-right' : child.value['align'] == 'right', 'text-center' : child.value['align'] == 'center'}"
+            >
+              <ng-container *ngIf="child.value['type'] == 'simple'">
+                <span *ngIf="(child.value['badge'] && child.value['badge']['status']) else notBadge" class="badge bg-{{child.value['badge']['bg']}}">{{ child.value['value'] }}</span>
+                <ng-template #notBadge>{{child.value['value']}}</ng-template>
+              </ng-container>
+            </div>
+          </div>
+        </td>
+      </ng-container>
       <td *ngIf="haveAction">
         <div class="row justify-content-center">
           <div *ngIf="this.tables?.body?.isEditable" class="col-2 text-center">
             <app-tooltip text="Modifier">
-              <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content (click)="getLineId('edit', body.id)"></i>
+              <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content ></i>
             </app-tooltip>
           </div>
           <div *ngIf="this.tables?.body?.isDeleteable" class="col-2 text-center">
             <app-tooltip text="Supprimer">
-              <i class="pointer far fa-trash-alt text-secondary" style="font-size:18px" content (click)="getLineId('delete', body.id)"></i>
+              <i class="pointer far fa-trash-alt text-secondary" style="font-size:18px" content ></i>
             </app-tooltip>
           </div>
           <div *ngIf="this.tables?.body?.isViewable" class="col-2 text-center">
             <app-tooltip text="Voir détails">
-              <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content (click)="getLineId('view', body.id)"></i>
+              <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content ></i>
             </app-tooltip>
           </div>
           <div *ngIf="this.tables?.body?.isSwitchable" class="col-2 text-center">
@@ -56,64 +66,17 @@
         </div>
       </td>
     </tr>
-    <ng-template #expandable>
-      <tr [class.tr-is-expanded]="expanded == body.id">
-        <td 
-          *ngFor="let row of body.rowValue"
-          [ngClass]="{'text-center': row?.value?.align=='center', 'text-left': row?.value?.align=='left', 'text-right': row?.value?.align=='right'}"
-        >
-          <ng-container *ngIf="row.expand else isNotExpandble">
-            <i class="pointer fas fa-{{expanded === body.id ? 'chevron-down' : 'chevron-right'}} fa-1x pr-2" (click)="expand(row.id)"></i>{{ row?.value?.value }}
-          </ng-container>
-          <ng-template #isNotExpandble>
-            <i class="fas fa-arrow-alt-to-right"></i>
-            <i class="far fa-arrow-to-right"></i>
-            <span *ngIf="(row.badge && row.badge.status) else notBadge" class="badge bg-{{row.badge.bg}}">{{ row?.value?.value }}</span>
-            <ng-template #notBadge>{{ row?.value?.value }}</ng-template>
-          </ng-template>
-        </td>
-        <td *ngIf="haveAction">
-          <div class="row justify-content-center">
-            <div *ngIf="this.tables?.body?.isEditable" class="col-2 text-center">
-              <app-tooltip text="Modifier">
-                <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content (click)="getLineId('edit', body.id)"></i>
-              </app-tooltip>
-            </div>
-            <div *ngIf="this.tables?.body?.isDeleteable" class="col-2 text-center">
-              <app-tooltip text="Supprimer">
-                <i class="pointer far fa-trash-alt text-secondary" style="font-size:18px" content (click)="getLineId('delete', body.id)"></i>
-              </app-tooltip>
-            </div>
-            <div *ngIf="this.tables?.body?.isViewable" class="col-2 text-center">
-              <app-tooltip text="Voir détails">
-                <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content (click)="getLineId('view', body.id)"></i>
-              </app-tooltip>
-            </div>
-            <div *ngIf="this.tables?.body?.isSwitchable" class="col-2 text-center">
-              <div class="custom-control custom-switch custom-switch-on-success col-2">
-                <input type="checkbox" class="custom-control-input" id="customSwitch{{i}}">
-                <label class="custom-control-label" for="customSwitch{{i}}"></label>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
     <tr
-      [ngClass]="expanded == body.id ? 'isExpand' : 'isNotExpand'"
+      [ngClass]="expanded == field.value['parentID'] ? 'isExpand' : 'isNotExpand'"
       *ngFor="let expandValue of tableExpand?.cellValue; let i = index"
     >
-      <td 
-        *ngFor="let expand of expandValue.rowValue"
-        [ngClass]="{'text-center': expand?.value?.align=='center', 'text-left': expand?.value?.align=='left', 'text-right': expand?.value?.align=='right'}"
-      >
-        <ng-container *ngFor="let value of expand?.value?.value">
-          <p style="margin: 0!important">
-            {{ value }}
+      <td *ngFor="let row of expandValue.rowValue">
+        <ng-container >
+          <p style="margin: 0!important" *ngFor="let value of row.value">
+            {{ value.value }}
           </p>
         </ng-container>
       </td>
-      <td *ngIf="haveAction"></td>
     </tr>
   </ng-container>
   </tbody>

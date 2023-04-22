@@ -1,8 +1,14 @@
 <div class="card">
-  <div class="card-body">
+  <div class="card-body" style="padding-bottom: .40rem !important; padding-top: .40rem !important;">
     <form [formGroup]="filterFormGroup" class="mb-0 ">
       <div class="row" formArrayName="fields">
-        <div style="margin-bottom: O!important" class="col-3 row" *ngFor="let field of fieldGroup.controls; let i = index" [formGroupName]="i">
+        <div 
+          style="margin-bottom: O!important" 
+          class="row " 
+          [ngClass]="fieldGroup.controls.length > 1 ? 'col-3' : 'col-12'" 
+          *ngFor="let field of fieldGroup.controls; let i = index" 
+          [formGroupName]="i"
+        >
           <label col-sm-3 col-form-label>{{ field.value.label }} : </label>
           <ng-container [ngSwitch]="field.value.type">
             <div *ngSwitchCase="'input'" class="col-sm-7">
