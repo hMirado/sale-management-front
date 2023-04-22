@@ -69,7 +69,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   initForm(values: IRow[]) {
     this.fieldGroup().clear();
-    values.forEach((row: IRow, i: number) => {
+    values?.forEach((row: IRow, i: number) => {
       let parentField = this.formBuilder.group({
         parentID: row.id,
         parentLine: i,
@@ -90,9 +90,10 @@ export class TableComponent implements OnInit, OnDestroy {
             valueId: k,
             type: value.type,
             value: value.value,
+            align: value.align,
             badge: value?.badge || null,
             icon: value?.icon || null,
-            align: value.align
+            button: value?.button || null,
           })
           child.push(formValue)
         })

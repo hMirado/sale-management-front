@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-number',
+  selector: 'app-input-number',
   templateUrl: './number.component.html',
   styleUrls: ['./number.component.scss']
 })

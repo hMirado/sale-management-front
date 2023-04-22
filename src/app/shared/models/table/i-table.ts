@@ -34,12 +34,12 @@ export interface IRowValue {
 }
 
 export interface IValue {
-  type: 'simple' | 'input' | 'button';
+  type: 'simple' | 'button' | 'input-text' | 'input-number' | 'input-checkbox';
   value: string;
   align?: 'center' | 'left' | 'right';
   badge?: IBadge;
   icon?: IIcon;
-  button?: IButton[]
+  button?: IButton;
 }
 
 export interface IBadge {
@@ -50,12 +50,11 @@ export interface IBadge {
 export interface IIcon {
   status: boolean;
   icon: string;
-  color?: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+  color: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
 }
 
 export interface IButton {
-  text: string;
-  size: 'btn-xs';
-  bg: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
-  action: void;
+  size: 'btn-xs' | 'btn-sm';
+  bg: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'dark';
+  action: Function;
 }

@@ -42,8 +42,10 @@
         </div>
       </div>
     </form>
-    <div class="mt-1">
-      <app-table [id]='productId'></app-table>
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <app-table [id]='productId'></app-table>
+      </div>
     </div>
     <div class="col-2">
       <button (click)="openModal(productId)" [disabled]="!informationForm.valid" class="btn btn-sm btn-outline-dark">

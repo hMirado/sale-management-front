@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subscription, filter, map, of, startWith, switchMap } from 'rxjs';
+import { Observable, Subscription, filter, map, of, single, startWith, switchMap } from 'rxjs';
 import { userInfo, ADMIN } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { HelperService } from 'src/app/shared/serives/helper/helper.service';
@@ -9,7 +9,7 @@ import { ModalService } from 'src/app/shared/serives/modal/modal.service';
 import { TransferService } from '../../services/transfer/transfer.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
-import { ITable } from 'src/app/shared/models/table/i-table';
+import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { tableProductHeader } from '../../config/constant';
 import { TableService } from 'src/app/shared/serives/table/table.service';
 import { ItemSelectionService } from 'src/app/shared/serives/item-selection/item-selection.service';
@@ -36,14 +36,15 @@ export class CreateComponent implements OnInit, OnDestroy {
     id: this.productId,
     header: tableProductHeader,
     body: null
-  }
+  };
+  public selectedProducts: Product[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private localStorageService: LocalStorageService,
     private helperService: HelperService,
     private modalService: ModalService,
-    private  transferService: TransferService,
+    private transferService: TransferService,
     private tableService: TableService,
     private itemSelectionService: ItemSelectionService,
     private tableFilterService: TableFilterService
@@ -200,7 +201,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.itemSelectionService.setValidateSelectedProduct(true);
   }
 
-  public selectedProducts: Product[] = [];
+
+  private rows: IRow[] = [];
   getSelectedProduct() {
     this.subscription.add(
       this.itemSelectionService.getSelectedProducts().pipe(
@@ -208,6 +210,39 @@ export class CreateComponent implements OnInit, OnDestroy {
       ).subscribe((value: any) => {
         this.selectedProducts = value['products'];
         this.closeModal(this.productId);
+        this.rows = [];
+        this.selectedProducts.forEach((product: Product) => {
+          let row: IRow = this.transferService.getTableRowValue(product);
+          if (product.is_serializable) {
+            row.rowValue[2].value[0].button = {
+              size: 'btn-sm',
+              bg: 'secondary',
+              action: () => {
+                this.openSerializationModal(product.product_uuid)
+              }
+            };
+            row.rowValue[2].value[0].icon = {
+              status: true,
+              icon: 'exclamation-circle',
+              color: 'danger'
+            }
+          } else {
+            row.rowValue[2].value[0].icon = {
+              status: true,
+              icon: 'check-circle',
+              color: 'success'
+            }
+          }
+          this.rows.push(row)
+        })
+        let cells: ICell = {
+          cellValue: this.rows,
+          isEditable: false,
+          isDeleteable: false,
+          isSwitchable: false
+        }
+        this.table.body = cells;
+        this.tableService.setTableValue(this.table);
       })
     );
   }
@@ -218,5 +253,9 @@ export class CreateComponent implements OnInit, OnDestroy {
         if(status) this.itemSelectionService.setCancelSelectedProduct(true);
       })
     )
+  }
+
+  openSerializationModal(productUuid: string) {
+    console.log("openSerializationModal::productUuid", productUuid);
   }
 }

@@ -112,7 +112,10 @@ import { CheckboxComponent } from './components/input/checkbox/checkbox.componen
     MatStepperModule,
     MatCheckboxModule,
     TooltipComponent,
-    ItemSelectionComponent
+    ItemSelectionComponent,
+    NumberComponent,
+    TextComponent,
+    CheckboxComponent,
   ]
 })
 export class SharedModule { }
