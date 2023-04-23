@@ -9,7 +9,7 @@
       >
         {{header.value}}
       </th>
-      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isViewable || this.tables?.body?.isViewable" class="text-center">Actions</th>
+      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isSwitchable" class="text-center">Actions</th>
     </tr>
   </thead>
   <tbody formArrayName="fieldGroup">
@@ -35,7 +35,7 @@
                 <i class="pointer fas fa-{{expanded === parent.value['childID'] ? 'chevron-down' : 'chevron-right'}} fa-1x mt-1 pr-2" (click)="expand(parent.value['childID'])"></i>
               </ng-container>
               <div 
-              class="col"
+                class="col"
                 *ngFor="let child of childField(i, j).controls; let k = index"
                 [ngClass]="{'text-left' : child.value['align'] == 'left', 'text-right' : child.value['align'] == 'right', 'text-center' : child.value['align'] == 'center'}"
               >
@@ -49,13 +49,18 @@
                     "
                   ></ng-template>
                   <ng-template #number>
-                    <app-input-number></app-input-number>
+                    <app-input-number 
+                      [id]="parent.value['key'] + '-' + i + '-' + j + '-' + k"  
+                      [value]="child.value['value']"
+                      (formValue)="getInputValue($event)"
+                    >
+                    </app-input-number>
                   </ng-template>
                   <ng-template #text>
-
+                    <app-input-text></app-input-text>
                   </ng-template>
                   <ng-template #checkbox>
-
+                    <app-input-checkbox></app-input-checkbox>
                   </ng-template>
                   <ng-template #button>
                     <button class="btn {{child.value['button']['size']}} btn-outline-{{ child.value['button']['bg']}}" (click)="child.value['button'].action()"> {{ child.value['value'] }} </button>
@@ -82,11 +87,6 @@
             <div *ngIf="this.tables?.body?.isDeleteable" class="col-2 text-center">
               <app-tooltip text="Supprimer">
                 <i class="pointer far fa-trash-alt text-secondary" style="font-size:18px" content ></i>
-              </app-tooltip>
-            </div>
-            <div *ngIf="this.tables?.body?.isViewable" class="col-2 text-center">
-              <app-tooltip text="Voir détails">
-                <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content ></i>
               </app-tooltip>
             </div>
             <div *ngIf="this.tables?.body?.isSwitchable" class="col-2 text-center">

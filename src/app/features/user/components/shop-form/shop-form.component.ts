@@ -5,6 +5,7 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { User } from '../../models/user/user.model';
 import { UserService } from '../../services/user.service';
+import { inputTimer } from 'src/app/shared/config/constant';
 
 @Component({
   selector: 'app-shop-form',
@@ -100,7 +101,7 @@ export class ShopFormComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.shopField.valueChanges.pipe(
         filter(value => value && this.shopFormGroup.value['trigger'] && this.userCreated?.role?.role_key == 'ADMIN'),
-        debounceTime(250)
+        debounceTime(inputTimer / 2)
       ).subscribe((values: any) => {
         this.shopFormGroup.controls['trigger'].setValue(false);
         let ids: number[] = [];
@@ -120,7 +121,7 @@ export class ShopFormComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.shopFormGroup.valueChanges.pipe(
         filter(value => value && this.shopFormGroup.value['trigger'] && this.userCreated?.role?.role_key != 'ADMIN'),
-        debounceTime(250)
+        debounceTime(inputTimer / 2)
       ).subscribe((values: any) => {
         let shops = [values['shops']];
         if ( values['shops'][0].id ) {

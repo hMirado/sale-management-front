@@ -4,7 +4,7 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { ApiService } from 'src/app/core/services/api/api.service';
 import { ITableFilterFieldValue, ITableFilterField } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { IRow } from 'src/app/shared/models/table/i-table';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { environment } from 'src/environments/environment';
 import { transferStatus } from '../../config/constant';
 import { Transfer } from '../../models/transfer/transfer.model';

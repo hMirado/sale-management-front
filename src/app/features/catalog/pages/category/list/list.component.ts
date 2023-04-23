@@ -5,17 +5,17 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
-import { TableService } from 'src/app/shared/serives/table/table.service';
+import { TableService } from 'src/app/shared/services/table/table.service';
 import { tableCategoryHeader, tableCategoryId } from '../../../config/constant';
 import { Category } from '../../../models/category/category.model';
 import { CategoryService } from '../../../service/category/category.service';
 import {ActivatedRoute, Params, Router} from "@angular/router";
-import {ModalService} from "../../../../../shared/serives/modal/modal.service";
+import {ModalService} from "../../../../../shared/services/modal/modal.service";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { ITableFilter, ITableFilterField, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
-import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
+import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 
 @Component({
   selector: 'app-list',
@@ -180,7 +180,8 @@ export class ListComponent implements OnInit, OnDestroy {
       });
       let cells: ICell = {
         cellValue: this.rows,
-        isViewable: true,
+        paginate: true,
+        isEditable: true,
       };
       table.header = tableCategoryHeader;
       table.body = cells;

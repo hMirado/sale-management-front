@@ -13,10 +13,10 @@ export interface IHeader {
 
 export interface ICell {
   cellValue: IRow [];
+  paginate: boolean;
   isEditable?: boolean;
   isDeleteable?: boolean;
   isSwitchable?: boolean;
-  isViewable?: boolean
 }
 
 export interface IRow {

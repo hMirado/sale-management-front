@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IExport } from 'src/app/shared/models/export/i-export';
-import { ExportService } from 'src/app/shared/serives/export/export.service';
+import { ExportService } from 'src/app/shared/services/export/export.service';
 
 @Component({
   selector: 'app-export',

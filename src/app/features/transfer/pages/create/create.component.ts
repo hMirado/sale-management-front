@@ -1,21 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription, filter, map, of, single, startWith, switchMap } from 'rxjs';
-import { userInfo, ADMIN } from 'src/app/shared/config/constant';
+import { userInfo } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
-import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
-import { ModalService } from 'src/app/shared/serives/modal/modal.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
+import { ModalService } from 'src/app/shared/services/modal/modal.service';
 import { TransferService } from '../../services/transfer/transfer.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { tableProductHeader } from '../../config/constant';
-import { TableService } from 'src/app/shared/serives/table/table.service';
-import { ItemSelectionService } from 'src/app/shared/serives/item-selection/item-selection.service';
-import { ITableFilter, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
-import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
+import { TableService } from 'src/app/shared/services/table/table.service';
+import { ItemSelectionService } from 'src/app/shared/services/item-selection/item-selection.service';
+import { ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
+import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
+import { Product as TransfertProduct } from '../../models/validations/product'
 
 @Component({
   selector: 'app-create',
@@ -201,7 +202,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.itemSelectionService.setValidateSelectedProduct(true);
   }
 
-
+  private transferProduct: TransfertProduct[] = []
   private rows: IRow[] = [];
   getSelectedProduct() {
     this.subscription.add(
@@ -210,8 +211,14 @@ export class CreateComponent implements OnInit, OnDestroy {
       ).subscribe((value: any) => {
         this.selectedProducts = value['products'];
         this.closeModal(this.productId);
-        this.rows = [];
         this.selectedProducts.forEach((product: Product) => {
+          if (this.rows.length > 0 && this.rows.find((value: IRow) => value.id == product.product_uuid) ) {
+            return;
+          }
+          this.transferProduct.push({
+            productUuid: product.product_uuid,
+            quantity: 1
+          })
           let row: IRow = this.transferService.getTableRowValue(product);
           if (product.is_serializable) {
             row.rowValue[2].value[0].button = {
@@ -237,9 +244,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         })
         let cells: ICell = {
           cellValue: this.rows,
-          isEditable: false,
-          isDeleteable: false,
-          isSwitchable: false
+          paginate: false,
         }
         this.table.body = cells;
         this.tableService.setTableValue(this.table);

@@ -20,3 +20,4 @@ export const tableFilter ={
 }
 export const ADMIN: string = 'ADMIN';
 export const SELLER: string = 'SELLER';
+export const inputTimer: number = 500;

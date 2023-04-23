@@ -6,18 +6,18 @@ import { authorizations, responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
-import { ADMIN, tokenKey, userInfo } from 'src/app/shared/config/constant';
+import { ADMIN, inputTimer, tokenKey, userInfo } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
-import { AuthorizationService } from 'src/app/shared/serives/authorization/authorization.service';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
-import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
-import { ModalService } from 'src/app/shared/serives/modal/modal.service';
-import { TabService } from 'src/app/shared/serives/tab/tab.service';
-import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
-import { TableService } from 'src/app/shared/serives/table/table.service';
+import { AuthorizationService } from 'src/app/shared/services/authorization/authorization.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
+import { ModalService } from 'src/app/shared/services/modal/modal.service';
+import { TabService } from 'src/app/shared/services/tab/tab.service';
+import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
+import { TableService } from 'src/app/shared/services/table/table.service';
 import { depotShopCode, tableStockHeader, tableStockId } from '../../config/constant';
 import { AttributeType } from '../../models/attribute-type/attribute-type.model';
 import { SerializationType } from '../../models/serialization-type/serialization-type.model';
@@ -195,7 +195,7 @@ export class StockComponent implements OnInit, OnDestroy {
           distinctUntilChanged((prev, curr)=>{
             return prev.label === curr.label;
           }),
-          debounceTime(500),
+          debounceTime(inputTimer),
           filter(value => (value.length >= 3 || value == '') ),
           switchMap((product: string) => {
             if (product == '') {
@@ -320,9 +320,7 @@ export class StockComponent implements OnInit, OnDestroy {
       
       let cells: ICell = {
         cellValue: this.rows,
-        isEditable: false,
-        isDeleteable: false,
-        isSwitchable: false
+        paginate: true
       }
       table.body = cells;
       this.tableService.setTableValue(table);
@@ -381,7 +379,8 @@ export class StockComponent implements OnInit, OnDestroy {
       rows.push(row)
     })
     let cells: ICell = {
-      cellValue: rows
+      cellValue: rows,
+      paginate: false
     };
     this.tableService.setExpandedValue(cells)
   }

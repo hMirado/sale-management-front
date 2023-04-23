@@ -5,16 +5,16 @@ import { Subscription, debounceTime, switchMap, of, filter } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
-import { ADMIN, userInfo } from 'src/app/shared/config/constant';
+import { ADMIN, inputTimer, userInfo } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { ITableFilterFieldValue, ITableFilter, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { IRow, ITable, ICell } from 'src/app/shared/models/table/i-table';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
-import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
-import { ModalService } from 'src/app/shared/serives/modal/modal.service';
-import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
-import { TableService } from 'src/app/shared/serives/table/table.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
+import { ModalService } from 'src/app/shared/services/modal/modal.service';
+import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
+import { TableService } from 'src/app/shared/services/table/table.service';
 import { tableProductId, tableProductHeader } from '../../../config/constant';
 import { Category } from '../../../models/category/category.model';
 import { Product } from '../../../models/product/product.model';
@@ -137,7 +137,8 @@ export class ListComponent implements OnInit, OnDestroy {
       });
       let cells: ICell = {
         cellValue: this.rows,
-        isViewable: true,
+        paginate: true,
+        isEditable: true,
       };
       table.header = tableProductHeader;
       table.body = cells;
@@ -235,7 +236,7 @@ export class ListComponent implements OnInit, OnDestroy {
     if (category) {
       this.subscription.add(
         category.valueChanges.pipe(
-          debounceTime(500),
+          debounceTime(inputTimer),
           switchMap((category: string) => {
             if (category == '') {
              return of(this.categories)
@@ -369,6 +370,7 @@ export class ListComponent implements OnInit, OnDestroy {
           rows.push(row)
         })
         let cells: ICell = {
+          paginate: false,
           cellValue: rows
         };
         this.tableService.setExpandedValue(cells)

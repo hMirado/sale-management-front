@@ -8,7 +8,7 @@ import {
 import { Observable, tap } from 'rxjs';
 import { NotificationService } from '../../services/notification/notification.service';
 import { Router } from '@angular/router';
-import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {

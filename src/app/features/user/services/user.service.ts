@@ -10,7 +10,7 @@ import { Role } from 'src/app/shared/models/role/role.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { IRow } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
-import { UserFormValue } from '../models/user-form-value/user-form-value';
+import { UserFormValue } from '../models/validation/user-form-value';
 import { User } from '../models/user/user.model';
 
 @Injectable({

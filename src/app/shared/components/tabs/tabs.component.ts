@@ -1,5 +1,5 @@
 import { AfterContentInit, AfterViewInit, Component, ContentChildren, OnInit, QueryList } from '@angular/core';
-import { TabService } from '../../serives/tab/tab.service';
+import { TabService } from '../../services/tab/tab.service';
 import { TabComponent } from './tab/tab.component';
 
 @Component({

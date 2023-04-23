@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, distinct, distinctUntilChanged, filter, of, pairwise, startWith, Subscription, switchMap } from 'rxjs';
-import { tableFilter } from '../../config/constant';
+import { inputTimer, tableFilter } from '../../config/constant';
 import { ITableFilter, ITableFilterField, ITableFilterSearchValue } from '../../models/i-table-filter/i-table-filter';
-import { TableFilterService } from '../../serives/table-filter/table-filter.service';
+import { TableFilterService } from '../../services/table-filter/table-filter.service';
 
 @Component({
   selector: 'app-table-filter',
@@ -83,7 +83,7 @@ export class TableFilterComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.filterFormGroup.valueChanges.pipe(
         filter(value => value.triggerValueChange && value.id === this.id),
-        debounceTime(1000),
+        debounceTime(inputTimer * 2),
         switchMap(value => {
           this.filterFormGroup.patchValue({triggerValueChange: false});
           this.filterFormGroup.updateValueAndValidity();
@@ -107,7 +107,7 @@ export class TableFilterComponent implements OnInit, OnDestroy {
 
   filterSelectValue(i: number) {
     this.fieldGroup.at(i).valueChanges.pipe(
-      debounceTime(500),
+      debounceTime(inputTimer),
       startWith(null),
       pairwise(),
       filter(x => !this.isClicked),

@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Subscription, filter } from 'rxjs';
-import { ItemSelectionService } from '../../serives/item-selection/item-selection.service';
+import { ItemSelectionService } from '../../services/item-selection/item-selection.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { ITableFilter } from '../../models/i-table-filter/i-table-filter';
-import { TableFilterService } from '../../serives/table-filter/table-filter.service';
+import { TableFilterService } from '../../services/table-filter/table-filter.service';
 
 @Component({
   selector: 'app-item-selection',

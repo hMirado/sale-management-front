@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { ApiService } from 'src/app/core/services/api/api.service';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { environment } from 'src/environments/environment';
 import { IRow } from '../../../../shared/models/table/i-table';
 import { Product } from '../../models/product/product.model';
-import { ProductFormValue } from '../../models/product-form-value/product-form-value';
+import { ProductFormValue } from '../../models/validations/product-form-value';
 
 @Injectable({
   providedIn: 'root',
@@ -88,12 +88,12 @@ export class ProductService {
   addTableRowValue(value: Product): IRow {
     return {
       id: value.product_uuid,
-      isExpandable: true,
+      isExpandable: false,
       rowValue: [
         {
           id: value.product_uuid,
           key: 'code',
-          expand: true,
+          expand: false,
           value: [
             {
               type: 'simple',

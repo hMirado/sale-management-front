@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
 import { tokenKey, userInfo } from 'src/app/shared/config/constant'
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { IAuthorization } from 'src/app/shared/models/i-authorization/i-authorization';
 import { Menu } from 'src/app/core/models/menu/menu.model';
 import { appMenu } from 'src/app/core/config/constant'

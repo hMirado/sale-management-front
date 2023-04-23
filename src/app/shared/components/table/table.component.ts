@@ -1,8 +1,8 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import { Subscription, filter } from 'rxjs';
 import { ICell, IRow, IRowValue, ITable, IValue } from '../../models/table/i-table';
-import { TableService } from '../../serives/table/table.service';
-import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TableService } from '../../services/table/table.service';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-table',
@@ -57,19 +57,23 @@ export class TableComponent implements OnInit, OnDestroy {
   getTableValue(): void {
     this.subscription.add(
       this.tableService.table$.pipe(
-        filter((table: ITable|null|any) => table && table.id == this.id)
+        filter((table: ITable|null|any) => table && table.id == this.id),
+        //tap((x: any) => console.log(x))
       ).subscribe((table: ITable) => {
         this.tables = table;
-        this.initForm(table.body?.cellValue as IRow[]);
-        this.haveAction = !!(table.body?.isEditable || table.body?.isSwitchable || table.body?.isDeleteable || table.body?.isViewable);
+        this.initForm(table.body?.cellValue as IRow[], table.body?.paginate as boolean);
+        this.haveAction = !!(table.body?.isEditable || table.body?.isSwitchable || table.body?.isDeleteable);
         this.expand('');
       })
     );
   }
 
-  initForm(values: IRow[]) {
-    this.fieldGroup().clear();
+  initForm(values: IRow[], paginate: boolean) {
+    if(paginate) this.fieldGroup().clear();
     values?.forEach((row: IRow, i: number) => {
+      if (this.fieldGroup().value.length > 0 && this.fieldGroup().value.find((value: any) => value['parentID'] == row.id) ) {
+        return;
+      }
       let parentField = this.formBuilder.group({
         parentID: row.id,
         parentLine: i,
@@ -103,7 +107,7 @@ export class TableComponent implements OnInit, OnDestroy {
     });
   }
 
-  getTypeOfValue(value: any) {
+  getTypeOfValue(value: any): any {
     return typeof value;
   }
 
@@ -133,5 +137,17 @@ export class TableComponent implements OnInit, OnDestroy {
 
   getLineId(action: string, id: string): void {
     this.tableService.setLineId({action: action, id: id})
+  }
+
+  getInputValue(event: any) {
+    const id = event['id'].split('-');
+    const i = id[1];
+    const j = id[2];
+    const k = id[3];
+    if (event['isValid']) {
+      this.childField(i, j).at(k).patchValue({value: event['value']});
+      this.childField(i, j).updateValueAndValidity();
+    }
+    console.log(this.fieldGroup());
   }
 }

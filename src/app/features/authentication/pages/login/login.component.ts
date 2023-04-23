@@ -7,8 +7,8 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { LoaderService } from 'src/app/core/services/loader/loader.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { tokenKey } from 'src/app/shared/config/constant';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
-import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
 import { Login } from '../../models/login/login.model';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { Notification } from '../../../../core/models/notification/notification.model';
