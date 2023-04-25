@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { ICell, ITable } from '../../models/table/i-table';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { ICell, ITable, InputValue } from '../../models/table/i-table';
 
 @Injectable({
   providedIn: 'root'
@@ -11,34 +11,43 @@ export class TableService {
   public tableExpandedValue$: BehaviorSubject<ICell|null> = new BehaviorSubject<ICell|null>(null);
   private detailId$: Subject<string> = new Subject<string>();
   private lineId$: Subject<any> = new Subject<any>();
+  private inputValue$: Subject<InputValue>= new Subject<InputValue>();
 
   constructor() { }
 
-  setTableValue(value: ITable) {
+  setTableValue(value: ITable): void {
     this.table$.next(value);
   }
 
-  setExpandUuid (uuid: string) {
+  setExpandUuid (uuid: string): void {
     this.expandUiid$.next(uuid);
   }
 
-  setExpandedValue(value: ICell) {
+  setExpandedValue(value: ICell): void {
     this.tableExpandedValue$.next(value);
   }
 
-  setDetailId(uuid: string) {
+  setDetailId(uuid: string): void {
     this.detailId$.next(uuid);
   }
 
-  getDetailId() {
+  getDetailId(): Observable<string> {
     return this.detailId$;
   }
 
-  setLineId(value: any) {
+  setLineId(value: any): void {
     this.lineId$.next(value);
   }
 
-  getlineId() {
+  getlineId(): Observable<any> {
     return this.lineId$;
+  }
+
+  setInputValue(value: InputValue): void {
+    this.inputValue$.next(value);
+  }
+
+  getInputValue(): Observable<InputValue> {
+    return this.inputValue$;
   }
 }

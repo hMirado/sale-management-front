@@ -58,3 +58,9 @@ export interface IButton {
   bg: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'dark';
   action: Function;
 }
+
+export interface InputValue {
+  tableId: string;
+  id: string;
+  value: string;
+}

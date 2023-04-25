@@ -81,7 +81,7 @@ export class TransferService {
           value: [
             {
               type: product.is_serializable ? 'button' : 'simple',
-              value: product.is_serializable ? 'Numéro de série' : 'Aucun numéro de série a renseigné',
+              value: product.is_serializable ? 'Numéro de série' : 'Aucun numéro de série a renseigné.',
               align: 'left'
             },
           ],

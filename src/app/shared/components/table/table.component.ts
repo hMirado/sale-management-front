@@ -74,15 +74,16 @@ export class TableComponent implements OnInit, OnDestroy {
       if (this.fieldGroup().value.length > 0 && this.fieldGroup().value.find((value: any) => value['parentID'] == row.id) ) {
         return;
       }
+      const id: string =  row.id;
       let parentField = this.formBuilder.group({
-        parentID: row.id,
+        id: id,
         parentLine: i,
         parentField: this.formBuilder.array([])
       });
       let parent = parentField.get('parentField') as FormArray;
       row.rowValue.forEach((rowValue: IRowValue, j: number) => {
         let childField = this.formBuilder.group({
-          childID: rowValue.id,
+          id: id,
           childLine: j,
           expand: rowValue.expand,
           key: rowValue.key,
@@ -91,7 +92,8 @@ export class TableComponent implements OnInit, OnDestroy {
         let child = childField.get('childField') as FormArray;
         rowValue.value.forEach((value: IValue, k: number) => {
           const formValue = this.formBuilder.group({
-            valueId: k,
+            id: id,
+            rowId: k,
             type: value.type,
             value: value.value,
             align: value.align,
@@ -148,6 +150,12 @@ export class TableComponent implements OnInit, OnDestroy {
       this.childField(i, j).at(k).patchValue({value: event['value']});
       this.childField(i, j).updateValueAndValidity();
     }
-    console.log(this.fieldGroup());
+    
+    const value = {
+      tableId: this.id,
+      id: this.childField(i, j).at(k).value['id'],
+      value: this.childField(i, j).at(k).value['value']
+    }
+    this.tableService.setInputValue(value);
   }
 }

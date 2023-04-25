@@ -34,7 +34,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TooltipComponent } from './components/tooltip/tooltip.component';
 import { ItemSelectionComponent } from './components/item-selection/item-selection.component';
-import { FormComponent } from './components/table/form/form.component';
 import { NumberComponent } from './components/input/number/number.component';
 import { TextComponent } from './components/input/text/text.component';
 import { CheckboxComponent } from './components/input/checkbox/checkbox.component';
@@ -63,7 +62,6 @@ import { CheckboxComponent } from './components/input/checkbox/checkbox.componen
     TableHeaderComponent,
     TooltipComponent,
     ItemSelectionComponent,
-    FormComponent,
     NumberComponent,
     TextComponent,
     CheckboxComponent,

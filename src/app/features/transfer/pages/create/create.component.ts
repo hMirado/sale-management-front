@@ -9,7 +9,7 @@ import { ModalService } from 'src/app/shared/services/modal/modal.service';
 import { TransferService } from '../../services/transfer/transfer.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
-import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
+import { ICell, IRow, ITable, InputValue } from 'src/app/shared/models/table/i-table';
 import { tableProductHeader } from '../../config/constant';
 import { TableService } from 'src/app/shared/services/table/table.service';
 import { ItemSelectionService } from 'src/app/shared/services/item-selection/item-selection.service';
@@ -62,7 +62,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.initProductTableSelected();
     this.getProductFilterValue();
     this.getSelectedProduct();
-    this.getCancelSelectedProduct()
+    this.getCancelSelectedProduct();
+    this.getInputValue();
   }
 
   ngOnDestroy(): void {
@@ -217,7 +218,8 @@ export class CreateComponent implements OnInit, OnDestroy {
           }
           this.transferProduct.push({
             productUuid: product.product_uuid,
-            quantity: 1
+            quantity: 1,
+            isSerializable: product.is_serializable
           })
           let row: IRow = this.transferService.getTableRowValue(product);
           if (product.is_serializable) {
@@ -258,6 +260,22 @@ export class CreateComponent implements OnInit, OnDestroy {
         if(status) this.itemSelectionService.setCancelSelectedProduct(true);
       })
     )
+  }
+
+  getInputValue() {
+    this.subscription.add(
+      this.tableService.getInputValue().pipe(
+        filter((value: InputValue) => value != null && value.tableId == this.productId)
+        //TODO verify quantity in API & show notification if stock < value  
+      ).subscribe((value: InputValue) => {
+        this.transferProduct.map((transferProduct: TransfertProduct) => {
+          if (transferProduct.productUuid == value.id) {
+            transferProduct.quantity = +value.value;
+          }
+          return transferProduct;
+        });
+      })
+    );
   }
 
   openSerializationModal(productUuid: string) {
