@@ -71,7 +71,9 @@ export class TableComponent implements OnInit, OnDestroy {
   initForm(values: IRow[], paginate: boolean) {
     if(paginate) this.fieldGroup().clear();
     values?.forEach((row: IRow, i: number) => {
-      if (this.fieldGroup().value.length > 0 && this.fieldGroup().value.find((value: any) => value['parentID'] == row.id) ) {
+      console.log();
+      
+      if (this.fieldGroup().value.length > 0 && this.fieldGroup().value.find((value: any) => value['id'] == row.id) ) {
         return;
       }
       const id: string =  row.id;

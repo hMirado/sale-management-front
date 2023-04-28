@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subscription, debounceTime, filter, switchMap } from 'rxjs';
+import { Subscription, debounceTime, filter, of, switchMap } from 'rxjs';
 import { inputTimer } from 'src/app/shared/config/constant';
 
 @Component({
@@ -46,7 +46,8 @@ export class NumberComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.numberFormGroup.valueChanges.pipe(
         debounceTime(inputTimer + inputTimer),
-        filter((value: any) => value['trigger'])
+        filter((value: any) => value['trigger']),
+        switchMap((value: any) => of(value))
       ).subscribe((value: any) => {
         value = {...value, ...{isValid: this.numberFormGroup.valid}};
         this.formValue.emit(value);

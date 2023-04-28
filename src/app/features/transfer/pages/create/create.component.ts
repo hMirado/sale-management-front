@@ -17,6 +17,7 @@ import { ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Product as TransfertProduct } from '../../models/validations/product'
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
 
 @Component({
   selector: 'app-create',
@@ -48,7 +49,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     private transferService: TransferService,
     private tableService: TableService,
     private itemSelectionService: ItemSelectionService,
-    private tableFilterService: TableFilterService
+    private tableFilterService: TableFilterService,
+    private notificationService: NotificationService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -182,7 +184,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     )
   }
 
-  getProductResponse(response: ApiResponse) {
+  getProductResponse(response: ApiResponse): void {
     const products = {id: this.productId, products: response.data};
     this.itemSelectionService.setProducts(products);
   }
@@ -205,7 +207,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   private transferProduct: TransfertProduct[] = []
   private rows: IRow[] = [];
-  getSelectedProduct() {
+  getSelectedProduct(): void {
     this.subscription.add(
       this.itemSelectionService.getSelectedProducts().pipe(
         filter((value: any) => value && value['id'] == this.productId)
@@ -262,23 +264,46 @@ export class CreateComponent implements OnInit, OnDestroy {
     )
   }
 
-  getInputValue() {
+  getInputValue(): void {
     this.subscription.add(
       this.tableService.getInputValue().pipe(
-        filter((value: InputValue) => value != null && value.tableId == this.productId)
-        //TODO verify quantity in API & show notification if stock < value  
-      ).subscribe((value: InputValue) => {
-        this.transferProduct.map((transferProduct: TransfertProduct) => {
-          if (transferProduct.productUuid == value.id) {
-            transferProduct.quantity = +value.value;
-          }
-          return transferProduct;
-        });
+        filter((value: InputValue) => value != null && value.tableId == this.productId),  
+        switchMap((value: InputValue) => {
+          const product = value.id;
+          const shop = this.informationForm.value['shopSender'].shop_uuid;
+          return this.transferService.verifyStock(shop, product, value);
+        })
+      ).subscribe((response: ApiResponse) => {
+        if (!response.data.quantityIsValid) {
+          this.showNotification('danger', `Quantité saisie indisponible. Quantité en stock restant : ${response.data.quantityRemaining}`);
+        } else {
+          this.transferProduct.map((transferProduct: TransfertProduct) => {
+            if (transferProduct.productUuid == response.data.product) {
+              transferProduct.quantity = response.data.quantityInput;
+            }
+            return transferProduct;
+          });
+        }
       })
     );
   }
 
-  openSerializationModal(productUuid: string) {
-    console.log("openSerializationModal::productUuid", productUuid);
+  showNotification(type: string, message: string): void {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
+  }
+
+  openSerializationModal(productUuid: string): void {
+    const product = this.selectedProducts.filter((product: Product) => product.product_uuid == productUuid)[0];
+    const transferProduct = this.transferProduct.filter((product: TransfertProduct) => product.productUuid == productUuid)[0]
+    this.transferService.setSelectedProduct(product);
+    this.transferService.setQuantity(transferProduct.quantity);
+    this.openModal('serialization');
+  }
+
+  saveSerialization() {
+    
   }
 }

@@ -19,7 +19,6 @@ import { TabService } from 'src/app/shared/services/tab/tab.service';
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 import { TableService } from 'src/app/shared/services/table/table.service';
 import { depotShopCode, tableStockHeader, tableStockId } from '../../config/constant';
-import { AttributeType } from '../../models/attribute-type/attribute-type.model';
 import { SerializationType } from '../../models/serialization-type/serialization-type.model';
 import { Serialization } from '../../models/serialization/serialization.model';
 import { Stock } from '../../models/stock/stock.model';

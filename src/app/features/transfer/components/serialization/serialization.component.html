@@ -1,0 +1,34 @@
+<div *ngIf="product">
+  <div class="row bg-gray disabled color-palette small" style="padding: 10px 0;">
+    <div class="col-6 text-left">{{ product.label }}</div>
+    <div class="col-6 text-right"> Quantité(s) renseignée(s) 0/{{ quantity }}</div>
+  </div>
+  <div class="mt-2">
+    <form [formGroup]="formGroup">
+      <ng-container formArrayName="serializations">
+        <div class="form-group row align-items-center" *ngFor="let field of serializationField().controls; let i = index;">
+          <ng-container [formGroupName]="i">
+            <label for="value" class="col-sm-4 col-form-label text-justify">{{field.value['label']}}</label>
+            <div class="col-8">
+              <input 
+                type="text" 
+                class="form-control form-control-sm" 
+                id="value" 
+                name="value" 
+                formControlName="value"
+                (input)="triggerEvent();getFormValue(i)"
+                matInput
+                [matAutocomplete]="auto"
+              >
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event, i)">
+                <mat-option *ngFor="let _serialization of serializations$  | async" [value]="_serialization.serialization_value">
+                  {{ _serialization.serialization_value }}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
+    </form>
+  </div>
+</div>

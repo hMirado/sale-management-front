@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, Subject, map } from 'rxjs';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { ApiService } from 'src/app/core/services/api/api.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Stock } from 'src/app/features/stock/models/stock/stock.model';
-import { IRow } from 'src/app/shared/models/table/i-table';
+import { IRow, InputValue } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransferService {
+  private selectedProduct$: Subject<Product> = new Subject<Product>();
+  private quantity$: Subject<Number> = new Subject<Number>();
 
   constructor(
     private apiService: ApiService,
@@ -88,5 +90,47 @@ export class TransferService {
         }
       ]
     }
+  }
+
+  verifyStock(shop: string, product: string, value: InputValue): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/stock/shop/${shop}/product/${product}`;
+    return this.apiService.doGet(url).pipe(
+      map((response: ApiResponse) => {
+        const quantity = +value.value
+        response.data = {
+          product: value.id,
+          quantityIsValid: response.data.quantity >= quantity,
+          quantityInput: quantity,
+          quantityRemaining: response.data.quantity
+        }
+        return response
+      })
+    );
+  }
+
+  setSelectedProduct(product: Product):void {
+    this.selectedProduct$.next(product)
+  }
+
+  getSelectedProduct(): Observable<Product> {
+    return this.selectedProduct$;
+  }
+
+  setQuantity(qty: Number):void {
+    this.quantity$.next(qty)
+  }
+
+  getQuantity(): Observable<Number> {
+    return this.quantity$;
+  }
+
+  getSerialization(shop: string, product: string, search: string): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/serialization/shop/product/${product}`;
+    const param = {
+      shop: shop,
+      search: search,
+      is_sold: false
+    }
+    return this.apiService.doGet(url, param);
   }
 }

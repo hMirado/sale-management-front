@@ -64,5 +64,19 @@
   <div body>
     <app-item-selection [id]="productId"></app-item-selection>
   </div>
-  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="validateSelectedProduct()">Enregistrer</button>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="validateSelectedProduct()">Enregistrer</button>
+</app-modal>
+
+<app-modal [id]="'serialization'" size="medium" [singleButton]="true">
+  <div head>
+    <h4 class="modal-title">
+      Ajout de(s) numéro(s) de série
+    </h4>
+  </div>
+  <div body>
+    <app-serialization [shopSender]="informationForm.value['shopSender']['shop_uuid']"></app-serialization>
+  </div>
+  <div footer>
+    <button class="btn btn-sm btn-outline-primary" (click)="saveSerialization()">Enregister</button>
+  </div>
 </app-modal>

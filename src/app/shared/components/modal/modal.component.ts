@@ -11,7 +11,7 @@ import {ModalService} from "../../services/modal/modal.service";
 export class ModalComponent implements OnInit,OnDestroy {
   @Input() public id: string = '';
   @Input() public singleButton: boolean = false;
-  @Input() public size: string = 'medium';
+  @Input() public size: string = 'sm';
   public config!: IModal;
   private subscription: Subscription = new Subscription();
 
@@ -21,6 +21,8 @@ export class ModalComponent implements OnInit,OnDestroy {
 
   ngOnInit(): void {
     this.getModalConfig();
+    console.log(this.singleButton);
+    
   }
 
   ngOnDestroy(): void {
