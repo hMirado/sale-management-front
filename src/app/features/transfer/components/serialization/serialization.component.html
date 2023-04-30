@@ -1,7 +1,7 @@
 <div *ngIf="product">
   <div class="row bg-gray disabled color-palette small" style="padding: 10px 0;">
     <div class="col-6 text-left">{{ product.label }}</div>
-    <div class="col-6 text-right"> Quantité(s) renseignée(s) 0/{{ quantity }}</div>
+    <div class="col-6 text-right"> Quantité(s): {{ quantity }}</div>
   </div>
   <div class="mt-2">
     <form [formGroup]="formGroup">

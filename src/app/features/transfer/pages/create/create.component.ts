@@ -326,10 +326,8 @@ export class CreateComponent implements OnInit, OnDestroy {
           if (product.product_uuid == productSerialization.product_uuid) {
             product['serializations'] = productSerialization.serializations
           }
-          return product
+          return product;
         });
-        console.log(productSerialization);
-        
         this.closeModal('serialization');
       })
     );
@@ -342,7 +340,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           this.selectedProducts = this.selectedProducts.filter((product: Product) => product.product_uuid != value['id']);
           this.transferProduct = this.transferProduct.filter((product: TransfertProduct) => product.product_uuid != value['id']);
           this.rows = this.rows.filter((row: IRow) => row.id != value['id']);
-        }
+        };
       })
     );
   }
@@ -386,8 +384,8 @@ export class CreateComponent implements OnInit, OnDestroy {
   saveTransfer(value: Transfer) {
     this.subscription.add(
     this.transferService.create(value).subscribe((response: ApiResponse) => {
-      console.log(response);
-      
+      this.showNotification('success', 'Transfert enregistré avec succès.');
+      setTimeout(() => this.router.navigateByUrl('/transfer'), 1000);
     })
     )
   }
