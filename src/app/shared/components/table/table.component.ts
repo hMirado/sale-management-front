@@ -70,9 +70,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
   initForm(values: IRow[], paginate: boolean) {
     if(paginate) this.fieldGroup().clear();
+    if (values && values.length == 0)this.fieldGroup().clear();
     values?.forEach((row: IRow, i: number) => {
-      console.log();
-      
       if (this.fieldGroup().value.length > 0 && this.fieldGroup().value.find((value: any) => value['id'] == row.id) ) {
         return;
       }
@@ -143,6 +142,10 @@ export class TableComponent implements OnInit, OnDestroy {
     this.tableService.setLineId({action: action, id: id})
   }
 
+  removeLine(i: number) {
+    this.fieldGroup().removeAt(i);
+  }
+
   getInputValue(event: any) {
     const id = event['id'].split('-');
     const i = id[1];
@@ -154,6 +157,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
     
     const value = {
+      key: event['id'],
       tableId: this.id,
       id: this.childField(i, j).at(k).value['id'],
       value: this.childField(i, j).at(k).value['value']

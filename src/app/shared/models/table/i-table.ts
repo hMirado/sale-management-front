@@ -15,6 +15,7 @@ export interface ICell {
   cellValue: IRow [];
   paginate: boolean;
   isEditable?: boolean;
+  isViewable?: boolean;
   isDeleteable?: boolean;
   isSwitchable?: boolean;
 }
@@ -60,6 +61,7 @@ export interface IButton {
 }
 
 export interface InputValue {
+  key: string;
   tableId: string;
   id: string;
   value: string;

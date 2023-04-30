@@ -6,14 +6,18 @@ import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Stock } from 'src/app/features/stock/models/stock/stock.model';
 import { IRow, InputValue } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
+import { Product as TransfertProduct } from '../../models/validations/product'
+import { Transfer } from '../../models/validations/transfer';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransferService {
-  private selectedProduct$: Subject<Product> = new Subject<Product>();
+  private selectedProduct$: Subject<TransfertProduct> = new Subject<TransfertProduct>();
   private quantity$: Subject<Number> = new Subject<Number>();
-
+  private saveSerialization$: Subject<boolean> = new Subject<boolean>();
+  private productSerialization$: Subject<TransfertProduct> = new Subject<TransfertProduct>();
+  
   constructor(
     private apiService: ApiService,
   ) { }
@@ -108,16 +112,16 @@ export class TransferService {
     );
   }
 
-  setSelectedProduct(product: Product):void {
-    this.selectedProduct$.next(product)
+  setSelectedProduct(product: TransfertProduct):void {
+    this.selectedProduct$.next(product);
   }
 
-  getSelectedProduct(): Observable<Product> {
+  getSelectedProduct(): Observable<TransfertProduct> {
     return this.selectedProduct$;
   }
 
   setQuantity(qty: Number):void {
-    this.quantity$.next(qty)
+    this.quantity$.next(qty);
   }
 
   getQuantity(): Observable<Number> {
@@ -130,7 +134,29 @@ export class TransferService {
       shop: shop,
       search: search,
       is_sold: false
-    }
+    };
     return this.apiService.doGet(url, param);
+  }
+
+
+  setSaveSerialization(status: boolean):void {
+    this.saveSerialization$.next(status);
+  }
+
+  getSaveSerialization(): Observable<boolean> {
+    return this.saveSerialization$;
+  }
+
+  setProductSerialization(product: TransfertProduct): void {
+    this.productSerialization$.next(product);
+  }
+
+  getProductSerialization(): Observable<TransfertProduct> {
+    return this.productSerialization$;
+  }
+
+  create(value: Transfer): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/transfer`;
+    return this.apiService.doPost(url, value);
   }
 }

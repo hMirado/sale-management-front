@@ -25,8 +25,9 @@ export class ItemSelectionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.productFilter();
     this.getProducts();
+    this.getCurrentSelectedProduct();
     this.getIsValidateSelectedProduct();
-    this.getSelectedProduct();
+    this.getCanceldSelectedProduct();
   }
 
   ngOnDestroy(): void {
@@ -56,6 +57,16 @@ export class ItemSelectionComponent implements OnInit, OnDestroy {
         this.products = [];
         if (this.id == value?.id) {
           this.products = value.products;
+        }
+      })
+    );
+  }
+
+  getCurrentSelectedProduct(): void {
+    this.subscription.add(
+      this.itemSelectionService.getSelectedProducts().subscribe(( value: any ) => {
+        if (value['id'] == this.id) {
+          this.selectedProducts = value['products']
         }
       })
     );
@@ -93,7 +104,7 @@ export class ItemSelectionComponent implements OnInit, OnDestroy {
     );
   }
 
-  getSelectedProduct() {
+  getCanceldSelectedProduct() {
     this.subscription.add(
       this.itemSelectionService.getCancelSelectedProduct().subscribe((isCanceled: boolean) => {
         if (isCanceled) this.selectedProducts = this.currentProducts;

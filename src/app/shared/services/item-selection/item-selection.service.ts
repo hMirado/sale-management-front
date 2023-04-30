@@ -6,14 +6,14 @@ import { Product } from 'src/app/features/catalog/models/product/product.model';
   providedIn: 'root'
 })
 export class ItemSelectionService {
-  private products$: BehaviorSubject<{id: string, products: Product[]} | null> = new BehaviorSubject<{id: string, products: Product[]} | null>(null);
+  private products$: Subject<{id: string, products: Product[]} | null> = new Subject<{id: string, products: Product[]} | null>();
   private validateSelectedProduct$: Subject<boolean> = new Subject<boolean>;
   private cancelSelectedProduct$: Subject<boolean> = new Subject<boolean>;
   private selectedProducts$: Subject<{id: string, products: Product[]} | null> = new Subject<{id: string, products: Product[]} | null>();
 
   constructor() { }
 
-  getProducts(): BehaviorSubject<{id: string, products: Product[]} | null> {
+  getProducts(): Subject<{id: string, products: Product[]} | null> {
     return this.products$;
   }
 

@@ -1,5 +1,9 @@
+import { Serialization } from "./serialization";
+
 export interface Product {
-  productUuid: string;
+  product_uuid: string;
+  label: string;
   quantity: number;
-  isSerializable: boolean;
+  is_serializable: boolean;
+  serializations?: Serialization[]
 }

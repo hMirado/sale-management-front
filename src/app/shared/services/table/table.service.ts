@@ -12,6 +12,7 @@ export class TableService {
   private detailId$: Subject<string> = new Subject<string>();
   private lineId$: Subject<any> = new Subject<any>();
   private inputValue$: Subject<InputValue>= new Subject<InputValue>();
+  private tableValueEdited$: Subject<any> = new Subject<any>();
 
   constructor() { }
 
@@ -49,5 +50,13 @@ export class TableService {
 
   getInputValue(): Observable<InputValue> {
     return this.inputValue$;
+  }
+
+  setTableValueEdited(value: any): void {
+    this.tableValueEdited$.next(value);
+  }
+
+  getTableValueEdited(): Observable<any> {
+    return this.tableValueEdited$;
   }
 }

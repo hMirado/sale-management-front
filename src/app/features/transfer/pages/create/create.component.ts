@@ -18,6 +18,9 @@ import { TableFilterService } from 'src/app/shared/services/table-filter/table-f
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Product as TransfertProduct } from '../../models/validations/product'
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { Router } from '@angular/router';
+import { Serialization } from '../../models/validations/serialization';
+import { Transfer } from '../../models/validations/transfer';
 
 @Component({
   selector: 'app-create',
@@ -40,6 +43,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     body: null
   };
   public selectedProducts: Product[] = [];
+  private transferProduct: TransfertProduct[] = []
+  private rows: IRow[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,7 +55,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     private tableService: TableService,
     private itemSelectionService: ItemSelectionService,
     private tableFilterService: TableFilterService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -66,6 +72,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.getSelectedProduct();
     this.getCancelSelectedProduct();
     this.getInputValue();
+    this.getProductSerialization();
+    this.getTableLineId();
   }
 
   ngOnDestroy(): void {
@@ -144,6 +152,13 @@ export class CreateComponent implements OnInit, OnDestroy {
     return shop.shop_name
   }
 
+  clear() {
+    this.rows = [];
+    this.transferProduct = [];
+    this.selectedProducts = [];
+    this.setTableValue();
+  }
+
   // matAutoComplete for receiver site
   searchShopReceiver(): void {
     this.informationForm.controls['shopReceiver'].valueChanges.pipe(
@@ -170,6 +185,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   openModal(id: string): void {
     if (id === this.productId && this.informationForm.valid) {
       this.getProductInStock();
+      this.itemSelectionService.setSelectedProducts({
+        id: this.productId,
+        products: this.selectedProducts
+      })
     }
     this.modalService.showModal(id);
   }
@@ -205,8 +224,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.itemSelectionService.setValidateSelectedProduct(true);
   }
 
-  private transferProduct: TransfertProduct[] = []
-  private rows: IRow[] = [];
   getSelectedProduct(): void {
     this.subscription.add(
       this.itemSelectionService.getSelectedProducts().pipe(
@@ -219,9 +236,11 @@ export class CreateComponent implements OnInit, OnDestroy {
             return;
           }
           this.transferProduct.push({
-            productUuid: product.product_uuid,
+            product_uuid: product.product_uuid,
+            label: product.label,
             quantity: 1,
-            isSerializable: product.is_serializable
+            is_serializable: product.is_serializable,
+            serializations: []
           })
           let row: IRow = this.transferService.getTableRowValue(product);
           if (product.is_serializable) {
@@ -232,28 +251,22 @@ export class CreateComponent implements OnInit, OnDestroy {
                 this.openSerializationModal(product.product_uuid)
               }
             };
-            row.rowValue[2].value[0].icon = {
-              status: true,
-              icon: 'exclamation-circle',
-              color: 'danger'
-            }
-          } else {
-            row.rowValue[2].value[0].icon = {
-              status: true,
-              icon: 'check-circle',
-              color: 'success'
-            }
-          }
+          };
           this.rows.push(row)
-        })
-        let cells: ICell = {
-          cellValue: this.rows,
-          paginate: false,
-        }
-        this.table.body = cells;
-        this.tableService.setTableValue(this.table);
+        });
+        this.setTableValue();
       })
     );
+  }
+
+  setTableValue() {
+    let cells: ICell = {
+      cellValue: this.rows,
+      paginate: false,
+      isDeleteable: true
+    }
+    this.table.body = cells;
+    this.tableService.setTableValue(this.table);
   }
 
   getCancelSelectedProduct() {
@@ -278,8 +291,9 @@ export class CreateComponent implements OnInit, OnDestroy {
           this.showNotification('danger', `Quantité saisie indisponible. Quantité en stock restant : ${response.data.quantityRemaining}`);
         } else {
           this.transferProduct.map((transferProduct: TransfertProduct) => {
-            if (transferProduct.productUuid == response.data.product) {
+            if (transferProduct.product_uuid == response.data.product) {
               transferProduct.quantity = response.data.quantityInput;
+              transferProduct.serializations = [];
             }
             return transferProduct;
           });
@@ -296,14 +310,85 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   openSerializationModal(productUuid: string): void {
-    const product = this.selectedProducts.filter((product: Product) => product.product_uuid == productUuid)[0];
-    const transferProduct = this.transferProduct.filter((product: TransfertProduct) => product.productUuid == productUuid)[0]
-    this.transferService.setSelectedProduct(product);
-    this.transferService.setQuantity(transferProduct.quantity);
+    const transferProduct = this.transferProduct.filter((product: TransfertProduct) => product.product_uuid == productUuid)[0]
+    this.transferService.setSelectedProduct(transferProduct);
     this.openModal('serialization');
   }
 
-  saveSerialization() {
-    
+  saveSerialization(): void {
+    this.transferService.setSaveSerialization(true);
+  }
+
+  getProductSerialization(): void {
+    this.subscription.add(
+      this.transferService.getProductSerialization().subscribe((productSerialization: TransfertProduct) => {
+        this.transferProduct.map((product: TransfertProduct) => {
+          if (product.product_uuid == productSerialization.product_uuid) {
+            product['serializations'] = productSerialization.serializations
+          }
+          return product
+        });
+        console.log(productSerialization);
+        
+        this.closeModal('serialization');
+      })
+    );
+  }
+
+  getTableLineId() {
+    this.subscription.add(
+      this.tableService.getlineId().subscribe((value: any) => {
+        if (value['action'] == 'delete') {
+          this.selectedProducts = this.selectedProducts.filter((product: Product) => product.product_uuid != value['id']);
+          this.transferProduct = this.transferProduct.filter((product: TransfertProduct) => product.product_uuid != value['id']);
+          this.rows = this.rows.filter((row: IRow) => row.id != value['id']);
+        }
+      })
+    );
+  }
+
+  cancelCreate() {
+    this.router.navigateByUrl('/transfer')
+  }
+
+  create() {
+    let isValid = true;
+    this.transferProduct.forEach((transferProduct: TransfertProduct) => {
+      if (transferProduct.is_serializable) {
+        if (transferProduct.serializations && transferProduct.serializations.length > 0) {
+          transferProduct.serializations.forEach((serialization: Serialization) => {
+            if (serialization.group_id == '' || serialization.label == '' || serialization.value == '') {
+              isValid = false;
+              return;
+            }
+          })
+        } else {
+          isValid = false;
+          return;
+        }
+      }
+    })
+
+    if (!isValid || !this.informationForm.valid) {
+      this.showNotification('danger', 'Veuillez verifier les informations saisies')
+    } else {
+      const value = {
+        user: this.informationForm.value['userSender'],
+        shop_sender: this.informationForm.value['shopSender'].shop_uuid,
+        shop_receiver: this.informationForm.value['shopReceiver'].shop_uuid,
+        commentary: '',
+        products: this.transferProduct
+      };
+      this.saveTransfer(value)
+    }
+  }
+
+  saveTransfer(value: Transfer) {
+    this.subscription.add(
+    this.transferService.create(value).subscribe((response: ApiResponse) => {
+      console.log(response);
+      
+    })
+    )
   }
 }

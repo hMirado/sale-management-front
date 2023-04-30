@@ -81,12 +81,21 @@
           <div class="row justify-content-center">
             <div *ngIf="this.tables?.body?.isEditable" class="col-2 text-center">
               <app-tooltip text="Modifier">
-                <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content ></i>
+                <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content (click)="getLineId('edit', field.value['id'])"></i>
+              </app-tooltip>
+            </div>
+            <div *ngIf="this.tables?.body?.isViewable" class="col-2 text-center">
+              <app-tooltip text="Voir détails">
+                <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content (click)="getLineId('view', field.value['id'])"></i>
               </app-tooltip>
             </div>
             <div *ngIf="this.tables?.body?.isDeleteable" class="col-2 text-center">
               <app-tooltip text="Supprimer">
-                <i class="pointer far fa-trash-alt text-secondary" style="font-size:18px" content ></i>
+                <i 
+                  class="pointer far fa-trash-alt text-secondary" 
+                  style="font-size:18px" content 
+                  (click)="getLineId('delete', field.value['id']); removeLine(i)"
+                ></i>
               </app-tooltip>
             </div>
             <div *ngIf="this.tables?.body?.isSwitchable" class="col-2 text-center">

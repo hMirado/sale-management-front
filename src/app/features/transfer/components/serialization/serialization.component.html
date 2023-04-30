@@ -9,7 +9,7 @@
         <div class="form-group row align-items-center" *ngFor="let field of serializationField().controls; let i = index;">
           <ng-container [formGroupName]="i">
             <label for="value" class="col-sm-4 col-form-label text-justify">{{field.value['label']}}</label>
-            <div class="col-8">
+            <div class="col-7">
               <input 
                 type="text" 
                 class="form-control form-control-sm" 
@@ -26,6 +26,7 @@
                 </mat-option>
               </mat-autocomplete>
             </div>
+            <i class="col-1 text-center fas " [ngClass]="field.get('value')?.valid ? 'fa-check-circle text-success' : 'fa-exclamation-circle text-danger'"></i>
           </ng-container>
         </div>
       </ng-container>

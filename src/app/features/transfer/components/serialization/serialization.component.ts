@@ -1,11 +1,12 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subscription, debounceTime, distinctUntilChanged, filter, first, last, of, pairwise, switchMap, tap } from 'rxjs';
 import { TransferService } from '../../services/transfer/transfer.service';
-import { Product } from 'src/app/features/catalog/models/product/product.model';
+import { Product as TransfertProduct } from '../../models/validations/product'
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { inputTimer } from 'src/app/shared/config/constant';
-import { Serialization } from 'src/app/features/stock/models/serialization/serialization.model';
+import { Serialization as TransferSerialization } from "../../models/validations/serialization";
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
+import { Serialization } from 'src/app/features/stock/models/serialization/serialization.model';
 
 @Component({
   selector: 'app-serialization',
@@ -15,7 +16,7 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 export class SerializationComponent implements OnInit, OnDestroy {
   @Input() shopSender!: string;
   public quantity: number = 0;
-  public product!: Product;
+  public product!: TransfertProduct;
   private subscription = new Subscription();
   public formGroup: FormGroup;
 
@@ -26,6 +27,7 @@ export class SerializationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getProductDetail();
+    this.saveSerialisation();
   }
 
   ngOnDestroy(): void {
@@ -34,22 +36,18 @@ export class SerializationComponent implements OnInit, OnDestroy {
 
   getProductDetail(): void {
     this.subscription.add(
-      this.transferService.getSelectedProduct().pipe(
-        switchMap((product: Product) => {
-          this.product = product;
-          this.createForm();
-          return this.transferService.getQuantity()
-        })
-      ).subscribe((qty: Number) => {
-        this.quantity = +qty;
+      this.transferService.getSelectedProduct().subscribe((product: TransfertProduct) => {
+        this.product = product;
+        this.quantity = product.quantity;
+        this.createForm();
         this.addSerializationField(this.quantity);
       })
     );
   }
 
-  createForm() {
+  createForm(): void {
     this.formGroup = this.formBuilder.group({
-      productUuid: this.product.product_uuid,
+      product_uuid: this.product.product_uuid,
       serializations: this.formBuilder.array([]),
       trigger: false
     })
@@ -61,12 +59,24 @@ export class SerializationComponent implements OnInit, OnDestroy {
 
   addSerializationField(quantity: number) {
     for(let i = 0; i < quantity; i++) {
-      let field = this.formBuilder.group({
-        label: '',
-        value: ['', Validators.required],
-        group: ''
-      }); 
-      this.serializationField().push(field)
+      let serialization: TransferSerialization;
+      if (this.product.serializations && this.product.serializations.length > 0) {
+        serialization = this.product.serializations[0];
+        let field = this.formBuilder.group({
+          label: [serialization.label, Validators.required],
+          value: [serialization.value, Validators.required],
+          group_id: [serialization.group_id, Validators.required]
+        }); 
+        this.serializationField().push(field)
+      } else {
+        let field = this.formBuilder.group({
+          label: '',
+          value: ['', Validators.required],
+          group_id: ''
+        }); 
+        this.serializationField().push(field)
+      }
+      
     }
   }
 
@@ -77,7 +87,7 @@ export class SerializationComponent implements OnInit, OnDestroy {
 
   public serializations$: Observable<Serialization[]> = of([]);
   public serializations: Serialization[] = [];
-  getFormValue(i: number) {
+  getFormValue(i: number): void {
     this.subscription.add( 
       this.serializationField().at(i).valueChanges.pipe(
         debounceTime(inputTimer),
@@ -85,16 +95,12 @@ export class SerializationComponent implements OnInit, OnDestroy {
         filter((value: any) => value && (value.value.length == 0 || value.value.length > 3) && this.formGroup.value['trigger']),
         switchMap((value: any)  => {
           this.formGroup.patchValue({trigger: false});
-          
+          this.serializationField().at(i).patchValue({isValid: false});
           return this.transferService.getSerialization(this.shopSender, this.product.product_uuid, value.value)
         })
       ).subscribe((response: ApiResponse) => {
         this.serializations = [];
-        console.log(this.formGroup.value.serializations);
         const groups = this.formGroup.value.serializations.map((value: any) => value.group);
-        console.log(groups);
-        
-        
         response.data.forEach((serializations: Serialization[]) => {
           serializations.forEach((serialization: Serialization) => {
             if (!groups.includes(serialization.group_id)) this.serializations.push(serialization);
@@ -106,17 +112,28 @@ export class SerializationComponent implements OnInit, OnDestroy {
     )
   }
 
-  selectedValue(event: any, i: number) {
-    console.log(event.option.value);
+  selectedValue(event: any, i: number): void {
     const value = event.option.value
     const seletced = this.serializations.filter((serialization: Serialization) => serialization.serialization_value == value)[0];
     this.serializationField().at(i).patchValue(
       {
         label: seletced.label,
         value: seletced.serialization_value,
-        group: seletced.group_id
+        group_id: seletced.group_id
       }
     );
     this.serializations$ = of([]);
+  }
+
+  saveSerialisation(): void {
+    this.subscription.add(
+      this.transferService.getSaveSerialization().subscribe((status: boolean) => {
+        const productSerialization = { ...this.formGroup.value, ...{
+          quantity: this.product.quantity,
+          is_serializable: this.product.is_serializable
+        }}
+        this.transferService.setProductSerialization(productSerialization);
+      })
+    );
   }
 }
