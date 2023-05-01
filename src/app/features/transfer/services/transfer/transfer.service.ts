@@ -7,7 +7,10 @@ import { Stock } from 'src/app/features/stock/models/stock/stock.model';
 import { IRow, InputValue } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
 import { Product as TransfertProduct } from '../../models/validations/product'
-import { Transfer } from '../../models/validations/transfer';
+import { Transfer as TransferValidation } from '../../models/validations/transfer';
+import { Transfer } from '../../models/transfer/transfer.model';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
+import { status } from '../../config/constant';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +23,7 @@ export class TransferService {
   
   constructor(
     private apiService: ApiService,
+    private helperService: HelperService
   ) { }
 
   getProductsInStock(shop: string, search: string = ''): Observable<ApiResponse>{
@@ -155,8 +159,100 @@ export class TransferService {
     return this.productSerialization$;
   }
 
-  create(value: Transfer): Observable<ApiResponse> {
+  create(value: TransferValidation): Observable<ApiResponse> {
     const url = `${environment['store-service']}/transfer`;
     return this.apiService.doPost(url, value);
+  }
+
+  getTransfers(currentShop: string = '', currentUser: string = '', _params: any = {}): Observable<ApiResponse> {
+    const params: any = {
+      paginate: 1,
+      page: (_params['page'] && _params['page'] > 0) ? _params['page'] : 1
+    };
+    if (currentShop != '') params['currentShop'] = currentShop;
+    if (currentUser != '') params['currentUser'] = currentUser;
+    if (_params['keyword'] && _params['keyword']) params['keyword'] = _params['keyword'];
+    if (_params['shop'] && (_params['shop'] != '' && _params['shop'] != 'all')) params['shop'] = _params['shop'];
+    if (_params['status'] && (_params['status'] != '' && _params['status'] != 'all')) params['status'] = _params['status'];
+    const url = `${environment['store-service']}/transfer`
+    return this.apiService.doGet(url, params);
+  }
+
+  getTransferTableRowValue(transfer: Transfer): IRow {
+    const userSender = transfer.user_sender.last_name.toLocaleUpperCase() + ' ' + transfer.user_sender.first_name;
+    const transferStatus = transfer.transfer_status;
+    const userReceiver = (
+      transferStatus.transfer_status_code == status.inProgress && transfer.user_sender.user_id == transfer.user_receiver.user_id
+    ) ? '' : transfer.user_receiver.last_name.toUpperCase() + ' ' + transfer.user_receiver.first_name;
+    return {
+      id: transfer.transfer_uuid,
+      isExpandable: false,
+      rowValue: [
+        {
+          id: transfer.transfer_uuid,
+          key: 'date',
+          expand: false,
+          value: [
+            {
+              type: 'simple',
+              value: this.helperService.getDate(transfer?.createdAt),
+              align: 'left',
+            },
+          ],
+        },
+        {
+          id: transfer.transfer_uuid,
+          key: 'code',
+          expand: false,
+          value: [
+            {
+              type: 'simple',
+              value: transfer.transfer_code.toLocaleUpperCase(),
+              align: 'left',
+            },
+          ],
+        },
+        {
+          id: transfer.transfer_uuid,
+          key: 'status',
+          expand: false,
+          value: [
+            {
+              type: 'simple',
+              value: transferStatus.transfer_status_label.toLocaleUpperCase(),
+              align: 'center',
+              badge: {
+                status: true,
+                bg: transferStatus.transfer_status_code == status.inProgress ? 'info' : 'success'
+              }
+            },
+          ],
+        },
+        {
+          id: transfer.transfer_uuid,
+          key: 'shopSender',
+          expand: false,
+          value: [
+            {
+              type: 'simple',
+              value: transfer.shop_sender.shop_name,
+              align: 'left',
+            }
+          ],
+        },
+        {
+          id: transfer.transfer_uuid,
+          key: 'shopSender',
+          expand: false,
+          value: [
+            {
+              type: 'simple',
+              value: transfer.shop_receiver.shop_name,
+              align: 'left',
+            }
+          ],
+        },
+      ]
+    }
   }
 }

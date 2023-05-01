@@ -13,13 +13,14 @@
     </tr>
   </thead>
   <tbody formArrayName="fieldGroup">
-    <ng-container *ngIf="!tables?.body?.cellValue || tables?.body?.cellValue?.length == 0">
+    <!-- <ng-container *ngIf="!tables?.body?.cellValue || tables?.body?.cellValue?.length == 0">
       <tr>
-        <td class="text-center" [attr.colspan]="tables['header']['length']">
+        azerf rfdisck
+        <td class="text-center" [attr.colspan]="tables.header.length">
           Aucun données disponibles
         </td>
       </tr>
-    </ng-container>
+    </ng-container> -->
     <ng-container *ngFor="let field of fieldGroup().controls; let i = index">
       <tr [formGroupName]="i">
         <ng-container formArrayName="parentField">
