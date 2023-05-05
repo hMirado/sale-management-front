@@ -467,7 +467,6 @@ export class StockComponent implements OnInit, OnDestroy {
           this.params['p'] = 0;
           this.params = { ...this.params, ... filter?.value };
           
-          console.log(this.params);
           return this.stockService.getStocks(this.shopFilter, this.params)
         })
       ).subscribe((response: ApiResponse) => this.getStockresponse(response))

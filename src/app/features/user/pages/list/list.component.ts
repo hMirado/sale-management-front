@@ -155,7 +155,7 @@ export class ListComponent implements OnInit, OnDestroy {
   getLineId() {
     this.subscription.add(
       this.tableService.getlineId().subscribe((value: any) => {
-        if (value && value['action'] == 'view') this.router.navigateByUrl(`/user/detail/${value['id']}`);
+        if (value && value['action'] == 'edit') this.router.navigateByUrl(`/user/detail/${value['id']}`);
       })
     );
   }

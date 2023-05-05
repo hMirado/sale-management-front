@@ -57,8 +57,7 @@ export class TableComponent implements OnInit, OnDestroy {
   getTableValue(): void {
     this.subscription.add(
       this.tableService.table$.pipe(
-        filter((table: ITable|null|any) => table && table.id == this.id),
-        //tap((x: any) => console.log(x))
+        filter((table: ITable|null|any) => table && table.id == this.id)
       ).subscribe((table: ITable) => {
         this.tables = table;
         this.initForm(table.body?.cellValue as IRow[], table.body?.paginate as boolean);

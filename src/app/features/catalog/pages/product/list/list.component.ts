@@ -386,7 +386,7 @@ export class ListComponent implements OnInit, OnDestroy {
   getTableAction() {
     this.subscription.add(
       this.tableService.getlineId().subscribe((value: any) => {
-        if (value && value['id'] != '' && value['action'] == 'view') this.router.navigateByUrl(`/catalog/product/detail/${value['id']}`);
+        if (value && value['id'] != '' && value['action'] == 'edit') this.router.navigateByUrl(`/catalog/product/detail/${value['id']}`);
       })
     );
   }
