@@ -50,7 +50,8 @@ export class ProductService {
   }
 
   getProductPrice(productUuid: string, shopId: string = '') {
-    const param = { shop: shopId };
+    
+    const param = shopId != '' ?{ shop: shopId } : null;
     let url = `${environment['store-service']}/price/product/${productUuid}`;
     return this.apiService.doGet(url, param);
   }
@@ -93,7 +94,7 @@ export class ProductService {
         {
           id: value.product_uuid,
           key: 'code',
-          expand: false,
+          expand: true,
           value: [
             {
               type: 'simple',
@@ -215,6 +216,18 @@ export class ProductService {
             {
               type: 'simple',
               value: this.helperService.numberFormat(price['ttc_price'] / 100),
+              align: 'right',
+            },
+          ],
+        },
+        {
+          id: price['price_id'],
+          key: 'action',
+          expand: false,
+          value: [
+            {
+              type: 'simple',
+              value: '',
               align: 'right',
             },
           ],

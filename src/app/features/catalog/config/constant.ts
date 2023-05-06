@@ -48,6 +48,6 @@ export const tableProductHeader: IHeader[] = [
   {value: 'LIBELLé', align: 'left'},
   {value: 'CATEGORIE', align: 'left'},
   {value: 'SHOP', align: 'left'},
-  {value: 'PRIX (MGA)', align: 'right'},
+  {value: 'PRIX (MGA)', align: 'left'},
 ]
 //end of product
