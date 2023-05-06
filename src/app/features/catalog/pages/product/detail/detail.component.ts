@@ -5,7 +5,7 @@ import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model'
 import { ProductService } from '../../../service/product/product.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Product } from '../../../models/product/product.model';
-import { ProductFormValue } from '../../../models/product-form-value/product-form-value';
+import { ProductFormValue } from '../../../models/validations/product-form-value';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 
 @Component({

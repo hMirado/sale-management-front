@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ProductFormValue } from '../../../models/product-form-value/product-form-value';
+import { ProductFormValue } from '../../../models/validations/product-form-value';
 import { Product } from '../../../models/product/product.model';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, debounceTime, filter } from 'rxjs';
@@ -9,6 +9,7 @@ import { ShopService } from 'src/app/features/setting/services/shop/shop.service
 import { Price } from '../../../models/price/price.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { inputTimer } from 'src/app/shared/config/constant';
 
 @Component({
   selector: 'app-product-price',
@@ -99,7 +100,7 @@ export class PriceComponent implements OnInit, OnDestroy {
   getPricesValues() {
     this.subscription.add(
       this.priceField.valueChanges.pipe(
-        debounceTime(100),
+        debounceTime(inputTimer),
         filter(value => this.isAllShop)
       ).subscribe(values => {
         const value = values[0].ttcPrice;

@@ -9,8 +9,8 @@ import { ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-
 import { Role } from 'src/app/shared/models/role/role.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
-import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
-import { TableService } from 'src/app/shared/serives/table/table.service';
+import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
+import { TableService } from 'src/app/shared/services/table/table.service';
 import { tableProductHeader } from '../../config/constant';
 import { User } from '../../models/user/user.model';
 import { UserService } from '../../services/user.service';
@@ -107,7 +107,8 @@ export class ListComponent implements OnInit, OnDestroy {
       });
       let cells: ICell = {
         cellValue: rows,
-        isViewable: true
+        paginate: true,
+        isEditable: true
       };
       table.body = cells;
       this.tableService.setTableValue(table);
@@ -154,7 +155,7 @@ export class ListComponent implements OnInit, OnDestroy {
   getLineId() {
     this.subscription.add(
       this.tableService.getlineId().subscribe((value: any) => {
-        if (value && value['action'] == 'view') this.router.navigateByUrl(`/user/detail/${value['id']}`);
+        if (value && value['action'] == 'edit') this.router.navigateByUrl(`/user/detail/${value['id']}`);
       })
     );
   }

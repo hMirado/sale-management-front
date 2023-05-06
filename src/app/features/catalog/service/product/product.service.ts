@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { ApiService } from 'src/app/core/services/api/api.service';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { environment } from 'src/environments/environment';
 import { IRow } from '../../../../shared/models/table/i-table';
 import { Product } from '../../models/product/product.model';
-import { ProductFormValue } from '../../models/product-form-value/product-form-value';
+import { ProductFormValue } from '../../models/validations/product-form-value';
 
 @Injectable({
   providedIn: 'root',
@@ -36,15 +36,21 @@ export class ProductService {
     let url = `${environment['store-service']}/product`;
     let params: any = {
       paginate: 1,
-      page: (_params['page'] && _params['page'] > 0) ? _params['page'] : 1
+      page: _params['page'] && _params['page'] > 0 ? _params['page'] : 1,
     };
-    if (_params['keyword'] && _params['keyword'] != '') params['search'] = _params['keyword'];
-    if (_params['category'] &&(_params['category'] != '' && _params['category'] != 'all')) params['category'] = _params['category'];
+    if (_params['keyword'] && _params['keyword'] != '')
+      params['search'] = _params['keyword'];
+    if (
+      _params['category'] &&
+      _params['category'] != '' &&
+      _params['category'] != 'all'
+    )
+      params['category'] = _params['category'];
     return this.apiService.doGet(url, params);
   }
 
   getProductPrice(productUuid: string, shopId: string = '') {
-    const param = { shop: shopId }
+    const param = { shop: shopId };
     let url = `${environment['store-service']}/price/product/${productUuid}`;
     return this.apiService.doGet(url, param);
   }
@@ -82,57 +88,67 @@ export class ProductService {
   addTableRowValue(value: Product): IRow {
     return {
       id: value.product_uuid,
-      isExpandable: true,
+      isExpandable: false,
       rowValue: [
         {
           id: value.product_uuid,
           key: 'code',
-          type: 'simple',
-          expand: true,
-          value: {
-            value: [value.code],
-            align: 'left',
-          },
+          expand: false,
+          value: [
+            {
+              type: 'simple',
+              value: value.code,
+              align: 'left',
+            },
+          ],
         },
         {
           id: value.product_uuid,
           key: 'label',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [value.label],
-            align: 'left',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: value.label,
+              align: 'left',
+            },
+          ],
         },
         {
           id: value.product_uuid,
           key: 'category',
-          type: 'simple',
           expand: false,
-          value: {
-            value: value?.category ? [value.category.label] : [''],
-            align: 'left',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: value?.category ? value.category.label : '',
+              align: 'left',
+            },
+          ],
         },
         {
           id: value.product_uuid,
           key: 'shop',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [],
-            align: 'left',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: '',
+              align: 'left',
+            },
+          ],
         },
         {
           id: value.product_uuid,
           key: 'price',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [],
-            align: 'right',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: '',
+              align: 'right',
+            },
+          ],
         },
       ],
     };
@@ -146,54 +162,64 @@ export class ProductService {
         {
           id: price['price_id'],
           key: 'code',
-          type: 'simple',
           expand: true,
-          value: {
-            value: [],
-            align: 'left',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: '',
+              align: 'left',
+            },
+          ],
         },
         {
           id: price['price_id'],
           key: 'label',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [],
-            align: 'left',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: '',
+              align: 'left',
+            },
+          ],
         },
         {
           id: price['price_id'],
           key: 'category',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [],
-            align: 'left',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: '',
+              align: 'left',
+            },
+          ],
         },
         {
           id: price['price_id'],
           key: 'shop',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [price['shop']['shop_name']],
-            align: 'left',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: price['shop']['shop_name'],
+              align: 'left',
+            },
+          ],
         },
         {
           id: price['price_id'],
           key: 'price',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [this.helperService.numberFormat(price['ttc_price']/100)],
-            align: 'right',
-          },
+          value: [
+            {
+              type: 'simple',
+              value: this.helperService.numberFormat(price['ttc_price'] / 100),
+              align: 'right',
+            },
+          ],
         },
-      ]
-    }
+      ],
+    };
   }
 }

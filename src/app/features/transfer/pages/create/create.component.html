@@ -1,0 +1,88 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+<section class="content">
+  <div class="container-fluid">
+    <form [formGroup]="informationForm">
+      <div class="form-group row align-items-center">
+        <label for="" class="col-sm-2 col-form-label">Site émetteur : </label>
+        <div class="col-sm-2">
+          <input 
+            type="text" 
+            class="form-control form-control-sm" 
+            id="shopSender"
+            name="shopSender"
+            formControlName="shopSender"
+            matInput
+            [matAutocomplete]="send"
+            [readonly]="this.userData.role.role_key != 'ADMIN'"
+          >
+          <mat-autocomplete #send="matAutocomplete" [displayWith]="displayShopSender" (optionSelected)="clear()">
+            <mat-option *ngFor="let sender of filteredSenderShop | async" [value]="sender">
+              {{ sender.shop_name }}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <label for="" class="col-sm-2 col-form-label">Site récepteur : </label>
+        <div class="col-sm-2">
+          <input 
+            type="text" 
+            class="form-control form-control-sm" 
+            id="shopReceiver"
+            name="shopReceiver"
+            formControlName="shopReceiver"
+            matInput
+            [matAutocomplete]="receive"
+          >
+          <mat-autocomplete #receive="matAutocomplete" [displayWith]="displayShopReceiver">
+            <mat-option *ngFor="let receiver of filteredReceiverShop | async" [value]="receiver">
+              {{ receiver.shop_name }}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+      </div>
+    </form>
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <app-table [id]='productId'></app-table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-3">
+        <button (click)="openModal(productId)" [disabled]="!informationForm.valid" class="btn btn-sm btn-outline-dark">
+          Ajouter des articles 
+        </button>
+      </div>
+      <div class="col-9 text-right">
+        <button class="btn btn-sm btn-outline-secondary mr-1" (click)="cancelCreate()">Annuler</button>
+        <button class="btn btn-sm btn-outline-primary ml-1" (click)="create()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-modal [id]="productId" size="large">
+  <div head>
+    <h4 class="modal-title">
+      Sélectionner les artciles
+    </h4>
+  </div>
+  <div body>
+    <app-item-selection [id]="productId"></app-item-selection>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="validateSelectedProduct()">Enregistrer</button>
+</app-modal>
+
+<app-modal [id]="'serialization'" size="medium" [singleButton]="true">
+  <div head>
+    <h4 class="modal-title">
+      Ajout de(s) numéro(s) de série
+    </h4>
+  </div>
+  <div body>
+    <app-serialization [shopSender]="informationForm.value['shopSender']['shop_uuid']"></app-serialization>
+  </div>
+  <div footer>
+    <button class="btn btn-sm btn-outline-primary" (click)="saveSerialization()">Enregister</button>
+  </div>
+</app-modal>

@@ -6,15 +6,15 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
-import { ADMIN, userInfo } from 'src/app/shared/config/constant';
+import { ADMIN, inputTimer, userInfo } from 'src/app/shared/config/constant';
 import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
-import { HelperService } from 'src/app/shared/serives/helper/helper.service';
-import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
-import { ModalService } from 'src/app/shared/serives/modal/modal.service';
-import { TabService } from 'src/app/shared/serives/tab/tab.service';
-import { TableFilterService } from 'src/app/shared/serives/table-filter/table-filter.service';
-import { TableService } from 'src/app/shared/serives/table/table.service';
+import { HelperService } from 'src/app/shared/services/helper/helper.service';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
+import { ModalService } from 'src/app/shared/services/modal/modal.service';
+import { TabService } from 'src/app/shared/services/tab/tab.service';
+import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
+import { TableService } from 'src/app/shared/services/table/table.service';
 import { tableTransferHeader, tableTransferId, transferStatus } from '../../config/constant';
 import { SerializationType } from '../../models/serialization-type/serialization-type.model';
 import { Serialization } from '../../models/serialization/serialization.model';
@@ -223,7 +223,7 @@ export class TransfertComponent implements OnInit, OnDestroy {
           distinctUntilChanged((prev, curr)=>{
             return prev.label === curr.label;
           }),
-          debounceTime(500),
+          debounceTime(inputTimer),
           filter(value => (value.length >= 3 || value == '') ),
           switchMap((product: string) => {
             this.trigger(false);
@@ -268,7 +268,7 @@ export class TransfertComponent implements OnInit, OnDestroy {
         filter(value => {
           return this.transferFormGroup.value['trigger']
         }),
-        debounceTime(500),
+        debounceTime(inputTimer),
         switchMap((isValid: boolean) => {
           this.trigger(false);
           if (isValid) {
@@ -297,7 +297,7 @@ export class TransfertComponent implements OnInit, OnDestroy {
   public serializationInvalid: boolean = false;
   checkSerializationValue(i: number) {
     this.serializationField.at(i).valueChanges.pipe(
-      debounceTime(700),
+      debounceTime(inputTimer + 200),
       filter(value => value?.value?.length > 2),
       switchMap(value => {
         if (value != '') {
@@ -377,7 +377,8 @@ export class TransfertComponent implements OnInit, OnDestroy {
       })
       const cell: ICell = {
         cellValue: this.rows,
-        isViewable: true
+        paginate: true,
+        isEditable: true
       }
       table.body = cell;
       this.tableService.setTableValue(table);

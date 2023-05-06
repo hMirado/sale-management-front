@@ -35,6 +35,10 @@ const routes: Routes = [
     loadChildren: () => import('./features/role/role.module').then(role => role.RoleModule)
   },
   {
+    path: 'transfer',
+    loadChildren: () => import('./features/transfer/transfer.module').then(transfer => transfer.TransferModule)
+  },
+  {
     path: 'error',
     loadChildren: () => import('./features/error/error.module').then(error => error.ErrorModule)
   },

@@ -5,7 +5,8 @@ import { Observable, Subscription, debounceTime, filter, map, of, startWith, swi
 import { ProductService } from '../../../service/product/product.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Category } from '../../../models/category/category.model';
-import { ProductFormValue } from '../../../models/product-form-value/product-form-value';
+import { ProductFormValue } from '../../../models/validations/product-form-value';
+import { inputTimer } from 'src/app/shared/config/constant';
 
 @Component({
   selector: 'app-product-information',
@@ -115,7 +116,7 @@ export class InformationComponent implements OnInit, OnDestroy {
   verifyCodeExist() {
     this.subscription.add(
       this.informationFormgroup.controls['code'].valueChanges.pipe(
-        debounceTime(500),
+        debounceTime(inputTimer),
         filter(value => value != '' && this.informationFormgroup.controls['trigger'].value),
         switchMap(value => {
           return this.productService.verifyCode(value);
@@ -130,7 +131,7 @@ export class InformationComponent implements OnInit, OnDestroy {
   verifyLabelExist() {
     this.subscription.add(
       this.informationFormgroup.controls['label'].valueChanges.pipe(
-        debounceTime(500),
+        debounceTime(inputTimer),
         filter(value => value != '' && this.informationFormgroup.controls['trigger'].value),
         switchMap(value => {
           return this.productService.verifyLabel(value);

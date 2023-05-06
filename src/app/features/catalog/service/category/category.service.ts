@@ -57,22 +57,26 @@ export class CategoryService {
         {
           id: value.category_uuid,
           key: 'label',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [value.label],
-            align: 'left'
-          },
+          value: [
+            {
+              type: 'simple',
+              value: value.label,
+              align: 'left'
+            }
+          ],
         },
         {
           id: value.category_uuid,
           key: 'code',
-          type: 'simple',
           expand: false,
-          value: {
-            value: [value.code.toUpperCase()],
-            align: 'left'
-          },
+          value: [
+            {
+              type: 'simple',
+              value: value.code.toUpperCase(),
+              align: 'left'
+            }
+          ],
         }, 
         // {
         //   id: value.category_uuid,

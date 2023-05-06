@@ -5,6 +5,7 @@ import { ApiResponse } from 'src/app/core/models/api-response/api-response.model
 import { Role } from 'src/app/shared/models/role/role.model';
 import { User } from '../../models/user/user.model';
 import { UserService } from '../../services/user.service';
+import { inputTimer } from 'src/app/shared/config/constant';
 
 @Component({
   selector: 'app-info-form',
@@ -71,7 +72,7 @@ export class InfoFormComponent implements OnInit, OnDestroy {
   getFormValueChange() {
     this.subscription.add(
       this.userFormGroup.valueChanges.pipe(
-        debounceTime(500),
+        debounceTime(inputTimer),
         filter((value: any) => value['trigger'])
       ).subscribe((value: any) => {
         this.triggerEvent(false)

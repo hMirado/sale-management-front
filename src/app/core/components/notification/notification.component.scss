@@ -31,3 +31,16 @@
     }
   }
 }
+
+.callout {
+  padding: 0.5rem!important;
+  border: 1.5px solid #fff;
+}
+
+.callout.callout-danger {
+  border-color: #bd2130;
+}
+
+.callout.callout-success {
+  border-color: #1e7e34;
+}

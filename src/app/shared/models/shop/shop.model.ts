@@ -19,5 +19,5 @@ export class Shop {
     is_current_shop: boolean;
     createdAt?: string;
     updatedAt?: string;
-}
+  }
 }

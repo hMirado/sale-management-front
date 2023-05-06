@@ -1,0 +1,16 @@
+<form [formGroup]="numberFormGroup">
+  <div class="text-center">
+    <input
+    type="number"
+    class="custom-control form-control form-control-sm col-3"
+    [ngClass]="{
+      'input-error': 
+      numberFormGroup.get('value')?.hasError('required') || numberFormGroup.get('value')?.hasError('pattern')
+    }"
+    id="value"
+    name="value"
+    formControlName="value"
+    (input)="triggerEvent()"
+  >
+  </div>
+</form>
