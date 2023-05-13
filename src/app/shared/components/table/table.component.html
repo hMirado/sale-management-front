@@ -9,7 +9,7 @@
       >
         {{header.value}}
       </th>
-      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isSwitchable" class="text-center">Actions</th>
+      <th *ngIf="haveAction" class="text-center">Actions</th>
     </tr>
   </thead>
   <tbody formArrayName="fieldGroup">

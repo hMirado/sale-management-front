@@ -10,7 +10,7 @@ export class TableService {
   public expandUiid$: Subject<string> = new Subject<string>();
   public tableExpandedValue$: BehaviorSubject<ICell|null> = new BehaviorSubject<ICell|null>(null);
   private detailId$: Subject<string> = new Subject<string>();
-  private lineId$: Subject<any> = new Subject<any>();
+  private lineId$: Subject<{id: string, action: string}> = new Subject<{id: string, action: string}>();
   private inputValue$: Subject<InputValue>= new Subject<InputValue>();
   private tableValueEdited$: Subject<any> = new Subject<any>();
 
@@ -36,11 +36,11 @@ export class TableService {
     return this.detailId$;
   }
 
-  setLineId(value: any): void {
+  setLineId(value: {id: string, action: string}): void {
     this.lineId$.next(value);
   }
 
-  getlineId(): Observable<any> {
+  getlineId(): Observable<{id: string, action: string}> {
     return this.lineId$;
   }
 

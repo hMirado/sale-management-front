@@ -96,7 +96,7 @@ export class StockService {
               value: value?.quantity > 0 ? 'En Stock' : 'En rupture',
               align: 'center',
               badge: {
-                status: value?.quantity > 0 ? true : false,
+                status: true,
                 bg: value?.quantity > 0 ? 'success' : 'danger',
               },
             },

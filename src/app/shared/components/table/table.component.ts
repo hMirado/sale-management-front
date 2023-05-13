@@ -61,7 +61,7 @@ export class TableComponent implements OnInit, OnDestroy {
       ).subscribe((table: ITable) => {
         this.tables = table;
         this.initForm(table.body?.cellValue as IRow[], table.body?.paginate as boolean);
-        this.haveAction = !!(table.body?.isEditable || table.body?.isSwitchable || table.body?.isDeleteable);
+        this.haveAction = !!(table.body?.isEditable || table.body?.isSwitchable || table.body?.isDeleteable || table.body?.isViewable);
         this.expand('');
       })
     );

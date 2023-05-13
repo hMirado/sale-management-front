@@ -8,13 +8,15 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { SerializationComponent } from './components/serialization/serialization.component';
+import { DetailComponent } from './pages/detail/detail.component';
 
 
 @NgModule({
   declarations: [
     ListComponent,
     CreateComponent,
-    SerializationComponent
+    SerializationComponent,
+    DetailComponent
   ],
   imports: [
     CommonModule,

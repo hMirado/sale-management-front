@@ -255,4 +255,9 @@ export class TransferService {
       ]
     }
   }
+
+  getTransfer(uuid: string): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/transfer/${uuid}`;
+    return this.apiService.doGet(url);
+  }
 }

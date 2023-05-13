@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CoreComponent } from 'src/app/core/core.component';
 import { ListComponent } from './pages/list/list.component';
 import { CreateComponent } from './pages/create/create.component';
+import { DetailComponent } from './pages/detail/detail.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
       {
         path: 'create',
         component: CreateComponent
+      },
+      {
+        path: ':uuid',
+        component: DetailComponent
       }
     ]
   }
