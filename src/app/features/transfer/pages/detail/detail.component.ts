@@ -8,6 +8,8 @@ import { userInfo } from 'src/app/shared/config/constant';
 import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Transfer } from '../../models/transfer/transfer.model';
+import { status } from '../../config/constant';
 
 @Component({
   selector: 'app-detail',
@@ -16,11 +18,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class DetailComponent implements OnInit, OnDestroy {
   private transferUuid: string = '';
-  public title: string = 'Détail du transfert';
+  public title: string = 'Détails du transfert';
   public breadCrumbs: BreadCrumb[] = [];
   private subscription = new Subscription();
   public userData: any = {};
-  public informationForm: FormGroup;
+  public tranferData!: Transfer
+  public transferForm: FormGroup;
 
   constructor(
     private transferService: TransferService,
@@ -30,6 +33,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
   ) {
     this.addHeaderContent();
+    this.getUserData();
     this.getTransfer();
   }
 
@@ -52,7 +56,7 @@ export class DetailComponent implements OnInit, OnDestroy {
       },
       {
         url: '',
-        label: 'Détails'
+        label: 'Détails du transfert'
       }
     ]
   }
@@ -65,24 +69,27 @@ export class DetailComponent implements OnInit, OnDestroy {
           return this.transferService.getTransfer(this.transferUuid);
         })
       ).subscribe((response: ApiResponse) => {
-        console.log(response.data);
+        this.tranferData = response.data;
         this.createForm();
       })
     );
   }
 
-  getUserData() {
+  getUserData(): void {
     const data = this.localStorageService.getLocalStorage(userInfo);
     this.userData = JSON.parse(this.helperService.decrypt(data));
   }
 
   createForm(): void {
-    this.informationForm = this.formBuilder.group({
+    const validator = this.tranferData.transfer_status.transfer_status_code == status.inProgress ? '' : 
+      this.tranferData.user_receiver.first_name + ' ' + this.tranferData.user_receiver.last_name.toUpperCase();
+    this.transferForm = this.formBuilder.group({
       transfer: this.transferUuid,
-      userSender: ['', Validators.required],
-      shopSender: ['', Validators.required],
-      userReceiver: ['', Validators.required],
-      shopReceiver: ['', Validators.required],
+      shopSender: this.tranferData.shop_sender.shop_name,
+      shopReceiver: this.tranferData.shop_receiver.shop_name,
+      creator: this.tranferData.user_sender.first_name + ' ' + this.tranferData.user_sender.last_name.toUpperCase(),
+      validator: validator,
+      commentary: '',
     });
   }
 }

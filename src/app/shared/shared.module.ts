@@ -37,6 +37,7 @@ import { ItemSelectionComponent } from './components/item-selection/item-selecti
 import { NumberComponent } from './components/input/number/number.component';
 import { TextComponent } from './components/input/text/text.component';
 import { CheckboxComponent } from './components/input/checkbox/checkbox.component';
+import { ButtonComponent } from './components/button/button.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { CheckboxComponent } from './components/input/checkbox/checkbox.componen
     NumberComponent,
     TextComponent,
     CheckboxComponent,
+    ButtonComponent,
   ],
   imports: [
     CommonModule,
