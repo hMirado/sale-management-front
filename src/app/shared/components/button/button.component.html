@@ -1,1 +1,8 @@
-<p>button works!</p>
+<button 
+  *ngIf="button && id == button.id"
+  class="btn btn-sm btn-outline-{{ button.color }}" 
+  (click)="click()"
+>
+  <i *ngIf="button.icon" [class]=""></i>
+  {{ button.label }}
+</button>

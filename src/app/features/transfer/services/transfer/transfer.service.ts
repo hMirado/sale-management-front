@@ -260,4 +260,9 @@ export class TransferService {
     const url = `${environment['store-service']}/transfer/${uuid}`;
     return this.apiService.doGet(url);
   }
+
+  validateTransfer(value: any): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/transfer/validate`;
+    return this.apiService.doPut(url, value);
+  }
 }

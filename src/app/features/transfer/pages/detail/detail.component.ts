@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, switchMap } from 'rxjs';
+import { Subscription, concatMap, switchMap } from 'rxjs';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { TransferService } from '../../services/transfer/transfer.service';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { userInfo } from 'src/app/shared/config/constant';
 import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
@@ -10,6 +10,8 @@ import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Transfer } from '../../models/transfer/transfer.model';
 import { status } from '../../config/constant';
+import { Button } from 'src/app/shared/models/button/button.model';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
 
 @Component({
   selector: 'app-detail',
@@ -22,15 +24,20 @@ export class DetailComponent implements OnInit, OnDestroy {
   public breadCrumbs: BreadCrumb[] = [];
   private subscription = new Subscription();
   public userData: any = {};
-  public tranferData!: Transfer
+  public transferData!: Transfer
   public transferForm: FormGroup;
+  public buttonValid!: Button;
+  public ButtonCancel: Button;
+  public inProgress: string = status.inProgress
 
   constructor(
     private transferService: TransferService,
+    private router: Router,
     private activatedRoute: ActivatedRoute,
     private localStorageService: LocalStorageService,
     private helperService: HelperService,
     private formBuilder: FormBuilder,
+    private notificationService: NotificationService,
   ) {
     this.addHeaderContent();
     this.getUserData();
@@ -38,6 +45,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.configButton();
   }
 
   ngOnDestroy(): void {
@@ -69,7 +77,7 @@ export class DetailComponent implements OnInit, OnDestroy {
           return this.transferService.getTransfer(this.transferUuid);
         })
       ).subscribe((response: ApiResponse) => {
-        this.tranferData = response.data;
+        this.transferData = response.data;
         this.createForm();
       })
     );
@@ -81,15 +89,58 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   createForm(): void {
-    const validator = this.tranferData.transfer_status.transfer_status_code == status.inProgress ? '' : 
-      this.tranferData.user_receiver.first_name + ' ' + this.tranferData.user_receiver.last_name.toUpperCase();
+    console.log(this.transferData);
+    
+    const validator = this.transferData.transfer_status.transfer_status_code == this.inProgress ? '' : 
+      this.transferData.user_receiver.first_name + ' ' + this.transferData.user_receiver.last_name.toUpperCase();
     this.transferForm = this.formBuilder.group({
       transfer: this.transferUuid,
-      shopSender: this.tranferData.shop_sender.shop_name,
-      shopReceiver: this.tranferData.shop_receiver.shop_name,
-      creator: this.tranferData.user_sender.first_name + ' ' + this.tranferData.user_sender.last_name.toUpperCase(),
+      shopSender: this.transferData.shop_sender.shop_name,
+      shopReceiver: this.transferData.shop_receiver.shop_name,
+      creator: this.transferData.user_sender.first_name + ' ' + this.transferData.user_sender.last_name.toUpperCase(),
       validator: validator,
-      commentary: '',
+      commentary: this.transferData.transfer_commentary,
     });
+  }
+
+  configButton(): void {
+    this.buttonValid = {
+      id: 'valid',
+      label: 'Valider',
+      color: 'primary',
+      action: this.validateTransfer
+    };
+    this.ButtonCancel = {
+      id: 'cancel',
+      label: 'Annuler',
+      color: 'secondary',
+      action: this.cancelTransfer
+    };
+  }
+
+  validateTransfer = () => {
+    const value = {
+      user: this.userData.user_uuid,
+      transfer: this.transferForm.value['transfer'],
+      commentary : this.transferForm.value['commentary']
+    };
+    this.subscription.add(
+      this.transferService.validateTransfer(value).subscribe((response: ApiResponse) => {
+        console.log("\nresponse", response);
+        this.getTransfer();
+        this.showNotification('success', `Transfert validé avec succè.`);
+      })
+    );
+  }
+
+  cancelTransfer = () => {
+    this.router.navigateByUrl('/transfer');
+  }
+
+  showNotification(type: string, message: string): void {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
   }
 }

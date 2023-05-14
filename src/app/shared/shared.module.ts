@@ -116,6 +116,7 @@ import { ButtonComponent } from './components/button/button.component';
     NumberComponent,
     TextComponent,
     CheckboxComponent,
+    ButtonComponent
   ]
 })
 export class SharedModule { }
