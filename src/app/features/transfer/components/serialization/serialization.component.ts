@@ -63,7 +63,7 @@ export class SerializationComponent implements OnInit, OnDestroy {
     for(let i = 0; i < quantity; i++) {
       let serialization: TransferSerialization;
       if (this.product.serializations && this.product.serializations.length > 0) {
-        serialization = this.product.serializations[0];
+        serialization = this.product.serializations[i];
         let field = this.formBuilder.group({
           label: [serialization.label, Validators.required],
           value: [serialization.value, Validators.required],
@@ -96,8 +96,6 @@ export class SerializationComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         filter((value: any) => value && value.value.length > 2 && this.formGroup.value['trigger']),
         switchMap((current: any)  => {
-          console.log(current);
-          
           this.formGroup.patchValue({trigger: false});
           this.serializationField().at(i).patchValue({
             label: '',

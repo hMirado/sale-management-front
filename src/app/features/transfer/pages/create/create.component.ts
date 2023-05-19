@@ -324,15 +324,17 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.transferService.getProductSerialization().subscribe((productSerialization: TransfertProduct) => {
         this.transferProduct.map((product: TransfertProduct) => {
           if (product.product_uuid == productSerialization.product_uuid) {
+            let isValid = true;
             product['serializations'] = productSerialization.serializations;
             product['serializations']?.forEach((serialization: Serialization) => {
-              let column = this.line.filter((line: Line) => line.lineId == productSerialization.product_uuid)[0]
-              let content = column.column[2].content[1];
-              if (content.type == 'icon') { 
-                content.icon = (serialization.is_valid && serialization.value != '' && serialization.group_id != '') ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-                content.bg = (serialization.is_valid && serialization.value != '' && serialization.group_id != '') ? 'text-success' : 'text-danger';
-              };
+              if (!serialization.is_valid && serialization.label == '' && serialization.group_id == '') isValid = false;
             })
+            let column = this.line.filter((line: Line) => line.lineId == productSerialization.product_uuid)[0]
+            let content = column.column[2].content[1];
+            if (content.type == 'icon') { 
+              content.icon = isValid ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+              content.bg = isValid ? 'text-success' : 'text-danger';
+            };
           }
           return product;
         });
@@ -396,6 +398,10 @@ export class CreateComponent implements OnInit, OnDestroy {
       setTimeout(() => this.router.navigateByUrl('/transfer'), 1000);
     })
     )
+  }
+
+  updateSerialNumberIcon() {
+    
   }
 
   getTableInputValue() {
