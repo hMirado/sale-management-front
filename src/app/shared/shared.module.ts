@@ -27,9 +27,6 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { NotificationComponent } from '../core/components/notification/notification.component';
-import { TableDyanmicComponent } from './components/table-dyanmic/table-dyanmic.component';
-import { RowComponent } from './components/table-dyanmic/row/row.component';
-import { TableHeaderComponent } from './components/table-dyanmic/table-header/table-header/table-header.component';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TooltipComponent } from './components/tooltip/tooltip.component';
@@ -38,6 +35,7 @@ import { NumberComponent } from './components/input/number/number.component';
 import { TextComponent } from './components/input/text/text.component';
 import { CheckboxComponent } from './components/input/checkbox/checkbox.component';
 import { ButtonComponent } from './components/button/button.component';
+import { TableauComponent } from './components/tableau/tableau.component';
 
 @NgModule({
   declarations: [
@@ -58,15 +56,13 @@ import { ButtonComponent } from './components/button/button.component';
     TabComponent,
     TableFilterComponent,
     NotificationComponent,
-    TableDyanmicComponent,
-    RowComponent,
-    TableHeaderComponent,
     TooltipComponent,
     ItemSelectionComponent,
     NumberComponent,
     TextComponent,
     CheckboxComponent,
     ButtonComponent,
+    TableauComponent,
   ],
   imports: [
     CommonModule,
@@ -106,9 +102,6 @@ import { ButtonComponent } from './components/button/button.component';
     MatFormFieldModule,
     MatInputModule,
     NotificationComponent,
-    TableDyanmicComponent,
-    RowComponent,
-    TableHeaderComponent,
     MatStepperModule,
     MatCheckboxModule,
     TooltipComponent,
@@ -116,7 +109,8 @@ import { ButtonComponent } from './components/button/button.component';
     NumberComponent,
     TextComponent,
     CheckboxComponent,
-    ButtonComponent
+    ButtonComponent,
+    TableauComponent
   ]
 })
 export class SharedModule { }

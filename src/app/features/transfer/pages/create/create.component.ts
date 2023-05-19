@@ -21,6 +21,9 @@ import { NotificationService } from 'src/app/core/services/notification/notifica
 import { Router } from '@angular/router';
 import { Serialization } from '../../models/validations/serialization';
 import { Transfer } from '../../models/validations/transfer';
+import { Table } from 'src/app/shared/models/table/table.model';
+import { TableauService } from 'src/app/shared/services/table/tableau.service';
+import { Line } from 'src/app/shared/models/table/body/line/line.model';
 
 @Component({
   selector: 'app-create',
@@ -37,14 +40,17 @@ export class CreateComponent implements OnInit, OnDestroy {
   public filteredSenderShop: Observable<Shop[]>;
   public filteredReceiverShop: Observable<Shop[]>;  
   public productId: string = 'transfer-product'
-  private table: ITable = {
-    id: this.productId,
-    header: tableProductHeader,
-    body: null
-  };
   public selectedProducts: Product[] = [];
-  private transferProduct: TransfertProduct[] = []
-  private rows: IRow[] = [];
+  private transferProduct: TransfertProduct[] = [];
+  public productTable: Table = {
+    id: 'product-table',
+    header: tableProductHeader,
+    body: {
+      bodyId: 'product-table-body',
+      line: []
+    }
+  };
+  private line: Line[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -56,7 +62,8 @@ export class CreateComponent implements OnInit, OnDestroy {
     private itemSelectionService: ItemSelectionService,
     private tableFilterService: TableFilterService,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private tableauService: TableauService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -74,6 +81,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.getInputValue();
     this.getProductSerialization();
     this.getTableLineId();
+    //this.getTableInputValue();
   }
 
   ngOnDestroy(): void {
@@ -153,10 +161,9 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   clear() {
-    this.rows = [];
+    this.line = [];
     this.transferProduct = [];
     this.selectedProducts = [];
-    this.setTableValue();
   }
 
   // matAutoComplete for receiver site
@@ -179,7 +186,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   initProductTableSelected(): void {
-    this.tableService.setTableValue(this.table);
+    this.tableauService.setTable(this.productTable)
   }
 
   openModal(id: string): void {
@@ -232,7 +239,8 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.selectedProducts = value['products'];
         this.closeModal(this.productId);
         this.selectedProducts.forEach((product: Product) => {
-          if (this.rows.length > 0 && this.rows.find((value: IRow) => value.id == product.product_uuid) ) {
+          this.transferService.getTableProduct(product)
+          if (this.line.length > 0 && this.line.find((value: Line) => value.lineId == product.product_uuid) ) {
             return;
           }
           this.transferProduct.push({
@@ -242,31 +250,17 @@ export class CreateComponent implements OnInit, OnDestroy {
             is_serializable: product.is_serializable,
             serializations: []
           })
-          let row: IRow = this.transferService.getTableRowValue(product);
-          if (product.is_serializable) {
-            row.rowValue[2].value[0].button = {
-              size: 'btn-sm',
-              bg: 'secondary',
-              action: () => {
-                this.openSerializationModal(product.product_uuid)
-              }
-            };
-          };
-          this.rows.push(row)
+          let line: Line = this.transferService.getTableProduct(product);
+          const isButton = line.column[2].content[0].type;
+          if (product.is_serializable && isButton == 'button') {
+            line.column[2].content[0].function =  () => {this.openSerializationModal(product.product_uuid)}
+          }
+          this.line.push(line);
         });
-        this.setTableValue();
+        this.productTable.body.line = this.line;
+        this.tableauService.setTable(this.productTable);
       })
     );
-  }
-
-  setTableValue() {
-    let cells: ICell = {
-      cellValue: this.rows,
-      paginate: false,
-      isDeleteable: true
-    }
-    this.table.body = cells;
-    this.tableService.setTableValue(this.table);
   }
 
   getCancelSelectedProduct() {
@@ -279,12 +273,12 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getInputValue(): void {
     this.subscription.add(
-      this.tableService.getInputValue().pipe(
-        filter((value: InputValue) => value != null && value.tableId == this.productId),  
-        switchMap((value: InputValue) => {
-          const product = value.id;
+      this.tableauService.getTableInputValue().pipe(
+        filter((value: any) => value['tableId'] == 'product-table' && value['value'] != null && value['value'] != ''),
+        switchMap((value: any) => {
+          const product = value['line'];
           const shop = this.informationForm.value['shopSender'].shop_uuid;
-          return this.transferService.verifyStock(shop, product, value);
+          return this.transferService.verifyStock(shop, product, value['value']);
         })
       ).subscribe((response: ApiResponse) => {
         if (!response.data.quantityIsValid) {
@@ -294,6 +288,12 @@ export class CreateComponent implements OnInit, OnDestroy {
             if (transferProduct.product_uuid == response.data.product) {
               transferProduct.quantity = response.data.quantityInput;
               transferProduct.serializations = [];
+              let column = this.line.filter((line: Line) => line.lineId == response.data.product)[0]
+              let content = column.column[2].content[1];
+              if (content.type == 'icon') { 
+                content.icon = 'fas fa-exclamation-circle';
+                content.bg =  'text-danger';
+              };
             }
             return transferProduct;
           });
@@ -324,7 +324,15 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.transferService.getProductSerialization().subscribe((productSerialization: TransfertProduct) => {
         this.transferProduct.map((product: TransfertProduct) => {
           if (product.product_uuid == productSerialization.product_uuid) {
-            product['serializations'] = productSerialization.serializations
+            product['serializations'] = productSerialization.serializations;
+            product['serializations']?.forEach((serialization: Serialization) => {
+              let column = this.line.filter((line: Line) => line.lineId == productSerialization.product_uuid)[0]
+              let content = column.column[2].content[1];
+              if (content.type == 'icon') { 
+                content.icon = (serialization.is_valid && serialization.value != '' && serialization.group_id != '') ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+                content.bg = (serialization.is_valid && serialization.value != '' && serialization.group_id != '') ? 'text-success' : 'text-danger';
+              };
+            })
           }
           return product;
         });
@@ -335,13 +343,13 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getTableLineId() {
     this.subscription.add(
-      this.tableService.getlineId().subscribe((value: any) => {
+      /*this.tableService.getlineId().subscribe((value: any) => {
         if (value['action'] == 'delete') {
           this.selectedProducts = this.selectedProducts.filter((product: Product) => product.product_uuid != value['id']);
           this.transferProduct = this.transferProduct.filter((product: TransfertProduct) => product.product_uuid != value['id']);
           this.rows = this.rows.filter((row: IRow) => row.id != value['id']);
         };
-      })
+      })*/
     );
   }
 
@@ -388,5 +396,41 @@ export class CreateComponent implements OnInit, OnDestroy {
       setTimeout(() => this.router.navigateByUrl('/transfer'), 1000);
     })
     )
+  }
+
+  getTableInputValue() {
+    this.subscription.add(
+      this.tableauService.getTableInputValue().subscribe((value: any) => {    
+        if (value['tableId'] == 'product-table') {
+          const line = this.productTable.body.line.filter((line: Line) => line.lineId == value['line'])[0];
+          const indexes = value['indexes'].split('-');
+
+          console.log(value);
+          
+          // Ajout icon check line 1 and column 2
+          /*let column = line.column[2];
+          column.content[1] = 
+            {
+              type: 'icon',
+              key: "string",
+              icon: 'fas fa-check-circle',
+              bg: 'text-success',
+              tooltip: {
+                hasTooltip: true,
+                text: 'Valide',
+                flow: 'top'
+              }
+            };
+          
+          const _value = {
+            tableId: value['tableId'],
+            line: value['line'],
+            index: 1,
+            columns: column
+          }
+          this.tableauService.setColumn(_value);*/
+        }
+      })
+    );
   }
 }

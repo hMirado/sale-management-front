@@ -1,0 +1,78 @@
+<table class="table table-hover text-nowrap" *ngIf="table">
+  <thead *ngIf="table.header && table.header.length > 0">
+    <tr>
+      <th 
+        *ngFor="let header of table.header" 
+        [attr.colspan]="header?.colspan" 
+        [attr.rowspan]="header?.rowspan"
+        [ngClass]="{
+          'text-center': header.style.align=='align-center',
+          'text-left': header.style.align=='align-left',
+          'text-right': header.style.align=='align-right'
+        }"
+      >
+        {{ header.value }}
+      </th>
+    </tr>
+  </thead>
+  <tbody *ngIf="table.body && table.body.line.length > 0">
+    <ng-container *ngFor="let _line of table.body.line; let i = index;">
+      <tr>
+        <td 
+          *ngFor="let _column of _line.column; let j = index;"
+        >
+          <div 
+            class="column-container"
+            [ngClass]="{
+              'flex-direction-column': _column.style.flex=='column',
+              'flex-direction-row': _column.style.flex=='row',
+              'content-center': _column.style.align=='align-center',
+              'content-left': _column.style.align=='align-left',
+              'content-right': _column.style.align=='align-right'
+            }"
+          >
+            <div *ngFor="let _content of _column.content; let k = index;" class="mr-1">
+              <ng-container *ngIf="_content.type == 'simple'">
+                <ng-container *ngIf="_content.expandable">
+                  <i class="pointer fas fa-{{expandedId ===  _line.lineId ? 'chevron-down' : 'chevron-right'}} fa-1x mt-1 pr-2"></i>
+                </ng-container>
+                {{ _content.value }}
+              </ng-container>
+              <ng-container *ngIf="_content.type == 'icon'">
+                <app-tooltip [text]="_content.tooltip.text || ''">
+                  <i class="pointer {{ _content.icon }} {{ _content.bg }}" style="font-size:18px" content></i>
+                </app-tooltip>
+              </ng-container>
+              <ng-container *ngIf="_content.type == 'badge'">
+                <span class="badge {{ _content.badge.bg }}">
+                  {{ _content.badge.value }}
+                </span>
+              </ng-container>
+              <ng-container *ngIf="_content.type == 'input'">
+                <app-input-number 
+                  *ngIf="_content.input == 'number'"
+                  [id]="getColumnId(i, j, k)"
+                  [line]="_line.lineId"
+                  [value]="_content.value"
+                  (formValue)="getInputValue($event)"
+                >
+                </app-input-number>
+              </ng-container>
+              <ng-container *ngIf="_content.type == 'button'">
+                <button class="btn btn-sm btn-outline-secondary" (click)="_content.function()">
+                  <i 
+                    *ngIf="_content.icon" [class]="_content.icon.icon"
+                    [attr.data-tooltip]="_content.icon.tooltip.text"
+                    [attr.data-flow]="_content.icon.tooltip.flow"
+                  >
+                  </i>
+                  <span> {{ _content.value }} </span>
+                </button>
+              </ng-container>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>

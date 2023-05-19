@@ -1,4 +1,4 @@
 <div class="custom-tooltip">
   <ng-content select="[content]"></ng-content>
-  <span class="custom-tooltiptext">{{ text }}</span>
+  <span class="custom-tooltiptext" *ngIf="text != ''">{{ text }}</span>
 </div>

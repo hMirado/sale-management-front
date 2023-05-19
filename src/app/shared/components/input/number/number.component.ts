@@ -9,6 +9,7 @@ import { inputTimer } from 'src/app/shared/config/constant';
   styleUrls: ['./number.component.scss']
 })
 export class NumberComponent implements OnInit, OnDestroy {
+  @Input() line!: string;
   @Input() id!: string;
   @Input() value: string = '';
   @Output() formValue = new EventEmitter<any>();
@@ -34,6 +35,7 @@ export class NumberComponent implements OnInit, OnDestroy {
 
   addControl(): void {
     this.numberFormGroup.addControl('id', new FormControl(this.id));
+    this.numberFormGroup.addControl('line', new FormControl(this.line));
     this.numberFormGroup.addControl('value', new FormControl(this.value, [Validators.required, Validators.pattern(/^\d*[1-9]\d*$/)]));
   }
 

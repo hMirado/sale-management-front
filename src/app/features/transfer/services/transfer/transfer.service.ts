@@ -11,6 +11,8 @@ import { Transfer as TransferValidation } from '../../models/validations/transfe
 import { Transfer } from '../../models/transfer/transfer.model';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { status } from '../../config/constant';
+import { Line } from 'src/app/shared/models/table/body/line/line.model';
+import { Column } from 'src/app/shared/models/table/body/column/column.model';
 
 @Injectable({
   providedIn: 'root'
@@ -100,13 +102,107 @@ export class TransferService {
     }
   }
 
-  verifyStock(shop: string, product: string, value: InputValue): Observable<ApiResponse> {
+  getTableProduct(product: Product): Line {
+    let serialization: Column;
+    if (product.is_serializable) {
+      serialization = {
+        content: [
+          {
+            type: "button",
+            key: "serialization",
+            disabled: false,
+            value: 'Numéro de série',
+            function: () => {},
+          },
+          {
+            type: 'icon',
+            key: "iconSerialization",
+            icon: 'fas fa-exclamation-circle',
+            bg: 'text-danger',
+            tooltip: {
+              hasTooltip: false,
+              text: 'Veuillez entrer un numéro de série',
+              flow: 'top'
+            }
+          }
+        ],
+        style: {
+          align: 'align-left',
+          flex: "row"
+        }
+      }
+    } else {
+      serialization = {
+          content: [
+          {
+            type: 'simple',
+            key: 'serialization',
+            value: 'Aucun numéro de série a renseigné',
+            expandable: false,
+            tooltip: { hasTooltip: false }
+          },
+          {
+            type: 'icon',
+            key: "iconSerialization",
+            icon: 'fas fa-check-circle',
+            bg: 'text-success',
+            tooltip: {
+              hasTooltip: true
+            }
+          }
+        ],
+        style: {
+          align: 'align-left',
+          flex: 'row'
+        }
+      }
+    }
+    return {
+      lineId: product.product_uuid,
+      column: [
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'name',
+              value: product.label,
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
+        },
+        {
+          content: [
+            {
+              type: 'input',
+              key: 'quantity',
+              input: 'number',
+              disabled: false,
+              value: '1',
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
+        },
+        serialization
+      ]
+    }
+  }
+
+  verifyStock(shop: string, product: string, qty: number): Observable<ApiResponse> {
     const url = `${environment['store-service']}/stock/shop/${shop}/product/${product}`;
     return this.apiService.doGet(url).pipe(
       map((response: ApiResponse) => {
-        const quantity = +value.value
+        const quantity = qty
         response.data = {
-          product: value.id,
+          product: product,
           quantityIsValid: response.data.quantity >= quantity,
           quantityInput: quantity,
           quantityRemaining: response.data.quantity

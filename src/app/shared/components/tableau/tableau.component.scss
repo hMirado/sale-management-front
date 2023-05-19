@@ -1,0 +1,30 @@
+th {
+  text-transform: uppercase;
+}
+
+.column-container {
+  display: flex;
+  vertical-align: middle;
+  align-items: center;
+}
+
+.flex-direction-column {
+  flex-direction: column;
+}
+
+.flex-direction-row {
+  flex-direction: row;
+}
+
+.content-center {
+  text-align: center;
+  justify-content: center;
+}
+.content-right {
+  text-align: right;
+  justify-content: flex-end;
+}
+.content-left {
+  text-align: left;
+  justify-content: flex-start;
+}

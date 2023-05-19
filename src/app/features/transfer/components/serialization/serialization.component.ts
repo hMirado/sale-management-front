@@ -19,6 +19,8 @@ export class SerializationComponent implements OnInit, OnDestroy {
   public product!: TransfertProduct;
   private subscription = new Subscription();
   public formGroup: FormGroup;
+  public serializations$: Observable<Serialization[]> = of([]);
+  public serializations: Serialization[] = [];
 
   constructor(
     private transferService: TransferService,
@@ -65,14 +67,16 @@ export class SerializationComponent implements OnInit, OnDestroy {
         let field = this.formBuilder.group({
           label: [serialization.label, Validators.required],
           value: [serialization.value, Validators.required],
-          group_id: [serialization.group_id, Validators.required]
+          group_id: [serialization.group_id, Validators.required],
+          is_valid: [(serialization.value && serialization.group_id && serialization.label) != '' ? true : false, Validators.required]
         }); 
         this.serializationField().push(field)
       } else {
         let field = this.formBuilder.group({
-          label: '',
+          label: ['', Validators.required],
           value: ['', Validators.required],
-          group_id: ''
+          group_id: ['', Validators.required],
+          is_valid: [false, Validators.required]
         }); 
         this.serializationField().push(field)
       }
@@ -85,28 +89,32 @@ export class SerializationComponent implements OnInit, OnDestroy {
     this.formGroup.updateValueAndValidity();
   }
 
-  public serializations$: Observable<Serialization[]> = of([]);
-  public serializations: Serialization[] = [];
   getFormValue(i: number): void {
     this.subscription.add( 
       this.serializationField().at(i).valueChanges.pipe(
         debounceTime(inputTimer),
         distinctUntilChanged(),
-        filter((value: any) => value && (value.value.length == 0 || value.value.length > 3) && this.formGroup.value['trigger']),
-        switchMap((value: any)  => {
+        filter((value: any) => value && value.value.length > 2 && this.formGroup.value['trigger']),
+        switchMap((current: any)  => {
+          console.log(current);
+          
           this.formGroup.patchValue({trigger: false});
-          this.serializationField().at(i).patchValue({isValid: false});
-          return this.transferService.getSerialization(this.shopSender, this.product.product_uuid, value.value)
+          this.serializationField().at(i).patchValue({
+            label: '',
+            group_id: '',
+            is_valid: false
+          });
+          this.serializationField().at(i).updateValueAndValidity();
+          return this.transferService.getSerialization(this.shopSender, this.product.product_uuid, current.value)
         })
       ).subscribe((response: ApiResponse) => {
         this.serializations = [];
-        const groups = this.formGroup.value.serializations.map((value: any) => value.group);
+        const groups = this.formGroup.value.serializations.map((value: any) => value.group_id);
         response.data.forEach((serializations: Serialization[]) => {
           serializations.forEach((serialization: Serialization) => {
             if (!groups.includes(serialization.group_id)) this.serializations.push(serialization);
-          })
-        })
-        
+          });
+        });
         this.serializations$ = of(this.serializations);
       })
     )
@@ -119,9 +127,11 @@ export class SerializationComponent implements OnInit, OnDestroy {
       {
         label: seletced.label,
         value: seletced.serialization_value,
-        group_id: seletced.group_id
+        group_id: seletced.group_id,
+        is_valid: true
       }
     );
+    this.serializationField().updateValueAndValidity()
     this.serializations$ = of([]);
   }
 
@@ -135,5 +145,14 @@ export class SerializationComponent implements OnInit, OnDestroy {
         this.transferService.setProductSerialization(productSerialization);
       })
     );
+  }
+
+  clearFieldValue(i: number) {
+    this.serializationField().at(i).patchValue({
+      label: '',
+      value: '',
+      group_id: '',
+      is_valid: false
+    });
   }
 }
