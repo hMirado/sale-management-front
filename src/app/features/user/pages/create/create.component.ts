@@ -20,6 +20,11 @@ export class CreateComponent implements OnInit, OnDestroy {
   public shopFormGroup: any;
   public isValidUserInfo: boolean = false;
   public isValidUserShop: boolean = false;
+
+  private userShop: any
+  public user: User;
+  private userUuid: string = '';
+  public password: string = '';
   @ViewChild('stepper') stepper: any;
 
   constructor(
@@ -70,7 +75,10 @@ export class CreateComponent implements OnInit, OnDestroy {
   createUser() {
     this.subscription.add(
       this.userService.createUser(this.userValue).subscribe((response: ApiResponse) => {
+        this.showNotification('success', 'Utilisateur créé');
         this.userService.nextUserCreated(response.data);
+        this.userUuid = response.data.user_uuid;
+        this.password = response.data.password;
         this.stepperHandler(1);
       })
     );
@@ -80,7 +88,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.stepper.selectedIndex = index;
   }
 
-  private userShop: any
   getUserShop() {
     this.subscription.add(
       this.userService.getUserShop().subscribe((value: any) => {
@@ -92,9 +99,14 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   addUserShop() {
     this.subscription.add(
-      this.userService.addUserShop(this.userShop).subscribe((response: ApiResponse) => {
-        this.showNotification('success', 'Utilisateur créé et affecté à un shop');
-        setTimeout(()=> this.router.navigateByUrl('user'), 1000);
+      this.userService.addUserShop(this.userShop).pipe(
+        switchMap((response: ApiResponse) => {
+          this.showNotification('success', 'Utilisateur affecté à un shop');
+          return this.userService.getUserByUuid(this.userUuid);
+        })
+      ).subscribe((response: ApiResponse) => {
+        this.user = response.data;
+        this.showNotification('success', 'Utilisateur affecté à un shop');
       })
     );
   }
@@ -104,5 +116,9 @@ export class CreateComponent implements OnInit, OnDestroy {
       type: type,
       message: message
     })
+  }
+
+  goToList() {
+    this.router.navigateByUrl('user')
   }
 }

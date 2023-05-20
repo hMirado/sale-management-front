@@ -124,7 +124,7 @@ export class ShopFormComponent implements OnInit, OnDestroy {
         debounceTime(inputTimer / 2)
       ).subscribe((values: any) => {
         let shops = [values['shops']];
-        if ( values['shops'][0].id ) {
+        if ( typeof values['shops'] == 'object' && values['shops'][0].id ) {
           shops = values['shops'].map((shop: any) => {
             if (shop['isChecked']) {
               return shop['id']

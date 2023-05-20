@@ -12,6 +12,7 @@ import { LocalStorageService } from 'src/app/shared/services/local-storage/local
 import { Login } from '../../models/login/login.model';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { Notification } from '../../../../core/models/notification/notification.model';
+import { ModalService } from 'src/app/shared/services/modal/modal.service';
 
 @Component({
   selector: 'app-login',
@@ -21,9 +22,11 @@ import { Notification } from '../../../../core/models/notification/notification.
 export class LoginComponent implements OnInit, OnDestroy {
   public loading$ = this.loaderService.loading$;
   public loginForm!: FormGroup;
+  public passwordForm!: FormGroup;
   public hasError: boolean = false;
   public notifications: Notification[] = [];
   private subscription = new Subscription();
+  public hide: boolean = true;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -33,6 +36,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router,
     public loaderService: LoaderService,
     private notificationService: NotificationService,
+    private modalService: ModalService,
   ) {
     this.createForm();
   }
@@ -49,6 +53,10 @@ export class LoginComponent implements OnInit, OnDestroy {
       emailOrPhoneNumber: ['', Validators.required],
       password: ['', Validators.required],
     })
+    this.passwordForm = this.formBuilder.group({
+      uuid: ['', Validators.required],
+      password: ['', Validators.required],
+    })
   }
 
   login() {
@@ -60,7 +68,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this.authService.login(loginValue).subscribe((response: ApiResponse) => {
         if (response.status === responseStatus.success) {
-          this.getUserData(response.data);
+          this.loginData = response.data;
+          const user = response.data['user']
+          if (user.is_new) {
+            this.passwordForm.patchValue({ uuid: user.user_uuid });
+            this.modalService.showModal('edit-password')
+          } else {
+            this.getUserData(response.data);
+          }
         }
       })
     }
@@ -73,13 +88,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/');
   }
 
-
   addNotification() {
     this.subscription.add(
       this.notificationService.notification$.subscribe((notification) => {
         if (notification.message && notification.type != '') {
           this.notifications.push(notification)
         }
+      })
+    );
+  }
+
+  private loginData: any;
+  savePassword() {
+    const value = this.passwordForm.value
+    this.subscription.add(
+      this.authService.update(value['uuid'], value['password']).subscribe((response: ApiResponse) => {
+        this.getUserData(this.loginData);
       })
     );
   }

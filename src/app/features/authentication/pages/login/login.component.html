@@ -74,3 +74,20 @@
     </div>
   </div>
 </div>
+
+<app-modal [id]="'edit-password'" size="medium">
+  <div head>
+    <h4 class="modal-title">
+      Modifier mots de passe
+    </h4>
+  </div>
+  <div body>
+    <form [formGroup]="passwordForm">
+      <div class="form-group">
+        <label>Nouveau mots de passe</label>
+        <input type="password" formControlName="password" name="password" class="form-control form-control-sm">
+      </div>
+    </form>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="savePassword()">Enregistrer</button>
+</app-modal>
