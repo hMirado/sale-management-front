@@ -151,7 +151,7 @@
     </form>
     <button *ngIf="productForm.controls.length < 5" class="btn btn-sm btn-outline-secondary" (click)="addFormField()">Ajouter ligne</button>
   </div>
-  <button save class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="createItems()">Ajouter</button>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="createItems()">Ajouter</button>
 </app-modal>
 
 <app-modal [id]="modalConfirmationID" [singleButton]="true" size="medium">
@@ -173,5 +173,5 @@
       </li>
     </ul>
   </div>
-  <button save class="btn btn-sm btn-outline-danger ml-1 mr-1" (click)="closeConfirmModal()">Fermer</button>
+  <button footer class="btn btn-sm btn-outline-danger ml-1 mr-1" (click)="closeConfirmModal()">Fermer</button>
 </app-modal>

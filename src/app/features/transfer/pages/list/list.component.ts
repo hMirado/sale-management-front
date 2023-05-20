@@ -23,6 +23,10 @@ export class ListComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
   private userData: any = {};
   public tableId: string = tableTransferId;
+  private currentShop: string = '';
+  private currentUser: string = '';
+  private rows: IRow[] = [];
+  private transfers: Transfer[] = [];
 
   constructor(
     private router: Router,
@@ -37,6 +41,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getTransfers();
+    this.getTableAction();
   }
 
   ngOnDestroy(): void {
@@ -56,8 +61,6 @@ export class ListComponent implements OnInit, OnDestroy {
     ]
   }
 
-  private currentShop: string = '';
-  private currentUser: string = '';
   getUserData(): void {
     const data = this.localStorageService.getLocalStorage(userInfo);
     this.userData = JSON.parse(this.helperService.decrypt(data))
@@ -81,8 +84,6 @@ export class ListComponent implements OnInit, OnDestroy {
     );
   }
 
-  private rows: IRow[] = [];
-  private transfers: Transfer[] = [];
   getTransfersResponse(response: ApiResponse) {
     this.rows = [];
     this.transfers = response.data.items;
@@ -93,7 +94,7 @@ export class ListComponent implements OnInit, OnDestroy {
     const cell: ICell = {
       cellValue: this.rows,
       paginate: true,
-      isEditable: true
+      isViewable: true
     };
     const table: ITable = {
       id: this.tableId,
@@ -101,5 +102,15 @@ export class ListComponent implements OnInit, OnDestroy {
       body: cell
     }
     this.tableService.setTableValue(table);
+  }
+
+  getTableAction() {
+    this.subscription.add(
+      this.tableService.getlineId().subscribe((value: {id: string, action: string}) => {
+        if (value && value.id != '' && value.action == 'view') {
+          this.router.navigateByUrl(`/transfer/${value.id}`);
+        }
+      })
+    );
   }
 }

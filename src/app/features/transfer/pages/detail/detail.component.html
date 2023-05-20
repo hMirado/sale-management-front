@@ -1,0 +1,88 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+<section class="content" *ngIf="transferData">
+  <div class="container-fluid">
+    <form class="row" [formGroup]="transferForm">
+      <div class="col-sm-12 col-md-8 col-lg-4">
+        <div class="form-group row align-items-center">
+          <label for="shopSender" class="col-sm-5 col-form-label">Site émetteur : </label>
+          <div class="col-sm-7">
+            <input 
+            type="text" 
+            class="form-control form-control-sm" 
+            id="shopSender"
+            name="shopSender"
+            formControlName="shopSender"
+            readonly
+          >
+          </div>
+        </div>
+        <div class="form-group row align-items-center">
+          <label for="shopReceiver" class="col-sm-5 col-form-label">Site récepteur : </label>
+          <div class="col-sm-7">
+            <input 
+            type="text" 
+            class="form-control form-control-sm" 
+            id="shopReceiver"
+            name="shopReceiver"
+            formControlName="shopReceiver"
+            readonly
+          >
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-8 col-lg-4">
+        <div class="form-group row align-items-center">
+          <label for="creator" class="col-sm-5 col-form-label">Créateur : </label>
+          <div class="col-sm-7">
+            <input 
+            type="text" 
+            class="form-control form-control-sm" 
+            id="creator"
+            name="creator"
+            formControlName="creator"
+            readonly
+          >
+          </div>
+        </div>
+        <div class="form-group row align-items-center">
+          <label for="validator" class="col-sm-5 col-form-label">Validateur : </label>
+          <div class="col-sm-7">
+            <input 
+            type="text" 
+            class="form-control form-control-sm" 
+            id="validator"
+            name="validator"
+            formControlName="validator"
+            readonly
+          >
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-8 col-lg-4">
+        <div class="form-group">
+          <label for="commentary">Commentaire : </label>
+          <textarea 
+            class="form-control"  
+            id="commentary"
+            name="commentary"
+            formControlName="commentary"
+            rows="2"
+            [readOnly]="transferData.transfer_status.transfer_status_code != inProgress"
+          >
+          </textarea>
+        </div>
+      </div>
+    </form>
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <app-tableau id="product-table"></app-tableau>
+      </div>
+    </div>
+    <div>
+      <div class="text-right">
+        <app-button class="mr-1" id="cancel" [button]="ButtonCancel"></app-button>
+        <app-button *ngIf="transferData.transfer_status.transfer_status_code == inProgress" class="ml-1" id="valid" [button]="buttonValid"></app-button>
+      </div>
+    </div>
+  </div>
+</section>

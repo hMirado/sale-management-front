@@ -9,7 +9,7 @@
       >
         {{header.value}}
       </th>
-      <th *ngIf="this.tables?.body?.isEditable || this.tables?.body?.isDeleteable || this.tables?.body?.isSwitchable" class="text-center">Actions</th>
+      <th *ngIf="haveAction" class="text-center">Actions</th>
     </tr>
   </thead>
   <tbody formArrayName="fieldGroup">
@@ -33,7 +33,7 @@
               formArrayName="childField" 
             >
               <ng-container class="col" *ngIf="parent.value['expand']">
-                <i class="pointer fas fa-{{expanded === parent.value['childID'] ? 'chevron-down' : 'chevron-right'}} fa-1x mt-1 pr-2" (click)="expand(parent.value['childID'])"></i>
+                <i class="pointer fas fa-{{expanded === parent.value['id'] ? 'chevron-down' : 'chevron-right'}} fa-1x mt-1 pr-2" (click)="expand(parent.value['id'])"></i>
               </ng-container>
               <div 
                 class="col"
@@ -109,7 +109,7 @@
         </td>
       </tr>
       <tr
-        [ngClass]="expanded == field.value['parentID'] ? 'isExpand' : 'isNotExpand'"
+        [ngClass]="expanded == field.value['id'] ? 'isExpand' : 'isNotExpand'"
         *ngFor="let expandValue of tableExpand?.cellValue; let i = index"
       >
         <td *ngFor="let row of expandValue.rowValue">

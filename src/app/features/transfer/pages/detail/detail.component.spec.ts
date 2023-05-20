@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableDyanmicComponent } from './table-dyanmic.component';
+import { DetailComponent } from './detail.component';
 
-describe('TableDyanmicComponent', () => {
-  let component: TableDyanmicComponent;
-  let fixture: ComponentFixture<TableDyanmicComponent>;
+describe('ValidateComponent', () => {
+  let component: DetailComponent;
+  let fixture: ComponentFixture<DetailComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TableDyanmicComponent ]
+      declarations: [ DetailComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TableDyanmicComponent);
+    fixture = TestBed.createComponent(DetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

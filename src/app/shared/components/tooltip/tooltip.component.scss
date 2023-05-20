@@ -5,7 +5,7 @@
 
 .custom-tooltip .custom-tooltiptext {
   visibility: hidden;
-  width: 100px;
+  min-width: 100px;
   background-color: #495057;
   opacity: 0.8;
   color: #ffffff;

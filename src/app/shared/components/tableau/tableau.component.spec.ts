@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableHeaderComponent } from './table-header.component';
+import { TableauComponent } from './tableau.component';
 
-describe('TableHeaderComponent', () => {
-  let component: TableHeaderComponent;
-  let fixture: ComponentFixture<TableHeaderComponent>;
+describe('TableauComponent', () => {
+  let component: TableauComponent;
+  let fixture: ComponentFixture<TableauComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TableHeaderComponent ]
+      declarations: [ TableauComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TableHeaderComponent);
+    fixture = TestBed.createComponent(TableauComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

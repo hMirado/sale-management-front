@@ -11,6 +11,9 @@ import { Transfer as TransferValidation } from '../../models/validations/transfe
 import { Transfer } from '../../models/transfer/transfer.model';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { status } from '../../config/constant';
+import { Line } from 'src/app/shared/models/table/body/line/line.model';
+import { Column } from 'src/app/shared/models/table/body/column/column.model';
+import { Serialization } from 'src/app/features/stock/models/serialization/serialization.model';
 
 @Injectable({
   providedIn: 'root'
@@ -100,13 +103,107 @@ export class TransferService {
     }
   }
 
-  verifyStock(shop: string, product: string, value: InputValue): Observable<ApiResponse> {
+  getTableProduct(product: Product): Line {
+    let serialization: Column;
+    if (product.is_serializable) {
+      serialization = {
+        content: [
+          {
+            type: "button",
+            key: "serialization",
+            disabled: false,
+            value: 'Numéro de série',
+            function: () => {},
+          },
+          {
+            type: 'icon',
+            key: "iconSerialization",
+            icon: 'fas fa-exclamation-circle',
+            bg: 'text-danger',
+            tooltip: {
+              hasTooltip: false,
+              text: 'Veuillez entrer un numéro de série',
+              flow: 'top'
+            }
+          }
+        ],
+        style: {
+          align: 'align-left',
+          flex: "row"
+        }
+      }
+    } else {
+      serialization = {
+          content: [
+          {
+            type: 'simple',
+            key: 'serialization',
+            value: 'Pas numéro de série.',
+            expandable: false,
+            tooltip: { hasTooltip: false }
+          },
+          {
+            type: 'icon',
+            key: "iconSerialization",
+            icon: 'fas fa-check-circle',
+            bg: 'text-success',
+            tooltip: {
+              hasTooltip: false
+            }
+          }
+        ],
+        style: {
+          align: 'align-left',
+          flex: 'row'
+        }
+      }
+    }
+    return {
+      lineId: product.product_uuid,
+      column: [
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'name',
+              value: product.label,
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
+        },
+        {
+          content: [
+            {
+              type: 'input',
+              key: 'quantity',
+              input: 'number',
+              disabled: false,
+              value: '1',
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
+        },
+        serialization
+      ]
+    }
+  }
+
+  verifyStock(shop: string, product: string, qty: number): Observable<ApiResponse> {
     const url = `${environment['store-service']}/stock/shop/${shop}/product/${product}`;
     return this.apiService.doGet(url).pipe(
       map((response: ApiResponse) => {
-        const quantity = +value.value
+        const quantity = qty
         response.data = {
-          product: value.id,
+          product: product,
           quantityIsValid: response.data.quantity >= quantity,
           quantityInput: quantity,
           quantityRemaining: response.data.quantity
@@ -179,11 +276,7 @@ export class TransferService {
   }
 
   getTransferTableRowValue(transfer: Transfer): IRow {
-    const userSender = transfer.user_sender.last_name.toLocaleUpperCase() + ' ' + transfer.user_sender.first_name;
     const transferStatus = transfer.transfer_status;
-    const userReceiver = (
-      transferStatus.transfer_status_code == status.inProgress && transfer.user_sender.user_id == transfer.user_receiver.user_id
-    ) ? '' : transfer.user_receiver.last_name.toUpperCase() + ' ' + transfer.user_receiver.first_name;
     return {
       id: transfer.transfer_uuid,
       isExpandable: false,
@@ -252,6 +345,131 @@ export class TransferService {
             }
           ],
         },
+      ]
+    }
+  }
+
+  getTransfer(uuid: string): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/transfer/${uuid}`;
+    return this.apiService.doGet(url);
+  }
+
+  validateTransfer(value: any): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/transfer/validate`;
+    return this.apiService.doPut(url, value);
+  }
+
+  getTransferProductSerialization(group: string): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/serialization/group?${group}`;
+    return this.apiService.doGet(url);
+  }
+
+  getValidateProductTable(product: Product): Line {
+    return {
+      lineId: product.product_id.toString(),
+      column: [
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'name',
+              value: product.label,
+              expandable: product.is_serializable ? true : false,
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
+        },
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'quantity',
+              expandable: false,
+              value: product.transfer_product.quantity,
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
+        },
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'sn',
+              expandable: false,
+              value: '',
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
+        }
+      ]
+    }
+  }
+
+  getSerializationLine(uuid: string, serializations: []): Line {
+    let content: any[] = [];
+    serializations.forEach((serialization: any) => {
+      content.push(
+        {
+            type: 'simple',
+            key: 'name',
+            value: serialization,
+            expandable: false,
+            tooltip: { hasTooltip: false }
+        }
+      )
+    })
+    return {
+      lineId: uuid,
+      column: [
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'name',
+              value: '',
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
+        },
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'quantity',
+              expandable: false,
+              value: '',
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
+        },
+        {
+          content: content,
+          style: {
+            align: 'align-left',
+            flex: 'column'
+          }
+        }
       ]
     }
   }

@@ -13,5 +13,6 @@ export class Product {
   fk_category_id?: number;
   category?: Category;
   attributes?: Attribute[];
-  prices?: Price[]
+  prices?: Price[];
+  transfer_product?: any;
 }

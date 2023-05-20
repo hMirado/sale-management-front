@@ -263,10 +263,10 @@ export class ListComponent implements OnInit, OnDestroy {
           code: x.code,
           label: x.label,
           is_serializable: x.isSerializable,
-          fk_category_id: this.categories.filter(category => category.label.toLowerCase == x.category.toLowerCase)[0].category_id,
+          fk_category_id: this.categories.filter(category => category.label.toLowerCase() == x.category.toLowerCase())[0].category_id,
           price: x.price
         }
-      })
+      });
       this.saveItems(products);
     }
   }
@@ -274,15 +274,13 @@ export class ListComponent implements OnInit, OnDestroy {
   saveItems(products: Product[]) {
     this.subscription.add(
       this.productService.createMultiProduct(products).subscribe((response:ApiResponse) => {
-        if (response.status == responseStatus.created) {
-          this.created = response.data.successCount;
-          this.error = response.data.errorCount;
-          this.errorValues = response.data.errors;
-          this.productFormGroup.reset();
-          this.productForm.clear();
-          this.closeModal(this.uniqueIdProduct);
-          this.openModal(this.modalConfirmationID);
-        }
+        this.productFormGroup.reset();
+        this.productForm.clear();
+        this.countProduct();
+        this.getProducts();
+        this.getCategories();
+        this.closeModal(this.uniqueIdProduct);
+        this.addFormField();
       })
     );
   }
