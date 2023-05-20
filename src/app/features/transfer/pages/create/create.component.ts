@@ -9,9 +9,7 @@ import { ModalService } from 'src/app/shared/services/modal/modal.service';
 import { TransferService } from '../../services/transfer/transfer.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
-import { ICell, IRow, ITable, InputValue } from 'src/app/shared/models/table/i-table';
 import { tableProductHeader } from '../../config/constant';
-import { TableService } from 'src/app/shared/services/table/table.service';
 import { ItemSelectionService } from 'src/app/shared/services/item-selection/item-selection.service';
 import { ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
@@ -22,7 +20,7 @@ import { Router } from '@angular/router';
 import { Serialization } from '../../models/validations/serialization';
 import { Transfer } from '../../models/validations/transfer';
 import { Table } from 'src/app/shared/models/table/table.model';
-import { TableauService } from 'src/app/shared/services/table/tableau.service';
+import { TableauService as TableService } from 'src/app/shared/services/table/tableau.service';
 import { Line } from 'src/app/shared/models/table/body/line/line.model';
 
 @Component({
@@ -41,13 +39,17 @@ export class CreateComponent implements OnInit, OnDestroy {
   public filteredReceiverShop: Observable<Shop[]>;  
   public productId: string = 'transfer-product'
   public selectedProducts: Product[] = [];
-  private transferProduct: TransfertProduct[] = [];
+  public transferProduct: TransfertProduct[] = [];
   public productTable: Table = {
     id: 'product-table',
     header: tableProductHeader,
     body: {
       bodyId: 'product-table-body',
       line: []
+    },
+    action: {
+      delete: true,
+      edit: false
     }
   };
   private line: Line[] = [];
@@ -58,12 +60,11 @@ export class CreateComponent implements OnInit, OnDestroy {
     private helperService: HelperService,
     private modalService: ModalService,
     private transferService: TransferService,
-    private tableService: TableService,
     private itemSelectionService: ItemSelectionService,
     private tableFilterService: TableFilterService,
     private notificationService: NotificationService,
     private router: Router,
-    private tableauService: TableauService
+    private tableService: TableService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -81,7 +82,6 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.getInputValue();
     this.getProductSerialization();
     this.getTableLineId();
-    //this.getTableInputValue();
   }
 
   ngOnDestroy(): void {
@@ -186,7 +186,7 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   initProductTableSelected(): void {
-    this.tableauService.setTable(this.productTable)
+    this.tableService.setTable(this.productTable)
   }
 
   openModal(id: string): void {
@@ -231,6 +231,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     this.itemSelectionService.setValidateSelectedProduct(true);
   }
 
+  public serializationIsValid: boolean = false;
   getSelectedProduct(): void {
     this.subscription.add(
       this.itemSelectionService.getSelectedProducts().pipe(
@@ -239,6 +240,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.selectedProducts = value['products'];
         this.closeModal(this.productId);
         this.selectedProducts.forEach((product: Product) => {
+
           this.transferService.getTableProduct(product)
           if (this.line.length > 0 && this.line.find((value: Line) => value.lineId == product.product_uuid) ) {
             return;
@@ -258,7 +260,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           this.line.push(line);
         });
         this.productTable.body.line = this.line;
-        this.tableauService.setTable(this.productTable);
+        this.tableService.setTable(this.productTable);
       })
     );
   }
@@ -273,7 +275,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getInputValue(): void {
     this.subscription.add(
-      this.tableauService.getTableInputValue().pipe(
+      this.tableService.getTableInputValue().pipe(
         filter((value: any) => value['tableId'] == 'product-table' && value['value'] != null && value['value'] != ''),
         switchMap((value: any) => {
           const product = value['line'];
@@ -345,13 +347,15 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getTableLineId() {
     this.subscription.add(
-      /*this.tableService.getlineId().subscribe((value: any) => {
-        if (value['action'] == 'delete') {
+      this.tableService.getAction().pipe(
+        filter((value: any) => value && value != null)
+      ).subscribe((value: any) => {
+        if (value['name'] == 'delete') {
           this.selectedProducts = this.selectedProducts.filter((product: Product) => product.product_uuid != value['id']);
           this.transferProduct = this.transferProduct.filter((product: TransfertProduct) => product.product_uuid != value['id']);
-          this.rows = this.rows.filter((row: IRow) => row.id != value['id']);
+          this.line = this.line.filter((line: Line) => line.lineId != value['id']);
         };
-      })*/
+      })
     );
   }
 
@@ -406,7 +410,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   getTableInputValue() {
     this.subscription.add(
-      this.tableauService.getTableInputValue().subscribe((value: any) => {    
+      this.tableService.getTableInputValue().subscribe((value: any) => {    
         if (value['tableId'] == 'product-table') {
           const line = this.productTable.body.line.filter((line: Line) => line.lineId == value['line'])[0];
           const indexes = value['indexes'].split('-');
@@ -434,7 +438,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             index: 1,
             columns: column
           }
-          this.tableauService.setColumn(_value);*/
+          this.tableService.setColumn(_value);*/
         }
       })
     );

@@ -4,5 +4,9 @@ import { Header } from "./header/header.model";
 export class Table {
   id: string;
   header: Header[];
-  body: Body
+  body: Body;
+  action: {
+    delete: boolean;
+    edit: boolean;
+  }
 }

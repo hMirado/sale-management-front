@@ -13,6 +13,7 @@ import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { status } from '../../config/constant';
 import { Line } from 'src/app/shared/models/table/body/line/line.model';
 import { Column } from 'src/app/shared/models/table/body/column/column.model';
+import { Serialization } from 'src/app/features/stock/models/serialization/serialization.model';
 
 @Injectable({
   providedIn: 'root'
@@ -137,7 +138,7 @@ export class TransferService {
           {
             type: 'simple',
             key: 'serialization',
-            value: 'Aucun numéro de série a renseigné',
+            value: 'Pas numéro de série.',
             expandable: false,
             tooltip: { hasTooltip: false }
           },
@@ -147,7 +148,7 @@ export class TransferService {
             icon: 'fas fa-check-circle',
             bg: 'text-success',
             tooltip: {
-              hasTooltip: true
+              hasTooltip: false
             }
           }
         ],
@@ -275,11 +276,7 @@ export class TransferService {
   }
 
   getTransferTableRowValue(transfer: Transfer): IRow {
-    const userSender = transfer.user_sender.last_name.toLocaleUpperCase() + ' ' + transfer.user_sender.first_name;
     const transferStatus = transfer.transfer_status;
-    const userReceiver = (
-      transferStatus.transfer_status_code == status.inProgress && transfer.user_sender.user_id == transfer.user_receiver.user_id
-    ) ? '' : transfer.user_receiver.last_name.toUpperCase() + ' ' + transfer.user_receiver.first_name;
     return {
       id: transfer.transfer_uuid,
       isExpandable: false,
@@ -360,5 +357,120 @@ export class TransferService {
   validateTransfer(value: any): Observable<ApiResponse> {
     const url = `${environment['store-service']}/transfer/validate`;
     return this.apiService.doPut(url, value);
+  }
+
+  getTransferProductSerialization(group: string): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/serialization/group?${group}`;
+    return this.apiService.doGet(url);
+  }
+
+  getValidateProductTable(product: Product): Line {
+    return {
+      lineId: product.product_id.toString(),
+      column: [
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'name',
+              value: product.label,
+              expandable: product.is_serializable ? true : false,
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
+        },
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'quantity',
+              expandable: false,
+              value: product.transfer_product.quantity,
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
+        },
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'sn',
+              expandable: false,
+              value: '',
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
+        }
+      ]
+    }
+  }
+
+  getSerializationLine(uuid: string, serializations: []): Line {
+    let content: any[] = [];
+    serializations.forEach((serialization: any) => {
+      content.push(
+        {
+            type: 'simple',
+            key: 'name',
+            value: serialization,
+            expandable: false,
+            tooltip: { hasTooltip: false }
+        }
+      )
+    })
+    return {
+      lineId: uuid,
+      column: [
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'name',
+              value: '',
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
+        },
+        {
+          content: [
+            {
+              type: 'simple',
+              key: 'quantity',
+              expandable: false,
+              value: '',
+              tooltip: { hasTooltip: false }
+            }
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
+        },
+        {
+          content: content,
+          style: {
+            align: 'align-left',
+            flex: 'column'
+          }
+        }
+      ]
+    }
   }
 }

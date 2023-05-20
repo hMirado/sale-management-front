@@ -1,4 +1,4 @@
-<table class="table table-hover text-nowrap" *ngIf="table">
+<table class="table text-nowrap" *ngIf="table">
   <thead *ngIf="table.header && table.header.length > 0">
     <tr>
       <th 
@@ -13,11 +13,12 @@
       >
         {{ header.value }}
       </th>
+      <th class="text-center" *ngIf="table.action.delete || table.action.edit"> action(s) </th>
     </tr>
   </thead>
   <tbody *ngIf="table.body && table.body.line.length > 0">
     <ng-container *ngFor="let _line of table.body.line; let i = index;">
-      <tr>
+      <tr [class.expanded]="_line.lineId == expandedId">
         <td 
           *ngFor="let _column of _line.column; let j = index;"
         >
@@ -34,7 +35,11 @@
             <div *ngFor="let _content of _column.content; let k = index;" class="mr-1">
               <ng-container *ngIf="_content.type == 'simple'">
                 <ng-container *ngIf="_content.expandable">
-                  <i class="pointer fas fa-{{expandedId ===  _line.lineId ? 'chevron-down' : 'chevron-right'}} fa-1x mt-1 pr-2"></i>
+                  <i 
+                    class="pointer fas fa-{{expandedId ===  _line.lineId ? 'chevron-down' : 'chevron-right'}} fa-1x mt-1 pr-2"
+                    (click)="setExpendLineId(_line.lineId)"
+                  >
+                  </i>
                 </ng-container>
                 {{ _content.value }}
               </ng-container>
@@ -72,7 +77,44 @@
             </div>
           </div>
         </td>
+        <td 
+          *ngIf="table.action.delete || table.action.edit"
+          class="table-action"
+        >
+          <button *ngIf="table.action.edit" class="btn btn-sm btn-outline-secondary" (click)="getAction(_line.lineId, 'edit')">
+            <app-tooltip text="Modifier">
+              <i class="pointer fas fa-edit text" style="font-size:18px" content></i>
+            </app-tooltip>
+          </button>
+          <button *ngIf="table.action.delete" class="btn btn-sm btn-outline-secondary" (click)="getAction(_line.lineId, 'delete'); ; removeLine(i)">
+            <app-tooltip text="Supprimer">
+              <i class="pointer far fa-trash-alt text" style="font-size:18px" content></i>
+            </app-tooltip>
+          </button>
+        </td>
       </tr>
+      <ng-container *ngIf="expandedId == _line.lineId">
+        <tr *ngFor="let expandedLine of expandedLines; let i = index">
+          <td *ngFor="let _column of expandedLine.column; let j = index">
+            <div 
+              class="column-container"
+              [ngClass]="{
+                'flex-direction-column': _column.style.flex=='column',
+                'flex-direction-row': _column.style.flex=='row',
+                'content-center': _column.style.align=='align-center',
+                'content-left': _column.style.align=='align-left',
+                'content-right': _column.style.align=='align-right'
+              }"
+            >
+              <div *ngFor="let _content of _column.content; let k = index;" class="mr-1">
+                <ng-container *ngIf="_content.type == 'simple'">
+                  {{ _content.value }}
+                </ng-container>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
     </ng-container>
   </tbody>
 </table>

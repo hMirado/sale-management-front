@@ -18,12 +18,12 @@ export class TableauComponent implements OnInit, OnDestroy {
   public expandedLines: Line[] = [];
 
   constructor(
-    private tableauService: TableauService
+    private tableService: TableauService
   ) { }
 
   ngOnInit(): void {
     this.getTable();
-    //this.getColumnNewValue();
+    this.getExpandedLineValue();
   }
 
   ngOnDestroy(): void {
@@ -32,7 +32,7 @@ export class TableauComponent implements OnInit, OnDestroy {
 
   getTable(): void {
     this.subscription.add(
-      this.tableauService.getTable().subscribe((data: Table) => {
+      this.tableService.getTable().subscribe((data: Table | null) => {
         this.expandedLines = [];
         if (data != null && data.id == this.id) this.table = data
       })
@@ -50,17 +50,42 @@ export class TableauComponent implements OnInit, OnDestroy {
       line: event['line'],
       value: event['value']
     }
-    this.tableauService.setTableInputValue(value)
+    this.tableService.setTableInputValue(value)
   }
 
   getColumnNewValue() {
     this.subscription.add(
-      this.tableauService.getColumn().subscribe((value: NewColValue) => {
+      this.tableService.getColumn().subscribe((value: NewColValue) => {
         if (this.id == value.tableId) {
           console.log(value);
           console.log(this.table.body);
           
         }
+      })
+    )
+  }
+
+  getAction(id: string, name: string) {
+    this.tableService.setAction({id: id, name: name})
+  }
+
+  removeLine(i: number) {
+    this.table.body.line = this.table.body.line.filter((line: Line, j: number) => i != j);
+  }
+
+  setExpendLineId(lineId: string) {
+    if (this.expandedId != lineId) {
+      this.expandedId = lineId;
+      this.tableService.setExpandedId(lineId);
+    } else {
+      this.expandedId = '';
+    }
+  }
+
+  getExpandedLineValue() {
+    this.subscription.add(
+      this.tableService.getExpandedLineValues().subscribe((lines: Line[]) => {
+        this.expandedLines = lines;
       })
     )
   }
