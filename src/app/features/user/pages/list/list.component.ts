@@ -45,6 +45,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private tableService: TableService
   ) {
     this.addHeaderContent();
+    this.params = {}
   }
 
   ngOnInit(): void {

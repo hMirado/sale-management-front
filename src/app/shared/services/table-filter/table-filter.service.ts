@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ITableFilter, ITableFilterSearchValue } from '../../models/i-table-filter/i-table-filter';
 
 @Injectable({
@@ -7,7 +7,7 @@ import { ITableFilter, ITableFilterSearchValue } from '../../models/i-table-filt
 })
 export class TableFilterService {
   filterData$:BehaviorSubject<ITableFilter|null> = new BehaviorSubject<ITableFilter|null>(null);
-  filterFormValue$: BehaviorSubject<ITableFilterSearchValue|null> = new BehaviorSubject<ITableFilterSearchValue|null>(null);
+  filterFormValue$: Subject<ITableFilterSearchValue> = new Subject<ITableFilterSearchValue>();
 
   constructor() { }
 

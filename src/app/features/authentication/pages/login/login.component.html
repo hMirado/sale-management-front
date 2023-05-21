@@ -5,7 +5,69 @@
   <div class="notification" *ngIf="notifications.length > 0">
     <app-notification *ngFor="let notifiction of notifications" [type]="notifiction.type" [message]="notifiction.message"></app-notification>
   </div>
-  <div class="hold-transition bg login-page">
+  <div class="row container">
+    <div class="col-sm-5 col-md-8 content-left">
+      <div class="block">
+        <img class="image" src="assets/images/login-logo.png"/>
+      </div>
+    </div>
+    <div class="col-sm-2 col-md-4 content-right">
+      <h1>BIENVENU</h1>
+      <form class="mt-2" [formGroup]="loginForm">
+        <div class="input-group mb-3">
+          <input type="number" 
+            class="form-control" 
+            [ngClass]="{
+              'input-error': 
+                (
+                  loginForm.get('touched')?.touched || !loginForm.get('emailOrPhoneNumber')?.valid
+                ) 
+                && loginForm.get('emailOrPhoneNumber')?.hasError('required')
+                && hasError
+            }"
+            id="emailOrPhoneNumber"
+            name="emailOrPhoneNumber" 
+            formControlName="emailOrPhoneNumber"
+            placeholder="Numéro télephone"
+          >
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-phone"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input 
+            type="password" 
+            class="form-control"
+            [ngClass]="{
+              'input-error': 
+                (
+                  loginForm.get('touched')?.touched || !loginForm.get('password')?.valid
+                ) 
+                && loginForm.get('password')?.hasError('required')
+                && hasError
+            }"
+            id="password"
+            name="password" 
+            formControlName="password"
+            placeholder="Mots de passe"
+          >
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <button type="submit" class="btn btn-outline-primary btn-block" (click)="login()">Se connecter</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!--<div class="hold-transition bg login-page">
     <div class="login-box">
       <div class="card card-outline">
         <div class="card-header text-center">
@@ -72,7 +134,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 
 <app-modal [id]="'edit-password'" size="medium">

@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       loginValue.password = this.loginForm.value.password;
 
       this.authService.login(loginValue).subscribe((response: ApiResponse) => {
-        if (response.status === responseStatus.success) {
+        if (response.data) {
           this.loginData = response.data;
           const user = response.data['user']
           if (user.is_new) {
@@ -76,6 +76,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           } else {
             this.getUserData(response.data);
           }
+        } else {
+          this.notificationService.addNotification({type: 'dander', message: 'Mots de passe incorrecte.'})
         }
       })
     }
