@@ -15,6 +15,11 @@
       <h1>BIENVENU</h1>
       <form class="mt-2" [formGroup]="loginForm">
         <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              + 261
+            </div>
+          </div>
           <input type="number" 
             class="form-control" 
             [ngClass]="{
@@ -22,7 +27,7 @@
                 (
                   loginForm.get('touched')?.touched || !loginForm.get('emailOrPhoneNumber')?.valid
                 ) 
-                && loginForm.get('emailOrPhoneNumber')?.hasError('required')
+                && (loginForm.get('emailOrPhoneNumber')?.hasError('required') || loginForm.get('emailOrPhoneNumber')?.hasError('pattern'))
                 && hasError
             }"
             id="emailOrPhoneNumber"
@@ -30,13 +35,13 @@
             formControlName="emailOrPhoneNumber"
             placeholder="Numéro télephone"
           >
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-phone"></span>
-            </div>
-          </div>
         </div>
         <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
           <input 
             type="password" 
             class="form-control"
@@ -53,11 +58,6 @@
             formControlName="password"
             placeholder="Mots de passe"
           >
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
         </div>
         <div class="row">
           <div class="col-12">
