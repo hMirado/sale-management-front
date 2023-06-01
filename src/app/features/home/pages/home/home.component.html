@@ -1,1 +1,25 @@
 <app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12 col-lg-4">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Que voulez-vous faire ?</h3>
+          </div>
+          <div class="card-body container p-2">
+            <div class="item">
+              <app-button id="sale" [disabled]="!shopIsOpen" [button]="buttonMakeSale"></app-button>
+            </div>
+            <div class="item">
+              <app-button id="open" [button]="buttonOpenShop"></app-button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-lg-8 bg-danger">
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates, quaerat praesentium inventore ab minima placeat natus provident ipsam perspiciatis magni at ducimus ut, voluptate voluptatum, doloribus dicta. A, porro impedit.
+      </div>
+    </div>
+  </div>
+</section>
