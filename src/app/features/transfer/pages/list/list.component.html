@@ -1,0 +1,17 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row mb-1">
+      <div class="col-2">
+        <button class="btn btn-block btn-outline-primary btn-sm" (click)="gotToCreateTransfer()">
+          Transferer un article
+        </button>
+      </div>
+    </div>
+    <div class="card mt-1">
+      <div class="card-body table-responsive p-0">
+        <app-table [id]='tableId'></app-table>
+      </div>
+    </div>
+  </div>
+</section>

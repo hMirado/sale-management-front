@@ -1,0 +1,143 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-12" *ngFor="let box of infoBoxStock">
+        <app-info-box [data]="box" [id]="box['id']"></app-info-box>
+      </div>
+    </div>
+    <div class="row mb-2" *ngIf="getAuthorization(authorizationStockAdd)">
+      <div class="col-2">
+        <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(stockId)">
+          <i class="fas fa-plus"></i> Ajouter stock
+        </button>
+      </div>
+    </div>
+    <div class="mb-2">
+      <app-table-filter [id]="'stock-filter'"></app-table-filter>
+    </div>
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <app-table [id]="tableId"></app-table>
+      </div>
+      <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
+        <ul class="pagination pagination-sm m-0 float-right">
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="setQueryParams(lastPage)">&laquo;</span>
+          </li>
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="setQueryParams(lastPage)">{{ lastPage
+              }}</span>
+          </li>
+          <li class="page-item">
+            <a class="page-link pointer bg-primary" [routerLink]="['/stock']" [queryParams]="{page: currentPage}">{{ currentPage }}</a>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="setQueryParams(nextPage)">{{ nextPage
+              }}</span>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="setQueryParams(nextPage)">&raquo;</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<app-modal [id]="stockId" size="medium">
+  <div head>
+    <h4 class="modal-title">
+      Ajout stock
+    </h4>
+  </div>
+  <div body>
+    <form [formGroup]="stockFormGroup">
+      <div class="row">
+        <div class="form-group col-12 col-lg-10">
+          <label for="item">Article *</label>
+          <input
+            type="text" 
+            id="product" 
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (stockFormGroup.get('product')?.invalid &&
+              stockFormGroup.get('product')?.hasError('required') &&
+              formError)
+            }" 
+            name="product" 
+            formControlName="product" 
+            [matAutocomplete]="auto"
+            (input)="getProductValueChange()"
+          >
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
+            <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize">
+              {{product.label}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div class="form-group col-12 col-lg-2">
+          <label for="quantity">Quantité *</label>
+          <input
+            type="number" 
+            id="quantity" 
+            class="form-control form-control-sm"
+            [ngClass]="{'input-error':
+              (this.stockFormGroup.get('quantity')?.invalid &&
+              this.stockFormGroup.get('quantity')?.hasError('required') &&
+              formError)
+            }" 
+            name="quantity" 
+            formControlName="quantity"
+            (input)="getQuantityValueChange()"
+          >
+        </div>
+      </div>
+      <ng-container formArrayName="serializations">
+        <small class="mb-2 badge custom-badge-warning" *ngIf="isSerializable && quantity > 0">
+          <i class="fas fa-exclamation">
+            Veuillez ajouter les numéros de série
+          </i>
+        </small>
+        <div class="mb-2" *ngFor="let detail of serializationField.controls; let i = index;" [formGroupName]="i">
+          <div class="card p-1">
+              <div class="row">
+                <div class="col-12 input-group" *ngFor="let serialization of getField(i).controls;  let b = index;" [formGroupName]="b">
+                  <ng-container >
+                    <select 
+                      class="form-control form-control-sm" 
+                      [ngClass]="{'input-error':
+                        (serialization.get('type')?.invalid &&
+                        serialization.get('type')?.hasError('required') && 
+                        formError)
+                      }" 
+                      name="type" 
+                      formControlName="type"
+                    >
+                      <option value="" selected disabled hidden>Sélectionner ici</option>
+                      <option *ngFor="let type of serializationTypes" [value]="type.serialization_type_id">{{type.label}}</option>
+                    </select>
+                    <input 
+                      type="text" 
+                      class="form-control form-control-sm" 
+                      [ngClass]="{'input-error':
+                        (serialization.get('serialization')?.invalid &&
+                        serialization.get('serialization')?.hasError('required') && 
+                        formError)
+                      }" 
+                      name="serialization" 
+                      formControlName="serialization"
+                    >
+                    <i *ngIf="b > 0" class="pointer ml-1 fa fa-trash-alt text-danger" (click)="removeSerializationField(i, b)"></i>
+                  </ng-container>
+                </div>
+                <div class="col-2">
+                  <button class="btn btn-xs btn-primary m-1" *ngIf="getField(i).length < 4" (click)="addField(i)"><i class="fa fa-plus"></i> Ajouter</button>
+                </div>
+              </div>
+          </div>
+        </div>
+      </ng-container>
+    </form>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="addStock()">Enregistrer</button>
+</app-modal>

@@ -16,10 +16,26 @@ import { ModalComponent } from './components/modal/modal.component';
 import { InfoBoxComponent } from './components/info-box/info-box.component';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { TabComponent } from './components/tabs/tab/tab.component';
+import { RouterModule } from '@angular/router';
+import { TableFilterComponent } from './components/table-filter/table-filter.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { NotificationComponent } from '../core/components/notification/notification.component';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { TooltipComponent } from './components/tooltip/tooltip.component';
+import { ItemSelectionComponent } from './components/item-selection/item-selection.component';
+import { NumberComponent } from './components/input/number/number.component';
+import { TextComponent } from './components/input/text/text.component';
+import { CheckboxComponent } from './components/input/checkbox/checkbox.component';
+import { ButtonComponent } from './components/button/button.component';
+import { TableauComponent } from './components/tableau/tableau.component';
 
 @NgModule({
   declarations: [
@@ -37,16 +53,30 @@ import { MatRippleModule } from '@angular/material/core';
     ModalComponent,
     InfoBoxComponent,
     TabsComponent,
-    TabComponent
+    TabComponent,
+    TableFilterComponent,
+    NotificationComponent,
+    TooltipComponent,
+    ItemSelectionComponent,
+    NumberComponent,
+    TextComponent,
+    CheckboxComponent,
+    ButtonComponent,
+    TableauComponent,
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     FormsModule,
     MatTabsModule,
     MatIconModule,
     MatChipsModule,
-    MatRippleModule
+    MatRippleModule,
+    MatDividerModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -65,7 +95,22 @@ import { MatRippleModule } from '@angular/material/core';
     MatTabsModule,
     MatIconModule,
     MatChipsModule,
-    MatRippleModule
+    MatRippleModule,
+    TableFilterComponent,
+    MatDividerModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NotificationComponent,
+    MatStepperModule,
+    MatCheckboxModule,
+    TooltipComponent,
+    ItemSelectionComponent,
+    NumberComponent,
+    TextComponent,
+    CheckboxComponent,
+    ButtonComponent,
+    TableauComponent
   ]
 })
 export class SharedModule { }

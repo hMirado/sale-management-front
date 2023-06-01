@@ -18,4 +18,13 @@ export class AuthenticationService {
     const url = `${environment['store-service']}/authentication/login`;
     return this.apiService.doPost(url, login);
   }
+
+  update(uuid: string, password: string) {
+    const value = {
+      uuid: uuid,
+      password: password
+    }
+    const url = `${environment['store-service']}/user/update-password`;
+    return this.apiService.doPut(url, value);
+  }
 }

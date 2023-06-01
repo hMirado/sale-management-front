@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CoreComponent } from 'src/app/core/core.component';
-import { CategoryComponent } from './pages/category/category.component';
-import { ProductComponent } from './pages/product/product.component';
-import { CreateComponent as ProductCreateComponent } from './pages/product/create/create.component';
 import { AuthenticationGuard } from 'src/app/shared/guards/authentication/authentication.guard';
+import { ListComponent as CategoryListComponent } from './pages/category/list/list.component';
+import { ListComponent as ProductListComponent } from './pages/product/list/list.component';
+import { DetailComponent as ProductDetailComponent } from './pages/product/detail/detail.component';
 
 const routes: Routes = [
   {
@@ -13,19 +13,32 @@ const routes: Routes = [
     children: [
       {
         path: 'category',
-        component: CategoryComponent
+        children: [
+          {
+            path: '',
+            component: CategoryListComponent
+          },
+          {
+            path: '**',
+            redirectTo : ''
+          },
+        ]
       },
       {
         path: 'product',
         children: [
           {
             path: '',
-            component: ProductComponent
+            component: ProductListComponent
           },
           {
-            path: 'create',
-            component: ProductCreateComponent
-          }
+            path: 'detail/:uuid',
+            component: ProductDetailComponent
+          },
+          {
+            path: '**',
+            redirectTo : ''
+          },
         ]
       }
     ],

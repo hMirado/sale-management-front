@@ -7,6 +7,7 @@ import { IInfoBox } from '../../models/i-info-box/i-info-box';
   styleUrls: ['./info-box.component.scss']
 })
 export class InfoBoxComponent implements OnInit {
+  @Input() public id: string = '';
   @Input() public data!: IInfoBox
   constructor() { }
 

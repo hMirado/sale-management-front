@@ -1,18 +1,23 @@
-<div class="custom-modal" *ngIf="config?.visible">
-  <div class="custom-modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
+<div *ngIf="config?.visible" class="custom-modal">
+  <div 
+    class="custom-modal-dialog" 
+    [ngClass]="{
+      'small': 'custom-modal-sm',
+      'medium': 'custom-modal-md',
+      'large': 'custom-modal-lg',
+      'x-large': 'custom-modal-xl'
+    }[size]"
+  >
+    <div class="modal-content" style="max-height: 600px;">
+      <div class="modal-header text-center">
         <ng-content select="[head]"></ng-content>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body"  style="height:100%; overflow-y: auto">
         <ng-content select="[body]"></ng-content>
       </div>
       <div class="modal-footer justify-content-center">
-        <button class="btn btn-default ml-1 mr-1" (click)="closeModal()">Annuler</button>
-        <ng-content select="[save]"></ng-content>
+        <button *ngIf="!singleButton" class="btn btn-sm btn-default ml-1 mr-1" (click)="closeModal()">Annuler</button>
+        <ng-content select="[footer]"></ng-content>
       </div>
     </div>
   </div>

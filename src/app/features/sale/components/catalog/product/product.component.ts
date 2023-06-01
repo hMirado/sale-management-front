@@ -33,7 +33,6 @@ export class ProductComponent implements OnInit {
   }
 
   removeProduct(product: Product) {
-    console.log(product);
     this.isAdded = false;
   }
 }
