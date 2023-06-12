@@ -11,7 +11,7 @@
             <div class="item">
               <app-button id="sale" [disabled]="!shopIsOpen" [button]="buttonMakeSale"></app-button>
             </div>
-            <div class="item">
+            <div class="item" *ngIf="singleShop">
               <app-button id="open" [button]="buttonOpenShop"></app-button>
             </div>
           </div>
@@ -23,3 +23,12 @@
     </div>
   </div>
 </section>
+<app-modal [id]="openShopId" size="small">
+  <div head>
+    <h4>Ouvrir shop</h4>
+  </div>
+  <div body>
+    Voulez-vous vraiment ouvrir votre shop ?
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="openShop()">Ouvrir</button>
+</app-modal>

@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           const user = response.data['user']
           if (user.is_new) {
             this.passwordForm.patchValue({ uuid: user.user_uuid });
-            this.modalService.showModal('edit-password')
+            this.modalService.showModal('edit-password');
           } else {
             this.getUserData(response.data);
           }
@@ -87,6 +87,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     const cryted = this.helperService.encrypt(JSON.stringify(data['user']));
     this.localStorageService.setLocalStorage(tokenKey, data['token']);
     this.localStorageService.setLocalStorage('pgu', cryted);
+    this.modalService.hideModal('edit-password');
     this.router.navigateByUrl('/');
   }
 

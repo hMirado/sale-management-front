@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, iif, of, Subscription, switchMap } from 'rxjs';
-import { authorizations, responseStatus } from 'src/app/core/config/constant';
+import { debounceTime, distinctUntilChanged, filter, of, Subscription, switchMap } from 'rxjs';
+import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Product } from 'src/app/features/catalog/models/product/product.model';
 import { Shop } from 'src/app/features/setting/models/shop/shop.model';
-import { ADMIN, inputTimer, tokenKey, userInfo } from 'src/app/shared/config/constant';
+import { ADMIN, authorizations, inputTimer, userInfo } from 'src/app/shared/config/constant';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';

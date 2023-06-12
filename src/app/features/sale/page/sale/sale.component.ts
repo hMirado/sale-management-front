@@ -41,7 +41,7 @@ export class SaleComponent implements OnInit, OnDestroy {
 
   getProducts() {
     this.subscription.add(
-      this.saleService.getCategorieAndProduct(this.userData.shop.shop_uuid).subscribe((response: ApiResponse) => {
+      this.saleService.getCategorieAndProduct(this.userData.shops[0].shop_uuid).subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
           this.saleService.setCategories(response.data.categories)
           this.saleService.setProducts(response.data.products)
