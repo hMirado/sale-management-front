@@ -181,6 +181,8 @@ export class ListComponent implements OnInit, OnDestroy {
       this.shopService.openOrCloseShop(shopUuid, status).subscribe((response: ApiResponse) => {
         console.log(response);
         this.shopService.nextUpdateStatus(true);
+        const message = status ? 'Le shop est maintenant ouvert' : 'Vous avez fermé le shop' 
+        this.showNotification('success', message);
       })
     );
   }

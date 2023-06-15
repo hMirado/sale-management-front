@@ -9,7 +9,7 @@
           </div>
           <div class="card-body container p-2">
             <div class="item">
-              <app-button id="sale" [disabled]="!shopIsOpen" [button]="buttonMakeSale"></app-button>
+              <app-button id="sale" [disabled]="!shopIsOpen && singleShop" [button]="buttonMakeSale"></app-button>
             </div>
             <div class="item" *ngIf="singleShop">
               <app-button id="open" [button]="buttonOpenShop"></app-button>
@@ -25,10 +25,10 @@
 </section>
 <app-modal [id]="openShopId" size="small">
   <div head>
-    <h4>Ouvrir shop</h4>
+    <h4>Séléctionner shop</h4>
   </div>
   <div body>
-    Voulez-vous vraiment ouvrir votre shop ?
+    <app-open-shop (formValue)="getSelectedShop($event)"></app-open-shop>
   </div>
   <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="openShop()">Ouvrir</button>
 </app-modal>
