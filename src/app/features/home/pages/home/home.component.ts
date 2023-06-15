@@ -74,10 +74,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getAction(_authorizations: []) {
-    const isSingle = _authorizations.filter((authorization: Authorization) => authorization.authorization_key == authorizations.shop.element.multipleAction)[0];
+    const isSingle = _authorizations.filter((authorization: Authorization) => authorization.authorization_key == authorizations.shop.element.singleAction)[0];
     this.singleShop = isSingle ? true : false;
-    if (!this.singleShop) this.choseShopSaleModal();
-    else this.getShopIsOpen();
+    if (this.singleShop) this.getShopIsOpen();
   }
 
   openModal(id: string) {
