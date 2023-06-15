@@ -1,4 +1,4 @@
-import { Authorization } from './authorization.class';
+import { Authorization } from './authorization.model';
 
 describe('Authorization', () => {
   it('should create an instance', () => {

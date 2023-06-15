@@ -9,6 +9,7 @@ import { Button } from '../../models/button/button.model';
 export class ButtonComponent implements OnInit {
   @Input() id: string;
   @Input() button: Button;
+  @Input() disabled: boolean = false;
   constructor() { }
 
   ngOnInit(): void {

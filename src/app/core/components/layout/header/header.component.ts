@@ -35,12 +35,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
       })
     )
   }
-
-  goToSalePage() {
-    this.router.navigate(['sale']);
-  }
-
-  closeSale() {
-    alert('Close')
-  }
 }
