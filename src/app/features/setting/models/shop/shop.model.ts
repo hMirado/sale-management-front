@@ -13,4 +13,5 @@ export class Shop {
   createdAt?: Date;
   updatedAt?: Date;
   company?: Company;
+  is_opened: boolean;
 }
