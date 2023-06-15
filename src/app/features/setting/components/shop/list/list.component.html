@@ -5,31 +5,16 @@
         <table class="table table-hover text-nowrap">
           <thead>
             <tr>
-              <th>Actions</th>
-              <th>ID</th>
               <th>Nom</th>
               <th>Localisation</th>
               <th>Box</th>
               <th>Ville</th>
               <th>Status</th>
+              <th>Action(s)</th>
             </tr>
           </thead>
           <tbody>
             <tr [formGroup]="shopFormGroup">
-              <td>
-                <button *ngIf="!isEdit else edit" type="button" class="btn btn-outline-primary btn-block btn-sm" (click)="onSubmit()">
-                  <i class="fas fa-plus"></i>
-                </button>
-                <ng-template #edit>
-                  <button type="button" class="btn btn-outline-secondary btn-sm mr-1" (click)="cancel()">
-                    <i class="fas fa-ban"></i>
-                  </button>
-                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="onSubmit()">
-                    <i class="fas fa-save"></i>
-                  </button>
-                </ng-template>
-              </td>
-              <td></td>
               <td>
                 <input class="form-control form-control-sm" type="text" name="name" formControlName="name" placeholder="Nom de la boutique">
               </td>
@@ -43,31 +28,47 @@
                 <input class="form-control form-control-sm" type="text" name="city" formControlName="city" placeholder="Ville">
               </td>
               <td></td>
+              <td>
+                <button *ngIf="!isEdit else edit" type="button" class="btn btn-outline-primary btn-block btn-sm" (click)="onSubmit()">
+                  <i class="fas fa-plus"></i>
+                </button>
+                <ng-template #edit>
+                  <button type="button" class="btn btn-outline-secondary btn-sm mr-1" (click)="cancel()">
+                    <i class="fas fa-ban"></i>
+                  </button>
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="onSubmit()">
+                    <i class="fas fa-save"></i>
+                  </button>
+                </ng-template>
+              </td>
             </tr>
             <tr *ngFor="let shop of shops">
-              <td>
-                <button class="btn btn-outline-info btn-sm mr-1" (click)="editShop(shop.shop_uuid)">
-                  <i class="fas fa-edit pointer"></i>
-                </button>
-                <!-- <i *ngIf="shop.status else activeShop" class="fas fa-times-circle text-danger pointer" (click)="updateShopStatus(shop.shop_uuid, shop.status)"></i>
-                <ng-template #activeShop>
-                  <i class="icon fas fa-check text-danger pointer" (click)="updateShopStatus(shop.shop_uuid, shop.status)"></i>
-                </ng-template> -->
-              </td>
-              <td>{{ shop.shop_id }}</td>
               <td>{{ shop.shop_name }}</td>
               <td>{{ shop.shop_location }}</td>
               <td>{{ shop.shop_box }}</td>
               <td>{{ shop.city }}</td>
               <td>
-                <!-- <span class="badge" [ngClass]="shop.status ? 'bg-success' : 'bg-danger'">
-                  {{ getShopStatusText(shop.status) }}
-                </span> -->
-
                 <div class="toggle-pill-color">
                   <input type="checkbox" [id]="shop.shop_id" name="check" [checked]="shop.status" (change)="updateShopStatus(shop.shop_uuid, shop.status)">
                   <label for="{{shop.shop_id}}"></label>
                 </div>
+              </td>
+              <td>
+                <button class="btn btn-default btn-sm mr-1" (click)="editShop(shop.shop_uuid)" >
+                  <app-tooltip text="Modifier shop">
+                    <i class="text-info fas fa-edit pointer" style="font-size:18px" content></i>
+                  </app-tooltip>
+                </button>
+                <button class="btn btn-default btn-sm mr-1" *ngIf="!shop.is_opened" (click)="openOrCloseShop(shop.shop_uuid, true)">
+                  <app-tooltip text="Ouvrir shop">
+                    <i class="text-danger fas fa-lock pointer" style="font-size:18px" content></i>
+                  </app-tooltip>
+                </button>
+                <button class="btn btn-default btn-sm mr-1" *ngIf="shop.is_opened" (click)="openOrCloseShop(shop.shop_uuid, false)">
+                  <app-tooltip text="Fermer shop">
+                    <i class="text-success fas fa-lock-open pointer" style="font-size:18px" content></i>
+                  </app-tooltip>
+                </button>
               </td>
             </tr>
           </tbody>
