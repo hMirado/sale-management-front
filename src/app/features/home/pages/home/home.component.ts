@@ -76,7 +76,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   getAction(_authorizations: []) {
     const isSingle = _authorizations.filter((authorization: Authorization) => authorization.authorization_key == authorizations.shop.element.singleAction)[0];
     this.singleShop = isSingle ? true : false;
-    if (this.singleShop) this.getShopIsOpen();
+    if (this.singleShop) {
+      this.getShopIsOpen();
+    }
+    else {
+      this.buttonMakeSale.color = 'success';
+      this.buttonMakeSale.action = this.openShopModal;
+    }
   }
 
   openModal(id: string) {
@@ -130,12 +136,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  choseShopSaleModal() {
-    console.log('CHOSE SHOP');
-    this.buttonMakeSale.color = 'success';
-    this.buttonMakeSale.action = this.makeSale;
-  }
-
   closeShop = () => {
     this.subscription.add(
       this.homeService.openShop(this.userData.shops[0].shop_uuid, false).subscribe((response: ApiResponse) => {
@@ -145,6 +145,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   makeSale = () => {
+    this.router.navigate(['sale']);
+  }
+
+  getSelectedShop(event: any) {
+    this.localStorageService.setLocalStorage('shop', event.shop_uuid);
+    this.closeModal(this.openShopId);
     this.router.navigate(['sale']);
   }
 }

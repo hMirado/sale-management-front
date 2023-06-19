@@ -20,4 +20,9 @@ export class HomeService {
     const url = `${environment['store-service']}/shop/${shopUuid}`;
     return this.apiService.doGet(url);
   }
+
+  getShopOpened(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/shop`;
+    return this.apiService.doGet(url, { open: 1 });
+  }
 }
