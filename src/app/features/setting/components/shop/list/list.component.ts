@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
@@ -174,5 +174,16 @@ export class ListComponent implements OnInit, OnDestroy {
       type: type,
       message: message
     })
+  }
+
+  openOrCloseShop(shopUuid: string, status: boolean) {
+    this.subscription.add(
+      this.shopService.openOrCloseShop(shopUuid, status).subscribe((response: ApiResponse) => {
+        console.log(response);
+        this.shopService.nextUpdateStatus(true);
+        const message = status ? 'Le shop est maintenant ouvert' : 'Vous avez fermé le shop' 
+        this.showNotification('success', message);
+      })
+    );
   }
 }

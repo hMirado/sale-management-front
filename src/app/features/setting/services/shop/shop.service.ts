@@ -58,4 +58,9 @@ export class ShopService {
     let url = `${environment['store-service']}/shop`;
     return this.apiService.doPost(url, shop);
   }
+
+  openOrCloseShop(shopUuid: string, status: boolean): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/shop/open/${shopUuid}`;
+    return this.apiService.doPut(url, {status: status})
+  }
 }

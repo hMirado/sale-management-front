@@ -107,7 +107,8 @@ export class StockComponent implements OnInit, OnDestroy {
 
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
-    this.userData = JSON.parse(this.helperService.decrypt(data));    
+    this.userData = JSON.parse(this.helperService.decrypt(data));  
+    console.log(this.userData);  
     this.shopFilter = ''
     if (this.userData.role.role_key != ADMIN) {
       this.shopFilter = this.userData.shops[0].shop_uuid;

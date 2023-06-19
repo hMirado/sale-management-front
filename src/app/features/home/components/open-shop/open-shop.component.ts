@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, filter, map, of, startWith } from 'rxjs';
+import { Observable, Subscription, filter, map, of, startWith } from 'rxjs';
 import { userInfo } from 'src/app/shared/config/constant';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
+import { HomeService } from '../../services/home/home.service';
+import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 
 @Component({
   selector: 'app-open-shop',
@@ -17,11 +19,13 @@ export class OpenShopComponent implements OnInit, OnDestroy {
   public filteredShops: Observable<Shop[]>;
   public formGroup!: FormGroup;
   public formError: boolean = false;
+  private subscription = new Subscription();
   
   constructor(
     private formBuilder: FormBuilder,
     private localStorageService: LocalStorageService,
     private helperService: HelperService,
+    private homeService: HomeService
     ) {
       this.createForm()
     }
@@ -35,10 +39,12 @@ export class OpenShopComponent implements OnInit, OnDestroy {
   }
 
   getUserShop() {
-    const data = this.localStorageService.getLocalStorage(userInfo);
-    const userData = JSON.parse(this.helperService.decrypt(data));
-    this.shops = userData.shops;
-    this.filteredShops = of(userData.shops);
+    this.subscription.add(
+      this.homeService.getShopOpened().subscribe((response: ApiResponse) => {
+        this.shops = response.data;
+        this.filteredShops = of(response.data);
+      })
+    );
   }
 
   createForm() {
