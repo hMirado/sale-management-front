@@ -34,15 +34,19 @@ export class SaleComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  private shopUuid: string = '';
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
     this.userData = JSON.parse(this.helperService.decrypt(data));
+    this.shopUuid = this.localStorageService.getLocalStorage('shop')
   }
 
   getProducts() {
     this.subscription.add(
-      this.saleService.getCategorieAndProduct(this.userData.shops[0].shop_uuid).subscribe((response: ApiResponse) => {
+      this.saleService.getCategorieAndProduct(this.shopUuid).subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
+          console.log('product', response.data.products);
+          
           this.saleService.setCategories(response.data.categories)
           this.saleService.setProducts(response.data.products)
         }
