@@ -59,5 +59,5 @@ export class Tooltip {
 export class Icon {
   tooltip: Tooltip;
   icon: string;
-  bg: 'text-success' | 'text-danger' | 'text-warning' | 'text-default';
+  bg: 'text-success' | 'text-danger' | 'text-warning' | 'text-default' | 'text-secondary';
 }

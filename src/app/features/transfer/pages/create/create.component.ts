@@ -47,7 +47,9 @@ export class CreateComponent implements OnInit, OnDestroy {
       bodyId: 'product-table-body',
       line: []
     },
-    action: {
+    action: {        
+      isParent: true,
+      isChild: false,
       delete: true,
       edit: false
     }
@@ -240,8 +242,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.selectedProducts = value['products'];
         this.closeModal(this.productId);
         this.selectedProducts.forEach((product: Product) => {
-
-          this.transferService.getTableProduct(product)
           if (this.line.length > 0 && this.line.find((value: Line) => value.lineId == product.product_uuid) ) {
             return;
           }

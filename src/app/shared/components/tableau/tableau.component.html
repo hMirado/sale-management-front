@@ -110,6 +110,17 @@
                 <ng-container *ngIf="_content.type == 'simple'">
                   {{ _content.value }}
                 </ng-container>
+                              <ng-container *ngIf="_content.type == 'button'">
+                <button class="btn btn-sm btn-outline-secondary" (click)="_content.function()">
+                  <i 
+                    *ngIf="_content.icon" [class]="_content.icon.icon"
+                    [attr.data-tooltip]="_content.icon.tooltip.text"
+                    [attr.data-flow]="_content.icon.tooltip.flow"
+                  >
+                  </i>
+                  <span> {{ _content.value }} </span>
+                </button>
+              </ng-container>
               </div>
             </div>
           </td>

@@ -9,6 +9,8 @@ import {
 import { IRow } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
 import { Stock } from '../../models/stock/stock.model';
+import { Line } from 'src/app/shared/models/table/body/line/line.model';
+import { emptyColumn, sellProductColumn } from '../../config/constant';
 
 @Injectable({
   providedIn: 'root',
@@ -55,91 +57,106 @@ export class StockService {
     return this.apiService.doGet(url, params);
   }
 
-  addTableRowValue(value: Stock): IRow {
+  getTableStock(stock: Stock): Line {
+    const column = (!stock?.product?.is_serializable && stock.quantity >= 0) ? sellProductColumn : emptyColumn;
     return {
-      id: value.stock_uuid,
-      isExpandable: (value.product?.is_serializable &&
-        value?.quantity > 0) as boolean,
-      rowValue: [
+      lineId: stock.stock_uuid,
+      column: [
         {
-          id: value.stock_uuid,
-          key: 'product',
-          expand: (value.product?.is_serializable &&
-            value?.quantity > 0) as boolean,
-          value: [
+          content: [
             {
               type: 'simple',
-              value: value?.product?.label as string,
-              align: 'left',
-            },
+              key: 'items',
+              value: stock?.product?.label || '',
+              expandable: (stock.product?.is_serializable && stock?.quantity > 0) as boolean,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
         },
         {
-          id: value.stock_uuid,
-          key: 'code',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
-              value: value?.product?.code as string,
-              align: 'left',
-            },
+              key: 'code',
+              value: stock?.product?.code || '',
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
         },
         {
-          id: value.stock_uuid,
-          key: 'status',
-          expand: false,
-          value: [
+          content: [
             {
-              type: 'simple',
-              value: value?.quantity > 0 ? 'En Stock' : 'En rupture',
-              align: 'center',
+              type: 'badge',
+              key: 'status',
               badge: {
-                status: true,
-                bg: value?.quantity > 0 ? 'success' : 'danger',
+                value: stock?.quantity > 0 ? 'En stock' : 'En rupture',
+                bg: stock?.quantity > 0 ? 'bg-success' : 'bg-danger'
               },
-            },
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
         },
         {
-          id: value.stock_uuid,
-          key: 'quantity',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
-              value: value?.quantity.toString(),
-              align: 'center',
-            },
+              key: 'quantity',
+              value: stock?.quantity.toString(),
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
         },
         {
-          id: value.stock_uuid,
-          key: 'shop',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
-              value: value?.shop?.shop_name ? value?.shop?.shop_name : '',
-              align: 'left',
-            },
+              key: 'shop',
+              value: stock?.shop?.shop_name ? stock?.shop?.shop_name : '',
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
         },
         {
-          id: value.stock_uuid,
-          key: 'serialization',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
+              key: 'serialization',
               value: '',
-              align: 'left',
-            },
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
         },
-      ],
-    };
+        column
+      ]
+    }
   }
 
   getProductSerialization(productUuid: string, shopUuid: string = '') {
@@ -150,81 +167,105 @@ export class StockService {
     return this.apiService.doGet(url, param);
   }
 
-  addTableRowSerializationValue(serialisationDisctinct: any): IRow {
-    const serializationValues = serialisationDisctinct['value'].map((value: string) => {
+  addTableRowSerializationValue(serialisationDisctinct: any): Line {
+    const content = serialisationDisctinct['value'].map((value: string) => {
       return {
         type: 'simple',
+        key: 'name',
         value: value,
-        align: 'left',
+        expandable: false,
+        tooltip: { hasTooltip: false }
       }
-    })
+    });
+    
     return {
-      id: serialisationDisctinct['id'],
-      isExpandable: false,
-      rowValue: [
+      lineId: serialisationDisctinct['id'],
+      column: [
         {
-          id: serialisationDisctinct['id'],
-          key: 'product',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
+              key: 'items',
               value: '',
-            },
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
         },
         {
-          id: serialisationDisctinct['id'],
-          key: 'code',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
+              key: 'code',
               value: '',
-            },
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
         },
         {
-          id: serialisationDisctinct['id'],
-          key: 'status',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
+              key: 'code',
               value: '',
-            },
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
         },
         {
-          id: serialisationDisctinct['id'],
-          key: 'quantity',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
+              key: 'quantity',
               value: '',
-            },
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-center',
+            flex: 'row'
+          }
         },
         {
-          id: serialisationDisctinct['id'],
-          key: 'shop',
-          expand: false,
-          value: [
+          content: [
             {
               type: 'simple',
+              key: 'shop',
               value: '',
-            },
+              expandable: false,
+              tooltip: { hasTooltip: false }
+            }
           ],
+          style: {
+            align: 'align-left',
+            flex: 'row'
+          }
         },
         {
-          id: serialisationDisctinct['id'],
-          key: 'product',
-          expand: false,
-          value: serializationValues,
+          content: content,
+          style: {
+            align: 'align-left',
+            flex: 'column'
+          }
         },
-      ],
-    };
+        sellProductColumn
+      ]
+    }
   }
 
   getShops(): Observable<ApiResponse> {

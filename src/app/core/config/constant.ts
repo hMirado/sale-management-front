@@ -53,11 +53,11 @@ export const appMenu: Menu[] = [
         icon: 'fas fa-users',
         label: 'UTILISATEURS',
         subMenu: [
-          {
-            authorization: 'PAGE_PROFIL',
-            label: 'Gestion des profils',
-            url: '/profil'
-          },
+          // {
+          //   authorization: 'PAGE_PROFIL',
+          //   label: 'Gestion des profils',
+          //   url: '/profil'
+          // },
           {
             authorization: 'PAGE_USER',
             label: 'Gestion des utilisateurs',
