@@ -6,11 +6,11 @@ import {
   ITableFilterField,
   ITableFilterFieldValue,
 } from 'src/app/shared/models/i-table-filter/i-table-filter';
-import { IRow } from 'src/app/shared/models/table/i-table';
 import { environment } from 'src/environments/environment';
 import { Stock } from '../../models/stock/stock.model';
 import { Line } from 'src/app/shared/models/table/body/line/line.model';
 import { emptyColumn, sellProductColumn } from '../../config/constant';
+import { Column } from 'src/app/shared/models/table/body/column/column.model';
 
 @Injectable({
   providedIn: 'root',
@@ -58,7 +58,50 @@ export class StockService {
   }
 
   getTableStock(stock: Stock): Line {
-    const column = (!stock?.product?.is_serializable && stock.quantity >= 0) ? sellProductColumn : emptyColumn;
+    // const column = (!stock?.product?.is_serializable && stock.quantity >= 0) ? sellProductColumn : emptyColumn;
+    let button: Column;
+    if (!stock?.product?.is_serializable && stock.quantity >= 0) {
+      button = {
+        content: [
+          {
+            type: 'button',
+            key: 'action',
+            value: '',
+            disabled: false,
+            action: () => {},
+            icon: {
+              tooltip: {
+                hasTooltip: true,
+                text: 'Vendre',
+                flow: 'top',
+              },
+              icon: 'fas fa-cash-register',
+              bg: 'text-secondary',
+            },
+          },
+        ],
+        style: {
+          align: 'align-center',
+          flex: 'row',
+        },
+      };
+    } else {
+      button = {
+        content: [
+          {
+            type: 'simple',
+            key: 'action',
+            value: '',
+            expandable: false,
+            tooltip: { hasTooltip: false }
+          }
+        ],
+        style: {
+          align: 'align-left',
+          flex: 'row'
+        }
+      }
+    }
     return {
       lineId: stock.stock_uuid,
       column: [
@@ -128,7 +171,7 @@ export class StockService {
           content: [
             {
               type: 'simple',
-              key: 'shop',
+              key: 'shop/' + stock?.shop?.shop_uuid,
               value: stock?.shop?.shop_name ? stock?.shop?.shop_name : '',
               expandable: false,
               tooltip: { hasTooltip: false }
@@ -154,7 +197,7 @@ export class StockService {
             flex: 'row'
           }
         },
-        column
+        button
       ]
     }
   }
@@ -162,7 +205,6 @@ export class StockService {
   getProductSerialization(productUuid: string, shopUuid: string = '') {
     let param: any = { is_sold: false };
     if (shopUuid != '') param['shop'] = shopUuid;
-
     const url = `${environment['store-service']}/serialization/shop/product/${productUuid}`;
     return this.apiService.doGet(url, param);
   }
@@ -263,7 +305,30 @@ export class StockService {
             flex: 'column'
           }
         },
-        sellProductColumn
+        {
+          content: [
+            {
+              type: 'button',
+              key: 'action',
+              value: '',
+              disabled: false,
+              action: () => {},
+              icon: {
+                tooltip: {
+                  hasTooltip: true,
+                  text: 'Vendre',
+                  flow: 'top',
+                },
+                icon: 'fas fa-cash-register',
+                bg: 'text-secondary',
+              },
+            },
+          ],
+          style: {
+            align: 'align-center',
+            flex: 'row',
+          },
+        }
       ]
     }
   }

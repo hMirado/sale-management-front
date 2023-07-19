@@ -10,7 +10,6 @@ import { ADMIN, authorizations, inputTimer, userInfo } from 'src/app/shared/conf
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
-import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { AuthorizationService } from 'src/app/shared/services/authorization/authorization.service';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
@@ -25,6 +24,7 @@ import { StockService } from '../../services/stock/stock.service';
 import { Table } from 'src/app/shared/models/table/table.model';
 import { Line } from 'src/app/shared/models/table/body/line/line.model';
 import { TableauService } from 'src/app/shared/services/table/tableau.service';
+import { Authorization } from 'src/app/shared/models/authorization/authorization.model';
 
 @Component({
   selector: 'app-stock',
@@ -58,6 +58,7 @@ export class StockComponent implements OnInit, OnDestroy {
   public authorizationStockTransfer: string = "authorizations.stock.element.transfer";
   public quantity: number = 0;
   private lines: Line[] = [];
+  public sellForm!: FormGroup;
 
   constructor(
     private tableService: TableService,
@@ -107,7 +108,7 @@ export class StockComponent implements OnInit, OnDestroy {
 
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
-    this.userData = JSON.parse(this.helperService.decrypt(data));  
+    this.userData = JSON.parse(this.helperService.decrypt(data));
     this.shopFilter = ''
     if (this.userData.role.role_key != ADMIN) {
       this.shopFilter = this.userData.shops[0].shop_uuid;
@@ -134,6 +135,15 @@ export class StockComponent implements OnInit, OnDestroy {
     quantity: ['', Validators.required],
     serializations: this.formBuilder.array([])
    });
+
+   this.sellForm = this.formBuilder.group({
+    user: ['', Validators.required],
+    shop: ['', Validators.required],
+    product: ['', Validators.required],
+    serialization: ['', Validators.required],
+    price: ['', Validators.required],
+    quantity: [1, Validators.required],
+   })
   }
 
   clearForm() {
@@ -320,8 +330,10 @@ export class StockComponent implements OnInit, OnDestroy {
     }
     if (response.status == responseStatus.success) {
       this.stocks = response.data.items;
-      this.stocks.forEach((stock: Stock) =>  {
+      this.stocks.forEach((stock: Stock, i: number) =>  {
         let line: Line = this.stockService.getTableStock(stock);
+        console.log('stock', stock);
+        
         line.column[6] = this.addLineAction(line, stock?.shop?.shop_uuid as string, stock.product?.product_uuid as string);
         this.lines.push(line);
       });
@@ -362,8 +374,9 @@ export class StockComponent implements OnInit, OnDestroy {
         filter((id: string) => id != ''),
         switchMap((id: string) => {
           const stock = this.stocks.filter(x => x.stock_uuid == id);
-          const productUuid = stock[0]?.product?.product_uuid as string;  
-          const shop = this.shopFilter != '' ? this.shopFilter : (this.params['shop'] != '' ? this.params['shop'] : '') 
+          const productUuid = stock[0]?.product?.product_uuid as string;
+          const line = this.lines.filter(x => x.lineId == id)[0];
+          const shop = line.column[4].content[0].key.split('/')[1];
           return this.stockService.getProductSerialization(productUuid, shop);
         })
       ).subscribe((response: ApiResponse) => this.getProductSerializationResponse(response))
@@ -391,7 +404,7 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   serializationValue(values: any[]) {
-    let lines: Line[] = []
+    let lines: Line[] = [];
     values.forEach((value: any) => {
       let line: Line = this.stockService.addTableRowSerializationValue(value);
       line.column[6] = this.addLineAction(line, value['shop'], value['product'], value['id']);
@@ -403,7 +416,7 @@ export class StockComponent implements OnInit, OnDestroy {
   addLineAction(line: Line, shop: string, product: string, serialization: string | null = null) {
     let columnAction = line.column[6];
     if (columnAction.content[0].type == 'button') {
-      columnAction.content[0].function = () => this.sellProduct(shop, product, serialization);
+      columnAction.content[0].action = () => {this.openSellModal(shop, product, serialization);}
     }
     return columnAction;
   }
@@ -543,12 +556,24 @@ export class StockComponent implements OnInit, OnDestroy {
     });
   }
 
-  sellProduct(shop: string, product: string, serialization: string | null = null) {
-    console.log('user', this.userData.user_uuid);
-    console.log('shop', shop);
-    console.log('product', product);
-    console.log('serialization', serialization);
-    console.log('\n');
-    
+  openSellModal(shop: string, product: string, serialization: string | null = null) {
+    this.sellForm.patchValue(
+      {
+        user: this.userData.user_uuid,
+        shop: shop,
+        product: product,
+        serialization: serialization,
+        quantity: 1
+      }
+    )
+    this.openModal('sell');
+  }
+
+  sellProduct() {
+    console.log(this.sellForm.value);
+  }
+
+  inputIsDisabled(value: any): boolean {
+    return value || value != null ? true : false;
   }
 }

@@ -26,7 +26,7 @@ export class Column {
     type: 'button';
     key: string;
     value: string;
-    function: Function;
+    action: Function;
     disabled: boolean;
     icon?: Icon;
   } | {

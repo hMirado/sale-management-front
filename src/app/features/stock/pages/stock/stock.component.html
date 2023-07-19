@@ -141,3 +141,51 @@
   </div>
   <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="addStock()">Enregistrer</button>
 </app-modal>
+<app-modal [id]="'sell'" size="small">
+  <div head>
+    <h4 class="modal-title">
+      Vente d'article
+    </h4>
+  </div>
+  <div body>
+    <div>
+     <h6 class="text-center">Voulez-vous vraiment vendre cette article ? Veuillez confirmer.</h6>
+     <form class="form-horizontal" [formGroup]="sellForm">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="price">Prix de vente: </label>
+            <input 
+              type="number" 
+              class="form-control form-control-sm" 
+              id="price" 
+              formControlName="price"
+              [ngClass]="{'input-error':
+              (
+                sellForm.get('price')?.invalid &&
+                (sellForm.get('price')?.dirty ||
+                sellForm.get('price')?.touched) &&
+                sellForm.get('price')?.hasError('required')
+              )
+            }"
+            >
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="quantity">Quantité : </label>
+            <input 
+              type="number" 
+              class="form-control form-control-sm" 
+              id="quantity" 
+              formControlName="quantity"
+              [readonly]="inputIsDisabled(sellForm.controls['serialization'].value)"
+            >
+          </div>
+        </div>
+      </div>
+     </form>
+    </div>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="sellProduct()">Confirmer</button>
+</app-modal>

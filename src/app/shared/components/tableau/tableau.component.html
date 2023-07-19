@@ -64,7 +64,7 @@
                 </app-input-number>
               </ng-container>
               <ng-container *ngIf="_content.type == 'button'">
-                <button class="btn btn-sm btn-outline-secondary" (click)="_content.function()">
+                <button class="btn btn-sm btn-outline-secondary" (click)="_content.action()">
                   <i 
                     *ngIf="_content.icon" [class]="_content.icon.icon"
                     [attr.data-tooltip]="_content.icon.tooltip.text"
@@ -111,7 +111,7 @@
                   {{ _content.value }}
                 </ng-container>
                               <ng-container *ngIf="_content.type == 'button'">
-                <button class="btn btn-sm btn-outline-secondary" (click)="_content.function()">
+                <button class="btn btn-sm btn-outline-secondary" (click)="_content.action()">
                   <i 
                     *ngIf="_content.icon" [class]="_content.icon.icon"
                     [attr.data-tooltip]="_content.icon.tooltip.text"

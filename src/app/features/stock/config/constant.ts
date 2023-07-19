@@ -134,7 +134,7 @@ export const sellProductColumn: Column = {
       key: 'action',
       value: '',
       disabled: false,
-      function: () => { },
+      action: () => {},
       icon: {
         tooltip: {
           hasTooltip: true,
