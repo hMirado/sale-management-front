@@ -41,6 +41,12 @@ export const appMenu: Menu[] = [
     ]
   },
   {
+    authorization: 'PAGE_SHOP',
+    icon: 'fas fa-cash-register',
+    label: 'Ventes',
+    url: '/sale/list'
+  },
+  {
     groupName: 'MON ENTREPRISE',
     subMenu: [
       {

@@ -24,7 +24,7 @@ import { StockService } from '../../services/stock/stock.service';
 import { Table } from 'src/app/shared/models/table/table.model';
 import { Line } from 'src/app/shared/models/table/body/line/line.model';
 import { TableauService } from 'src/app/shared/services/table/tableau.service';
-import { Authorization } from 'src/app/shared/models/authorization/authorization.model';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
 
 @Component({
   selector: 'app-stock',
@@ -71,7 +71,8 @@ export class StockComponent implements OnInit, OnDestroy {
     private localStorageService: LocalStorageService,
     private tableFilterService: TableFilterService,
     private authorizationService: AuthorizationService,
-    private tableauService: TableauService
+    private tableauService: TableauService,
+    private notificationService: NotificationService,
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -314,6 +315,7 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   getStockresponse(response: ApiResponse) {
+    this.lines = [];
     let table: Table = {
       id: this.stockId,
       header: tableStockHeader,
@@ -332,8 +334,6 @@ export class StockComponent implements OnInit, OnDestroy {
       this.stocks = response.data.items;
       this.stocks.forEach((stock: Stock, i: number) =>  {
         let line: Line = this.stockService.getTableStock(stock);
-        console.log('stock', stock);
-        
         line.column[6] = this.addLineAction(line, stock?.shop?.shop_uuid as string, stock.product?.product_uuid as string);
         this.lines.push(line);
       });
@@ -570,10 +570,23 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   sellProduct() {
-    console.log(this.sellForm.value);
+    this.subscription.add(
+      this.stockService.saleProductInStock(this.sellForm.value).subscribe((response: ApiResponse) => {
+        this.closeModal('sell');
+        this.showNotification('success', response.notification);
+        this.getStocks(this.currentPage);
+      })
+    );
   }
 
   inputIsDisabled(value: any): boolean {
     return value || value != null ? true : false;
+  }
+
+  showNotification(type: string, message: string) {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
   }
 }

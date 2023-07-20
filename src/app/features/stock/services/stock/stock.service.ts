@@ -382,4 +382,9 @@ export class StockService {
     const url = `${environment['store-service']}/stock/count`;
     return this.apiService.doGet(url, param);
   }
+
+  saleProductInStock(value: any) {
+    const url = `${environment['store-service']}/sale`;
+    return this.apiService.doPost(url, value);
+  }
 }
