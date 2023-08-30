@@ -1,5 +1,7 @@
 import { IExport } from "src/app/shared/models/export/i-export";
 import { IImport } from "src/app/shared/models/import/i-import";
+import { Column } from "src/app/shared/models/table/body/column/column.model";
+import { Header } from "src/app/shared/models/table/header/header.model";
 import { IHeader } from "src/app/shared/models/table/i-table";
 
 export const importStockConfig: IImport = {
@@ -16,35 +18,151 @@ export const exportStockConfig: IExport = {
   fileName: 'category-model.xlsx'
 }
 
-
-export const tableStockId: string = 'table-stock';
-
-export const tableStockHeader: IHeader[] = [
-  {value: 'Artcile', align: 'left'},
-  {value: 'CODE ARTICLE', align: 'left'},
-  {value: 'STatuT', align: 'center'},
-  {value: 'QUANTITE', align: 'center'},
-  {value: 'Shop', align: 'left'},
-  {value: 'Numéro DE série / IMEI', align: 'left'},
+export const tableStockHeader: Header[] = [
+    {
+    headId: 'item',
+    value: 'Article',
+    style: {
+      align: "align-left"
+    },
+    sort: {
+      isSorted: false,
+      tooltip: {
+        hasTooltip: false
+      }
+    },
+    colspan: 1,
+    rowspan: 1
+  },
+  {
+    headId: 'code',
+    value: 'Code article',
+    style: {
+      align: "align-left"
+    },
+    sort: {
+      isSorted: false,
+      tooltip: {
+        hasTooltip: false
+      }
+    },
+    colspan: 1,
+    rowspan: 1
+  },
+  {
+    headId: 'status',
+    value: 'Statut',
+    style: {
+      align: "align-center"
+    },
+    sort: {
+      isSorted: false,
+      tooltip: {
+        hasTooltip: false
+      }
+    },
+    colspan: 1,
+    rowspan: 1
+  },
+  {
+    headId: 'quantity',
+    value: 'Quantité',
+    style: {
+      align: "align-center"
+    },
+    sort: {
+      isSorted: false,
+      tooltip: {
+        hasTooltip: false
+      }
+    },
+    colspan: 1,
+    rowspan: 1
+  },
+  {
+    headId: 'shop',
+    value: 'Shop',
+    style: {
+      align: "align-left"
+    },
+    sort: {
+      isSorted: false,
+      tooltip: {
+        hasTooltip: false
+      }
+    },
+    colspan: 1,
+    rowspan: 1
+  },
+  {
+    headId: 'serialization',
+    value: 'Numéro de série',
+    style: {
+      align: "align-left"
+    },
+    sort: {
+      isSorted: false,
+      tooltip: {
+        hasTooltip: false
+      }
+    },
+    colspan: 1,
+    rowspan: 1
+  },
+  {
+    headId: 'action',
+    value: 'Action',
+    style: {
+      align: "align-center"
+    },
+    sort: {
+      isSorted: false,
+      tooltip: {
+        hasTooltip: false
+      }
+    },
+    colspan: 1,
+    rowspan: 1
+  }
 ]
-
 export const tableTransferId: string = 'table-transfer';
-
-export const tableTransferHeader: IHeader[] = [
-  {value: 'Date', align: 'left'},
-  {value: 'ARtcile', align: 'left'},
-  {value: 'CODE ARTICLE', align: 'left'},
-  {value: 'QUANTITE', align: 'center'},
-  {value: 'Type', align: 'center'},
-  {value: 'STatuT', align: 'center'},
-  {value: 'Shop d\'origine', align: 'left'},
-  {value: 'Shop déstinateur', align: 'left'},
-]
-
-export const transferStatus = {
-  inProgress: 'IN_PROGRESS',
-  validated: 'VALIDATED',
-  canceled: 'CANCELED',
-}
-
 export const depotShopCode = "DEP"
+export const sellProductColumn: Column = {
+  content: [
+    {
+      type: 'button',
+      key: 'action',
+      value: '',
+      disabled: false,
+      action: () => {},
+      icon: {
+        tooltip: {
+          hasTooltip: true,
+          text: 'Vendre',
+          flow: 'top'
+        },
+        icon: 'fas fa-cash-register',
+        bg: 'text-secondary'
+      }
+    }
+  ],
+  style: {
+    align: 'align-center',
+    flex: 'row'
+  }
+}
+export const emptyColumn: Column = {
+  content: [
+    {
+      type: 'simple',
+      key: 'action',
+      value: '',
+      expandable: false,
+      tooltip: { hasTooltip: false }
+    }
+  ],
+  style: {
+    align: 'align-left',
+    flex: 'row'
+  }
+}

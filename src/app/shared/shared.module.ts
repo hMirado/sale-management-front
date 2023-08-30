@@ -7,7 +7,6 @@ import { ContentHeaderComponent } from './components/content-header/content-head
 import { ToDoComponent } from './components/to-do/to-do.component';
 import { ImportComponent } from './components/files/import/import.component';
 import { ExportComponent } from './components/files/export/export.component';
-import { BoxSummaryComponent } from './components/box-summary/box-summary.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableComponent } from './components/table/table.component';
 import { FilterComponent } from './components/filter/filter.component';
@@ -36,6 +35,7 @@ import { TextComponent } from './components/input/text/text.component';
 import { CheckboxComponent } from './components/input/checkbox/checkbox.component';
 import { ButtonComponent } from './components/button/button.component';
 import { TableauComponent } from './components/tableau/tableau.component';
+import { SmallBoxComponent } from './components/small-box/small-box.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +46,6 @@ import { TableauComponent } from './components/tableau/tableau.component';
     ToDoComponent,
     ImportComponent,
     ExportComponent,
-    BoxSummaryComponent,
     TableComponent,
     FilterComponent,
     CardButtonComponent,
@@ -63,6 +62,7 @@ import { TableauComponent } from './components/tableau/tableau.component';
     CheckboxComponent,
     ButtonComponent,
     TableauComponent,
+    SmallBoxComponent,
   ],
   imports: [
     CommonModule,
@@ -110,7 +110,8 @@ import { TableauComponent } from './components/tableau/tableau.component';
     TextComponent,
     CheckboxComponent,
     ButtonComponent,
-    TableauComponent
+    TableauComponent,
+    SmallBoxComponent,
   ]
 })
 export class SharedModule { }

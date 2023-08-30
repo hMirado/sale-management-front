@@ -10,8 +10,10 @@ export class Serialization {
   createdAt?: Date;
   updatedAt?: Date;
   fk_product_id: number;
+  product_uuid: string;
   fk_serialization_type_id: number;
   fk_shop_id: number;
+  shop_uuid?: string;
   serialization_type?: SerializationType;
   shop?: Shop;
   product?: Product;

@@ -1,0 +1,10 @@
+<div 
+  class="small-box-container"
+  [class.bg-info]="data.color === 'info'"
+  [class.bg-success]="data.color === 'success'"
+  [class.bg-warning]="data.color === 'warning'"
+  [class.bg-danger]="data.color === 'danger'"
+>
+  <p class="small-box-counter">{{ data.counter }}</p>
+  <p class="small-box-description">{{ data.description }}</p>
+</div>
