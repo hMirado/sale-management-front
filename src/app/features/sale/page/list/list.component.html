@@ -1,6 +1,39 @@
 <app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
 <section class="section">
   <div class="container-fluid">
-    
+    <div class="row">
+      <div class="col-lg-3 col-md-4 col-sm-12" *ngFor="let boxData of boxDatas">
+        <app-info-box [data]="boxData" [id]="boxData.id"></app-info-box>
+      </div>
+    </div>
+    <div class="mb-2">
+      <app-table-filter [id]="'sale'"></app-table-filter>
+    </div>
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <app-tableau [id]="'sale'"></app-tableau>
+      </div>
+      <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
+        <ul class="pagination pagination-sm m-0 float-right">
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="setQueryParams(lastPage)">&laquo;</span>
+          </li>
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="setQueryParams(lastPage)">{{ lastPage
+              }}</span>
+          </li>
+          <li class="page-item">
+            <a class="page-link pointer bg-primary" [routerLink]="['/sale/list']" [queryParams]="{page: currentPage}">{{ currentPage }}</a>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="setQueryParams(nextPage)">{{ nextPage
+              }}</span>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="setQueryParams(nextPage)">&raquo;</span>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>

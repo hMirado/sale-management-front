@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BoxSummaryComponent } from './box-summary.component';
+import { SmallBoxComponent } from './small-box.component';
 
-describe('BoxSummaryComponent', () => {
-  let component: BoxSummaryComponent;
-  let fixture: ComponentFixture<BoxSummaryComponent>;
+describe('SmallBoxComponent', () => {
+  let component: SmallBoxComponent;
+  let fixture: ComponentFixture<SmallBoxComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BoxSummaryComponent ]
+      declarations: [ SmallBoxComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BoxSummaryComponent);
+    fixture = TestBed.createComponent(SmallBoxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
