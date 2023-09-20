@@ -8,10 +8,8 @@ import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { Role } from 'src/app/shared/models/role/role.model';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
-import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 import { TableService } from 'src/app/shared/services/table/table.service';
-import { tableProductHeader } from '../../config/constant';
 import { User } from '../../models/user/user.model';
 import { UserService } from '../../services/user.service';
 
@@ -53,7 +51,6 @@ export class ListComponent implements OnInit, OnDestroy {
     this.getUsers();
     this.getFilterValue();
     this.countUser();
-    this.getLineId()
   }
 
   ngOnDestroy(): void {
@@ -93,26 +90,10 @@ export class ListComponent implements OnInit, OnDestroy {
     );
   }
 
+  public users: User[] = [];
   getUsersResponse(response: ApiResponse) {
-    let table: ITable = {
-      id: 'user',
-      header: tableProductHeader,
-      body: null
-    };
-    let rows: IRow[] = []
     if (response.status == responseStatus.success) {
-      let users: User[] = response.data['items'];
-      users.forEach((user: User) => {
-        const row: IRow = this.userService.getTableRowValue(user)
-        rows.push(row);
-      });
-      let cells: ICell = {
-        cellValue: rows,
-        paginate: true,
-        isEditable: true
-      };
-      table.body = cells;
-      this.tableService.setTableValue(table);
+      this.users = response.data['items'];
       this.currentPage = response.data.currentPage;
       this.lastPage = this.currentPage == 1 ? 0 : this.currentPage - 1;
       this.nextPage = response.data.totalPages == this.currentPage ? this.currentPage : this.currentPage + 1;
@@ -153,11 +134,7 @@ export class ListComponent implements OnInit, OnDestroy {
     )
   }
 
-  getLineId() {
-    this.subscription.add(
-      this.tableService.getlineId().subscribe((value: any) => {
-        if (value && value['action'] == 'edit') this.router.navigateByUrl(`/user/detail/${value['id']}`);
-      })
-    );
+  goToUserDetail(userUuid: string) {
+    this.router.navigateByUrl(`/user/detail/${userUuid}`);
   }
 }

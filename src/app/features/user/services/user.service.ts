@@ -145,66 +145,6 @@ export class UserService {
     return this.apiService.doGet(url, params);
   }
 
-  getTableRowValue(user: User): IRow {
-    const name = user.last_name?.toUpperCase() + ' ' + user.first_name;
-    const shop = user.shops?.map((shop: Shop) => shop.shop_name) as any;
-
-    return {
-      id: user.user_uuid as string,
-      isExpandable: false,
-      rowValue: [
-        {
-          id: user.user_uuid as string,
-          key: 'name',
-          expand: false,
-          value: [
-            {
-              type: 'simple',
-              value: name,
-              align: 'left',
-            },
-          ],
-        },
-        {
-          id: user.user_uuid as string,
-          key: 'phone',
-          expand: false,
-          value: [
-            {
-              type: 'simple',
-              value: user.phone_number ? user.phone_number : '',
-              align: 'left',
-            },
-          ],
-        },
-        {
-          id: user.user_uuid as string,
-          key: 'shop',
-          expand: false,
-          value: [
-            {
-              type: 'simple',
-              value: shop.length > 2 ? '. . .' : shop,
-              align: 'left',
-            },
-          ],
-        },
-        {
-          id: user.user_uuid as string,
-          key: 'name',
-          expand: false,
-          value: [
-            {
-              type: 'simple',
-              value: user?.role?.role_name ? user?.role?.role_name : '',
-              align: 'left',
-            },
-          ],
-        },
-      ],
-    };
-  }
-
   countUser(): Observable<ApiResponse> {
     const url = `${environment['store-service']}/user/statistic/count`;
     return this.apiService.doGet(url);
