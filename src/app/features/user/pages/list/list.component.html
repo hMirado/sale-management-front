@@ -17,8 +17,13 @@
       <app-table-filter [id]="'user-filter'"></app-table-filter>
     </div>
     <div class="card">
-      <div class="card-bod table-responsive p-0">
-        <app-table [id]="'user'"></app-table>
+      <div class="card-bod table-responsive p-2">
+        <div class="row" *ngIf="users.length > 0">
+          <div class="col-sm-12 col-md-6 col-lg-3" *ngFor="let user of users">
+            <app-card [user]="user" (click)="goToUserDetail(user?.user_uuid || '')"></app-card>
+          </div>
+        </div>
+        <!-- <app-table [id]="'user'"></app-table> -->
       </div>
       <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
         <ul class="pagination pagination-sm m-0 float-right">
