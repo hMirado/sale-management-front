@@ -16,6 +16,8 @@ import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { ITableFilter, ITableFilterField, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
+import { FileService } from 'src/app/shared/services/file/file.service';
+import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
 
 @Component({
   selector: 'app-list',
@@ -39,6 +41,17 @@ export class ListComponent implements OnInit, OnDestroy {
   public totalItems: number = 0;
 
   public infoBoxCategoryCount!: IInfoBox;
+  public importConfig = {
+    label: 'Importer',
+    accept: 'xlsx/xls',
+    validation: {
+      encoding: ['utf8'],
+      maxSize: 1024 *8,
+    }
+  }
+  private file: any = '';
+  private keyword: string = '';
+  public importResponse: any = {};
 
   constructor(
     private categoryService: CategoryService,
@@ -49,7 +62,8 @@ export class ListComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private helperService: HelperService,
     private tableFilterService: TableFilterService,
-    private router: Router
+    private router: Router,
+    private fileService: FileService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -63,6 +77,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.filter();
     this.getFilterValue();
     this.getLineId();
+    this.getFileValid();
   }
 
   ngOnDestroy(): void {
@@ -224,7 +239,6 @@ export class ListComponent implements OnInit, OnDestroy {
     this.tableFilterService.setFilterData(categorieFilter)
   }
 
-  private keyword: string = '';
   getFilterValue() {
     this.subscription.add(
       this.tableFilterService.filterFormValue$.pipe(
@@ -248,5 +262,53 @@ export class ListComponent implements OnInit, OnDestroy {
         if (value && value['id'] != '' && value['action'] == 'view') this.router.navigateByUrl(`/catalog/category/${value['id']}`);
       })
     );
+  }
+
+  getFileValid(): void {
+    this.subscription.add(
+      this.fileService.base64File$.pipe(
+        filter((file: IBase64File) => file.id != '' && file.file != null)
+      ).subscribe((file: IBase64File) => {
+        this.file = file.file;
+        this.modalService.showModal('import');
+      })
+    );
+  }
+
+  confirmImport(): void {
+    if (this.file != '') {
+      this.runImport();
+    }
+  }
+
+  runImport(): void {
+    this.subscription.add(
+      this.categoryService.importCategory(this.file).subscribe((response: ApiResponse) => {
+        this.importResponse = response.data;
+        this.closeModal('import');
+        this.modalService.showModal('reponse');
+      })
+    )
+  }
+
+  closeModal(id: string): void {
+    this.modalService.hideModal(id);
+  }
+
+  downloadFile() {
+    const byteCharacters = window.atob(this.importResponse.fileName);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    let blob = new Blob([byteArray], { type: 'xlsx/xls' });
+
+    let link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob); //path to the file
+    link.download = 'erreur-catalogue.xlsx'; // name that the file takes
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   }
 }

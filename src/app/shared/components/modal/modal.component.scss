@@ -9,7 +9,7 @@
   background-color: rgba(#111111, 0.75);
   z-index: 9000 !important;
   .custom-modal-dialog {
-    background: #ffffff;
+    // background: #ffffff;
     margin: 0 auto;
     position: absolute;
     top: 45%;
@@ -21,6 +21,7 @@
 
   @media (min-width: 576px){
     .custom-modal-sm {
+        width: 500px;
         max-width: 500px;
         margin: 1.75rem auto;
     }

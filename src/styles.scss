@@ -117,3 +117,29 @@ input[type=number] {
     min-height: 100px;
   }
 }
+
+.list-resume-import {
+  display: flex; 
+  grid-gap: 10px;
+  justify-content: space-between; 
+  ul {
+    list-style: none;
+    li {
+      display: flex;
+      align-items: center;
+      span {
+        width: 195px !important;
+      }
+    }
+  }
+}
+
+.link-file {
+  color: #202224;
+  font-size: 11px;
+  text-decoration: underline;
+  cursor: pointer;
+  :hover {
+    color: #202224;
+  }
+}

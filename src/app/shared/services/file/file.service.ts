@@ -7,7 +7,8 @@ import { IBase64File } from '../../models/file/i-base64-file';
 })
 export class FileService {
   public base64File$: BehaviorSubject<IBase64File> = new BehaviorSubject<IBase64File>({file: null, id: ''});
-  
+  public csvLineCount$: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
+
   constructor() { }
 
   convertFileToBase64(file: File, id:string) {

@@ -36,6 +36,7 @@ import { CheckboxComponent } from './components/input/checkbox/checkbox.componen
 import { ButtonComponent } from './components/button/button.component';
 import { TableauComponent } from './components/tableau/tableau.component';
 import { SmallBoxComponent } from './components/small-box/small-box.component';
+import { ErrorComponent } from './components/files/error/error.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { SmallBoxComponent } from './components/small-box/small-box.component';
     ButtonComponent,
     TableauComponent,
     SmallBoxComponent,
+    ErrorComponent,
   ],
   imports: [
     CommonModule,
@@ -112,6 +114,7 @@ import { SmallBoxComponent } from './components/small-box/small-box.component';
     ButtonComponent,
     TableauComponent,
     SmallBoxComponent,
+    ErrorComponent
   ]
 })
 export class SharedModule { }
