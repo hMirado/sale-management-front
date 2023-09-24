@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExportService {
-  public isExport$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private isExport$: Subject<any> = new Subject<any>();
 
   constructor() { }
 
-  setIsExportValue(value: boolean) {
+  setIsExportValue(value: any): void {
     this.isExport$.next(value);
+  }
+
+  getIsExportValue(): Observable<any> {
+    return this.isExport$;
   }
 }
