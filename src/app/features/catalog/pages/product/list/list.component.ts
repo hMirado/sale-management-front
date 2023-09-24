@@ -15,11 +15,15 @@ import { LocalStorageService } from 'src/app/shared/services/local-storage/local
 import { ModalService } from 'src/app/shared/services/modal/modal.service';
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 import { TableService } from 'src/app/shared/services/table/table.service';
-import { tableProductId, tableProductHeader } from '../../../config/constant';
+import { tableProductId, tableProductHeader, exportProductConfig } from '../../../config/constant';
 import { Category } from '../../../models/category/category.model';
 import { Product } from '../../../models/product/product.model';
 import { CategoryService } from '../../../service/category/category.service';
 import { ProductService } from '../../../service/product/product.service';
+import { ExportService } from 'src/app/shared/services/export/export.service';
+import { FileService } from 'src/app/shared/services/file/file.service';
+import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
+import { ImportService } from 'src/app/shared/services/import/import.service';
 
 @Component({
   selector: 'app-list',
@@ -50,6 +54,16 @@ export class ListComponent implements OnInit, OnDestroy {
   public errorValues: any[] = [];
   private params: any = {};
   private userData: any;
+  public importConfig = {
+    label: 'Importer',
+    accept: 'xlsx/xls',
+    validation: {
+      encoding: ['utf8'],
+      maxSize: 1024 * 10,
+    }
+  }
+
+  public exportConfig = exportProductConfig;
 
   constructor(
     private productService: ProductService,
@@ -62,6 +76,9 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private tableFilterService: TableFilterService,
     private localStorageService: LocalStorageService,
+    private exportService: ExportService,
+    private fileService: FileService,
+    private importService: ImportService
   ) {
     this.createForm();
   }
@@ -77,6 +94,9 @@ export class ListComponent implements OnInit, OnDestroy {
     this.getUserData();
     this.getPriceValue();
     this.getTableAction();
+    this.getFileModel();
+    this.getFileValid();
+    this.confirmImport();
   }
 
   ngOnDestroy(): void {
@@ -387,5 +407,67 @@ export class ListComponent implements OnInit, OnDestroy {
         if (value && value['id'] != '' && value['action'] == 'edit') this.router.navigateByUrl(`/catalog/product/detail/${value['id']}`);
       })
     );
+  }
+
+  getFileModel() {
+    this.subscription.add(
+      this.exportService.getIsExportValue().pipe(
+        filter((value) => value.id == 'product-export' && value.status),
+        switchMap((value) => this.productService.getProductModel())
+      ).subscribe((response: ApiResponse) => this.downloadFile(response.data, 'product'))
+    );
+  }
+
+  downloadFile(file: string, fileName: string) {
+    const byteCharacters = window.atob(file);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    let blob = new Blob([byteArray], { type: 'xlsx/xls' });
+
+    let link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = fileName + '.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  private file: any;
+  getFileValid(): void {
+    this.subscription.add(
+      this.fileService.base64File$.pipe(
+        filter((base64: IBase64File) => base64.id == 'product-import' && base64.file != null)
+      ).subscribe((base64: IBase64File) => {
+        this.importService.setConfirmImportData({
+          id: 'import',
+          title: 'IMPORTER LES CATEGORIES D\'ARTICLES',
+          text: 'Vous êtes sur le point d\'importer un fichier EXCEL contenant les catégories d\'articles.'
+        })
+        this.file = base64.file;
+      })
+    );
+  }
+
+  confirmImport(): void {
+    this.subscription.add(
+      this.importService.getConfirmImport().pipe(
+        filter(value => value.id == 'import' && value.status && this.file != ''),
+        switchMap(value => {
+          return this.productService.importProduct(this.file)
+        })
+      ).subscribe((response: ApiResponse) => {
+        this.modalService.hideModal('import');
+        const result = {
+          id: 'import-result',
+          fileName: 'erreur-product',
+          ... response.data
+        }
+        this.importService.setResult(result);
+        this.getProducts();
+      })
+    )
   }
 }

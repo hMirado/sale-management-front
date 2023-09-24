@@ -24,7 +24,10 @@ export class ExportComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  export() {
-    this.exportService.setIsExportValue(true);
+  export(id: string) {
+    this.exportService.setIsExportValue({
+      id: id,
+      status: true
+    });
   }
 }

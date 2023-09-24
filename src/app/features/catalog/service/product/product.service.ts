@@ -235,4 +235,18 @@ export class ProductService {
       ],
     };
   }
+
+  getProductModel(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/product/export`;
+    return this.apiService.doGet(url);
+  }
+
+  importProduct(file:  string|ArrayBuffer|null): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/product/import`;
+    let data: Object = {
+      file: file
+    }
+
+    return this.apiService.doPost(url, data)
+  }
 }

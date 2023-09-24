@@ -16,7 +16,7 @@ export class HelperService {
   ) { }
 
   reset() {
-    this.exportService.isExport$.next(false);
+    //this.exportService.isExport$.next(false);
     this.fileService.base64File$.next({file: null, id: ''});
   }
 

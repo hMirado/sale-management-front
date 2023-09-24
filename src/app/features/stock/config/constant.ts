@@ -15,7 +15,7 @@ export const importStockConfig: IImport = {
 
 export const exportStockConfig: IExport = {
   label: 'Exporter le modèle',
-  fileName: 'category-model.xlsx'
+  id: 'category-model.xlsx'
 }
 
 export const tableStockHeader: Header[] = [

@@ -37,6 +37,8 @@ import { ButtonComponent } from './components/button/button.component';
 import { TableauComponent } from './components/tableau/tableau.component';
 import { SmallBoxComponent } from './components/small-box/small-box.component';
 import { ErrorComponent } from './components/files/error/error.component';
+import { ConfirmComponent } from './components/files/confirm/confirm.component';
+import { ResultComponent } from './components/files/result/result.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +67,8 @@ import { ErrorComponent } from './components/files/error/error.component';
     TableauComponent,
     SmallBoxComponent,
     ErrorComponent,
+    ConfirmComponent,
+    ResultComponent,
   ],
   imports: [
     CommonModule,
@@ -114,7 +118,9 @@ import { ErrorComponent } from './components/files/error/error.component';
     ButtonComponent,
     TableauComponent,
     SmallBoxComponent,
-    ErrorComponent
+    ErrorComponent,
+    ConfirmComponent,
+    ResultComponent
   ]
 })
 export class SharedModule { }

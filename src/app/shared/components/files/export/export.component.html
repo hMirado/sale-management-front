@@ -1,11 +1,5 @@
-<!-- <div class="card pt-3 text-center">
-  <label class="export" (click)="export()">
-    <i class="fas fa-cloud-download-alt fa-2x icon-color-download"></i>
-    <span>{{ config.label }}</span>
-  </label>
-</div> -->
-<div class="btn btn-block btn-outline-danger btn-sm">
-  <label class="export" (click)="export()">
-    <span>{{ config.label }}</span>
+<div class="btn btn-block btn-outline-danger btn-sm" *ngIf="id == config.id">
+  <label class="export" (click)="export(config.id)">
+    <span><i class="fas fa-file-export"></i> {{ config.label }}</span>
   </label>
 </div>

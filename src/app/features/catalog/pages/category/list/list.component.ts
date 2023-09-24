@@ -25,7 +25,6 @@ import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit, OnDestroy {
-
   public title: string = 'Catégories d\'articles';
   public breadCrumbs: BreadCrumb[] = [];
   public categoryFormGroup!: FormGroup;
@@ -46,7 +45,7 @@ export class ListComponent implements OnInit, OnDestroy {
     accept: 'xlsx/xls',
     validation: {
       encoding: ['utf8'],
-      maxSize: 1024 *8,
+      maxSize: 1024 * 10,
     }
   }
   private file: any = '';

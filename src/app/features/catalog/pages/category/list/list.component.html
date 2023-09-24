@@ -13,9 +13,6 @@
         </button>
       </div>
       <div class="col-2">
-        <!-- <button class="btn btn-block btn-outline-primary btn-sm">
-          <i class="fas fa-file-import"></i> Importer
-        </button> -->
         <app-import id="category" [config]="importConfig"></app-import>
       </div>
     </div> <div class="mb-2">
@@ -109,7 +106,7 @@
         <li>Total des catégories ajoutées: {{ importResponse.success }}</li>
         <li>
           <span class="text-left">Total des erreurs: {{ importResponse.error }}</span>
-          <span class="text-right"><a (click)="downloadFile()" class="link-file">Télécharger fichier erreur.</a></span>
+          <span class="text-right" *ngIf="importResponse.error > 0"><a (click)="downloadFile()" class="link-file">Télécharger fichier erreur.</a></span>
         </li>
       </ul>
     </div>
