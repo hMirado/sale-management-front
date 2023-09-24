@@ -6,7 +6,7 @@ import { NotificationService } from 'src/app/core/services/notification/notifica
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { TableService } from 'src/app/shared/services/table/table.service';
-import { tableCategoryHeader, tableCategoryId } from '../../../config/constant';
+import { exportCategoryConfig, tableCategoryHeader, tableCategoryId } from '../../../config/constant';
 import { Category } from '../../../models/category/category.model';
 import { CategoryService } from '../../../service/category/category.service';
 import {ActivatedRoute, Params, Router} from "@angular/router";
@@ -18,6 +18,7 @@ import { ITableFilter, ITableFilterField, ITableFilterSearchValue } from 'src/ap
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 import { FileService } from 'src/app/shared/services/file/file.service';
 import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
+import { ExportService } from 'src/app/shared/services/export/export.service';
 
 @Component({
   selector: 'app-list',
@@ -51,6 +52,7 @@ export class ListComponent implements OnInit, OnDestroy {
   private file: any = '';
   private keyword: string = '';
   public importResponse: any = {};
+  public exportConfig = exportCategoryConfig;
 
   constructor(
     private categoryService: CategoryService,
@@ -62,7 +64,8 @@ export class ListComponent implements OnInit, OnDestroy {
     private helperService: HelperService,
     private tableFilterService: TableFilterService,
     private router: Router,
-    private fileService: FileService
+    private fileService: FileService,
+    private exportService: ExportService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -77,6 +80,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.getFilterValue();
     this.getLineId();
     this.getFileValid();
+    this.getFileModel();
   }
 
   ngOnDestroy(): void {
@@ -294,8 +298,8 @@ export class ListComponent implements OnInit, OnDestroy {
     this.modalService.hideModal(id);
   }
 
-  downloadFile() {
-    const byteCharacters = window.atob(this.importResponse.fileName);
+  downloadFile(file: string, fileName: string) {
+    const byteCharacters = window.atob(file);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -305,9 +309,18 @@ export class ListComponent implements OnInit, OnDestroy {
 
     let link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob); //path to the file
-    link.download = 'erreur-catalogue.xlsx'; // name that the file takes
+    link.download = fileName + '.xlsx'; // name that the file takes
     document.body.appendChild(link);
     link.click();
     link.remove();
+  }
+
+  getFileModel() {
+    this.subscription.add(
+      this.exportService.getIsExportValue().pipe(
+        filter((value) => value.id == 'category-export' && value.status),
+        switchMap((value) => this.categoryService.getCategoryModel())
+      ).subscribe((response: ApiResponse) => this.downloadFile(response.data, 'category'))
+    )
   }
 }
