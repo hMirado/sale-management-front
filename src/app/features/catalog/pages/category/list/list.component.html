@@ -15,6 +15,9 @@
       <div class="col-2">
         <app-import id="category" [config]="importConfig"></app-import>
       </div>
+      <div class="col-2">
+        <app-export id="category-export" [config]="exportConfig"></app-export>
+      </div>
     </div> <div class="mb-2">
       <app-table-filter [id]="'category-filter'"></app-table-filter>
     </div>
@@ -106,7 +109,7 @@
         <li>Total des catégories ajoutées: {{ importResponse.success }}</li>
         <li>
           <span class="text-left">Total des erreurs: {{ importResponse.error }}</span>
-          <span class="text-right" *ngIf="importResponse.error > 0"><a (click)="downloadFile()" class="link-file">Télécharger fichier erreur.</a></span>
+          <span class="text-right" *ngIf="importResponse.error > 0"><a (click)="downloadFile(importResponse.fileName, 'erreur-catalogue')" class="link-file">Télécharger fichier erreur.</a></span>
         </li>
       </ul>
     </div>
