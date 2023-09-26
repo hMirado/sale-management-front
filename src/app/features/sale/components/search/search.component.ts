@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, filter, Subscription, switchMap } from 'rxjs';
 import { Category } from '../../models/category/category.model';
 import { SaleService } from '../../services/sale/sale.service';
+import { inputTimer } from 'src/app/shared/config/constant';
 
 @Component({
   selector: 'app-sale-search',
@@ -46,10 +47,8 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.searchFormGroup.valueChanges.pipe(
         filter(value => value.triggerEvent),
-        debounceTime(1000),
+        debounceTime(inputTimer),
         switchMap(value => {
-          console.log(value);
-          
           return []
         })
       ).subscribe()

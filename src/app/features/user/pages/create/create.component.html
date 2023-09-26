@@ -1,0 +1,75 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12" *ngIf="!user">
+        <mat-stepper linear #stepper>
+          <mat-step label="Information de l'utilisateur" state="person">
+            <app-info-form></app-info-form>
+            <div>
+              <button 
+                class="btn btn-sm btn-primary"
+                [class.btn-disabled] = "!isValidUserInfo"
+                mat-button 
+                (click)="createUser()"
+              >
+                Creer
+              </button>
+            </div>
+          </mat-step>
+          <mat-step label="Shop de rattachement" state="location">
+            <app-shop-form></app-shop-form>
+            <div>
+              <button 
+                class="btn btn-sm btn-primary" 
+                [class.btn-disabled] = "!isValidUserShop" 
+                mat-button 
+                (click)="addUserShop()"
+              >
+                Enregistrer
+              </button>
+            </div>
+          </mat-step>
+          <ng-template matStepperIcon="person">
+            <mat-icon>person</mat-icon>
+          </ng-template>
+          <ng-template matStepperIcon="location">
+            <mat-icon>location_on</mat-icon>
+          </ng-template>
+        </mat-stepper>
+      </div>
+      <div class="col-12 card" *ngIf="user || user != null">
+        <div class="row">
+          <div class="col-4">
+            <div class="form-group">
+              <label for="">Nom: {{ user.last_name }} </label>
+            </div>
+          </div>
+          <div class="col-4">
+            <label for="">Prénom(s): {{ user.last_name?.toLocaleUpperCase() }}</label>
+          </div>
+          <div class="col-4">
+            <label for="">Email {{ user.email }}</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <label for="">Rôle: {{ user.role?.role_name }}</label>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label for="">Télephone: {{ user.phone_number }} </label>
+            </div>
+          </div>
+          <div class="col-4">
+            <label for="">Mots de passe: {{ password }}</label>
+          </div>
+        </div>
+        <div class="text-right">
+          <button class="btn btn-sm btn-outline-secondary" (click)="goToList()"> Retourner à la liste </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,68 +1,155 @@
-<div class="hold-transition bg login-page">
-  <div class="login-box">
-    <div class="card card-outline">
-      <div class="card-header text-center">
-        <p class="h1">
-          <b class="text-primary">Planet</b>
-          <span class="text-danger">Game</span>
-        </p>
-      </div>
-      <div class="card-body">
-        <form [formGroup]="loginForm">
-          <div class="input-group mb-3">
-            <input type="email" 
-              class="form-control" 
-              [ngClass]="{
-                'input-error': 
-                  (
-                    loginForm.get('touched')?.touched || !loginForm.get('email')?.valid
-                  ) 
-                  && loginForm.get('email')?.hasError('required')
-                  && hasError
-              }"
-              id="emailOrPhoneNumber"
-              name="emailOrPhoneNumber" 
-              formControlName="emailOrPhoneNumber"
-              placeholder="Email ou numéro tel."
-            >
-            <div class="input-group-append">
-              <div class="input-group-text">
-                <span class="fas fa-envelope"></span>
-              </div>
-            </div>
-          </div>
-          <div class="input-group mb-3">
-            <input 
-              type="password" 
-              class="form-control"
-              [ngClass]="{
-                'input-error': 
-                  (
-                    loginForm.get('touched')?.touched || !loginForm.get('password')?.valid
-                  ) 
-                  && loginForm.get('password')?.hasError('required')
-                  && hasError
-              }"
-              id="password"
-              name="password" 
-              formControlName="password"
-              placeholder="Mots de passe"
-            >
-            <div class="input-group-append">
-              <div class="input-group-text">
-                <span class="fas fa-lock"></span>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6">
-            </div>
-            <div class="col-6">
-              <button type="submit" class="btn btn-outline-primary btn-block" (click)="login()">Se connecter</button>
-            </div>
-          </div>
-        </form>
+<div class="box">
+  <div class="overlay dark" *ngIf="loading$ | async">
+    <i class="fas fa-4x fa-sync-alt spin"></i>
+  </div>  
+  <div class="notification" *ngIf="notifications.length > 0">
+    <app-notification *ngFor="let notifiction of notifications" [type]="notifiction.type" [message]="notifiction.message"></app-notification>
+  </div>
+  <div class="row container">
+    <div class="col-sm-5 col-md-8 content-left">
+      <div class="block">
+        <img class="image" src="assets/images/login-logo.png"/>
       </div>
     </div>
+    <div class="col-sm-2 col-md-4 content-right">
+      <h1>BIENVENU</h1>
+      <form class="mt-2" [formGroup]="loginForm">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <span class="fas fa-phone"></span>
+            </div>
+          </div>
+          <input type="number" 
+            class="form-control" 
+            [ngClass]="{
+              'input-error': 
+                (
+                  loginForm.get('touched')?.touched || !loginForm.get('emailOrPhoneNumber')?.valid
+                ) 
+                && (loginForm.get('emailOrPhoneNumber')?.hasError('required') || loginForm.get('emailOrPhoneNumber')?.hasError('pattern'))
+                && hasError
+            }"
+            id="emailOrPhoneNumber"
+            name="emailOrPhoneNumber" 
+            formControlName="emailOrPhoneNumber"
+            placeholder="Numéro télephone"
+          >
+        </div>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+          <input 
+            type="password" 
+            class="form-control"
+            [ngClass]="{
+              'input-error': 
+                (
+                  loginForm.get('touched')?.touched || !loginForm.get('password')?.valid
+                ) 
+                && loginForm.get('password')?.hasError('required')
+                && hasError
+            }"
+            id="password"
+            name="password" 
+            formControlName="password"
+            placeholder="Mots de passe"
+          >
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <button type="submit" class="btn btn-outline-primary btn-block" (click)="login()">Se connecter</button>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
+  <!--<div class="hold-transition bg login-page">
+    <div class="login-box">
+      <div class="card card-outline">
+        <div class="card-header text-center">
+          <p class="h1">
+            <b class="text-primary">Planet</b>
+            <span class="text-danger">Game</span>
+          </p>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="loginForm">
+            <div class="input-group mb-3">
+              <input type="email" 
+                class="form-control" 
+                [ngClass]="{
+                  'input-error': 
+                    (
+                      loginForm.get('touched')?.touched || !loginForm.get('email')?.valid
+                    ) 
+                    && loginForm.get('email')?.hasError('required')
+                    && hasError
+                }"
+                id="emailOrPhoneNumber"
+                name="emailOrPhoneNumber" 
+                formControlName="emailOrPhoneNumber"
+                placeholder="Email ou numéro tel."
+              >
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-envelope"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input 
+                type="password" 
+                class="form-control"
+                [ngClass]="{
+                  'input-error': 
+                    (
+                      loginForm.get('touched')?.touched || !loginForm.get('password')?.valid
+                    ) 
+                    && loginForm.get('password')?.hasError('required')
+                    && hasError
+                }"
+                id="password"
+                name="password" 
+                formControlName="password"
+                placeholder="Mots de passe"
+              >
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+              </div>
+              <div class="col-6">
+                <button type="submit" class="btn btn-outline-primary btn-block" (click)="login()">Se connecter</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> -->
 </div>
+
+<app-modal [id]="'edit-password'" size="medium">
+  <div head>
+    <h4 class="modal-title">
+      Modifier mots de passe
+    </h4>
+  </div>
+  <div body>
+    <form [formGroup]="passwordForm">
+      <div class="form-group">
+        <label>Nouveau mots de passe</label>
+        <input type="password" formControlName="password" name="password" class="form-control form-control-sm">
+      </div>
+    </form>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="savePassword()">Enregistrer</button>
+</app-modal>

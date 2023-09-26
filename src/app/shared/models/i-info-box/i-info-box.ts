@@ -1,5 +1,7 @@
 export interface IInfoBox {
+  id: string;
   bg: string;
-  number: number;
+  icon: string;
+  number: number|string;
   text: string;
 }

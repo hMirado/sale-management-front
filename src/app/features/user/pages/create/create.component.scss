@@ -1,0 +1,12 @@
+::ng-deep.mat-step-header {
+  pointer-events: none !important;
+}
+::ng-deep.mat-step-header[aria-selected="true"] {
+  border-radius: 32px;
+  width: 12%;
+  font-weight: 10px;
+
+  & div.mat-step-label.mat-step-label-active.mat-step-label-selected {
+      //color: #FFF;
+  }
+}

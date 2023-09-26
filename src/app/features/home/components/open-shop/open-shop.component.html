@@ -1,0 +1,31 @@
+<div class="text-center">
+  <h5>
+    Veuillez selectionner un shop pour faire une vente
+  </h5>
+  <form [formGroup]="formGroup">
+    <div class="form-group row">
+      <label for="shop" class="col-sm-3 col-form-label">Shop *</label>
+      <div class="col-sm-9">
+        <input 
+          type="text"
+          class="form-control form-control-sm"
+          id="shop"
+          name="shop"
+          formControlName="shop"
+          (input)="triggerEvent()"
+          [matAutocomplete]="auto"
+          [ngClass]="{'input-error':
+            (formGroup.get('shop')?.invalid &&
+            formGroup.get('shop')?.hasError('required') &&
+            formGroup.get('shop')?.touched) || formError
+          }"
+        >
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayShop" (optionSelected)="select()">
+          <mat-option *ngFor="let shop of filteredShops | async" [value]="shop">
+            {{ shop.shop_name }}
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+    </div>
+  </form>
+</div>

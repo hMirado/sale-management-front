@@ -1,39 +1,123 @@
-<table class="table table-hover text-nowrap">
+<table class="table table-hover text-nowrap" [formGroup]="tableFormGroup">
   <thead>
-  <tr>
-    <th *ngFor="let header of tables?.header" [attr.collspan]="header?.collspan">
-      {{header.value}}
-    </th>
-    <th>Action</th>
-  </tr>
-  </thead>
-  <tbody>
-  <ng-container *ngFor="let body of tables?.body?.cellValue; let i = index">
-    <tr *ngIf="!body.isExpandable else expandable">
-      <td *ngFor="let row of body.rowValue">
-        <img *ngIf="row?.image" [src]="row?.image">
-        {{ row?.value }}
-      </td>
-      <td *ngIf="haveAction">
-        <div class="row">
-          <div class="col-2">
-            <i *ngIf="this.tables.body?.isEditable" class="fas fa-edit text-secondary"></i>
-          </div>
-          <div class="col-2">
-            <i *ngIf="this.tables.body?.isDeleteable" class="far fa-trash-alt text-secondar2"></i>
-          </div>
-          <div class="custom-control custom-switch custom-switch-on-success col-2">
-            <input type="checkbox" class="custom-control-input" id="customSwitch{{i}}">
-            <label class="custom-control-label" for="customSwitch{{i}}"></label>
-          </div>
-        </div>
-      </td>
-    </tr>
-  </ng-container>
-  <ng-template #expandable>
     <tr>
-
+      <th 
+        *ngFor="let header of tables?.header" 
+        [attr.collspan]="header?.collspan"
+        [attr.rowspan]="header?.rowspan"
+        [ngClass]="{'text-center': header?.align=='center', 'text-left': header?.align=='left', 'text-right': header?.align=='right'}"
+      >
+        {{header.value}}
+      </th>
+      <th *ngIf="haveAction" class="text-center">Actions</th>
     </tr>
-  </ng-template>
+  </thead>
+  <tbody formArrayName="fieldGroup">
+    <!-- <ng-container *ngIf="!tables?.body?.cellValue || tables?.body?.cellValue?.length == 0">
+      <tr>
+        azerf rfdisck
+        <td class="text-center" [attr.colspan]="tables.header.length">
+          Aucun données disponibles
+        </td>
+      </tr>
+    </ng-container> -->
+    <ng-container *ngFor="let field of fieldGroup().controls; let i = index">
+      <tr [formGroupName]="i">
+        <ng-container formArrayName="parentField">
+          <td 
+            *ngFor="let parent of parentField(i).controls; let j = index"
+            [formGroupName]="j"
+            >
+            <div 
+              class="row" 
+              formArrayName="childField" 
+            >
+              <ng-container class="col" *ngIf="parent.value['expand']">
+                <i class="pointer fas fa-{{expanded === parent.value['id'] ? 'chevron-down' : 'chevron-right'}} fa-1x mt-1 pr-2" (click)="expand(parent.value['id'])"></i>
+              </ng-container>
+              <div 
+                class="col"
+                *ngFor="let child of childField(i, j).controls; let k = index"
+                [ngClass]="{'text-left' : child.value['align'] == 'left', 'text-right' : child.value['align'] == 'right', 'text-center' : child.value['align'] == 'center'}"
+              >
+                <ng-container *ngIf="child.value['type'] != 'simple' else simple">
+                  <ng-template 
+                    [ngTemplateOutlet]="
+                      child.value['type'] == 'input-number' ? number :
+                      child.value['type'] == 'input-text' ? text:
+                      child.value['type'] == 'input-checkbox' ? checkbox:
+                      button
+                    "
+                  ></ng-template>
+                  <ng-template #number>
+                    <app-input-number 
+                      [id]="parent.value['key'] + '-' + i + '-' + j + '-' + k"  
+                      [value]="child.value['value']"
+                      (formValue)="getInputValue($event)"
+                    >
+                    </app-input-number>
+                  </ng-template>
+                  <ng-template #text>
+                    <app-input-text></app-input-text>
+                  </ng-template>
+                  <ng-template #checkbox>
+                    <app-input-checkbox></app-input-checkbox>
+                  </ng-template>
+                  <ng-template #button>
+                    <button class="btn {{child.value['button']['size']}} btn-outline-{{ child.value['button']['bg']}}" (click)="child.value['button'].action()"> {{ child.value['value'] }} </button>
+                  </ng-template>
+                </ng-container>
+                <ng-template #simple>
+                  <span *ngIf="(child.value['badge'] && child.value['badge']['status']) else notBadge" class="badge bg-{{child.value['badge']['bg']}}">{{ child.value['value'] }}</span>
+                  <ng-template #notBadge>{{child.value['value']}}</ng-template>
+                </ng-template>
+                <ng-container class="col" *ngIf="child.value['icon'] && child.value['icon']['status']">
+                  <i class="fas fa-{{child.value['icon']['icon']}} text-{{child.value['icon']['color']}} fa-1x mt-2 pl-2 pr-2"></i>
+                </ng-container>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+        <td *ngIf="haveAction">
+          <div class="row justify-content-center">
+            <div *ngIf="this.tables?.body?.isEditable" class="col-2 text-center">
+              <app-tooltip text="Modifier">
+                <i class="pointer fas fa-edit text-secondary" style="font-size:18px" content (click)="getLineId('edit', field.value['id'])"></i>
+              </app-tooltip>
+            </div>
+            <div *ngIf="this.tables?.body?.isViewable" class="col-2 text-center">
+              <app-tooltip text="Voir détails">
+                <i class="pointer fas fa-eye text-secondary" style="font-size:18px" content (click)="getLineId('view', field.value['id'])"></i>
+              </app-tooltip>
+            </div>
+            <div *ngIf="this.tables?.body?.isDeleteable" class="col-2 text-center">
+              <app-tooltip text="Supprimer">
+                <i 
+                  class="pointer far fa-trash-alt text-secondary" 
+                  style="font-size:18px" content 
+                  (click)="getLineId('delete', field.value['id']); removeLine(i)"
+                ></i>
+              </app-tooltip>
+            </div>
+            <div *ngIf="this.tables?.body?.isSwitchable" class="col-2 text-center">
+              <div class="custom-control custom-switch custom-switch-on-success col-2">
+                <input type="checkbox" class="custom-control-input" id="customSwitch{{i}}">
+                <label class="custom-control-label" for="customSwitch{{i}}"></label>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr
+        [ngClass]="expanded == field.value['id'] ? 'isExpand' : 'isNotExpand'"
+        *ngFor="let expandValue of tableExpand?.cellValue; let i = index"
+      >
+        <td *ngFor="let row of expandValue.rowValue">
+          <p style="margin: 0!important" *ngFor="let value of row.value">
+            {{ value.value }}
+          </p>
+        </td>
+      </tr>
+    </ng-container>
   </tbody>
 </table>

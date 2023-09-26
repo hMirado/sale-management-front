@@ -35,16 +35,18 @@ export class CategoryService {
   }
 
   countCategories(): Observable<ApiResponse> {
-    let url = `${environment['store-service']}/category/count`;
+    let url = `${environment['store-service']}/category/statistic/count`;
     return this.apiService.doGet(url);
   }
 
-  getCategories(page: number = 1): Observable<ApiResponse> {
+  getCategories(paginate: number = 0, page: number = 1, keyword: string = ''): Observable<ApiResponse> {
     let url = `${environment['store-service']}/category`;
-    let params = {
+    let params: any = {
+      paginate: paginate,
       page: page
     }
-    return this.apiService.doGet(url, params)
+    if (keyword != '') params['keyword'] = keyword;
+    return this.apiService.doGet(url, params);
   }
 
   addTableRowValue(value: Category): IRow {
@@ -55,25 +57,43 @@ export class CategoryService {
         {
           id: value.category_uuid,
           key: 'label',
-          type: 'simple',
           expand: false,
-          value: value.label,
+          value: [
+            {
+              type: 'simple',
+              value: value.label,
+              align: 'left'
+            }
+          ],
         },
         {
           id: value.category_uuid,
           key: 'code',
-          type: 'simple',
           expand: false,
-          value: value.code.toUpperCase(),
-        },
-        {
-          id: value.category_uuid,
-          key: 'total',
-          type: 'simple',
-          expand: false,
-          value:  value.products ? value.products.length : 0,
-        },
+          value: [
+            {
+              type: 'simple',
+              value: value.code.toUpperCase(),
+              align: 'left'
+            }
+          ],
+        }, 
+        // {
+        //   id: value.category_uuid,
+        //   key: 'total',
+        //   type: 'simple',
+        //   expand: false,
+        //   value:  {
+        //     value: value.products ? [value.products.length] : [0],
+        //     align: 'center'
+        //   },
+        // },
       ]
     }
+  }
+
+  getCategoryModel(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/category/export/model`;
+    return this.apiService.doGet(url);
   }
 }

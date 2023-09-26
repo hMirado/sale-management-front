@@ -8,13 +8,16 @@ export interface IHeader {
   value: string;
   collspan?: number;
   rowspan?: number;
+  align?: 'center' | 'left' | 'right';
 }
 
 export interface ICell {
   cellValue: IRow [];
-  isEditable: boolean;
-  isDeleteable: boolean;
-  isSwitchable: boolean;
+  paginate: boolean;
+  isEditable?: boolean;
+  isViewable?: boolean;
+  isDeleteable?: boolean;
+  isSwitchable?: boolean;
 }
 
 export interface IRow {
@@ -26,8 +29,40 @@ export interface IRow {
 export interface IRowValue {
   id: string;
   key: string;
-  type: 'simple' | 'input';
   expand: boolean;
-  value: number | boolean | string;
+  value: IValue[];
   image?: string;
+}
+
+export interface IValue {
+  type: 'simple' | 'button' | 'input-text' | 'input-number' | 'input-checkbox';
+  value: string;
+  align?: 'center' | 'left' | 'right';
+  badge?: IBadge;
+  icon?: IIcon;
+  button?: IButton;
+}
+
+export interface IBadge {
+  status?: boolean
+  bg?: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+}
+
+export interface IIcon {
+  status: boolean;
+  icon: string;
+  color: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'default';
+}
+
+export interface IButton {
+  size: 'btn-xs' | 'btn-sm';
+  bg: 'danger' | 'primary' | 'success' | 'warning' | 'info' | 'secondary' | 'dark';
+  action: Function;
+}
+
+export interface InputValue {
+  key: string;
+  tableId: string;
+  id: string;
+  value: string;
 }

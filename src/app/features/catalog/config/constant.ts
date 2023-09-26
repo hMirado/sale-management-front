@@ -13,16 +13,16 @@ export const impportCategoryConfig: IImport = {
 }
 
 export const exportCategoryConfig: IExport = {
-  label: 'Exporter le modèle',
-  fileName: 'category-model.xlsx'
+  label: 'Exporter modèle',
+  id: 'category-export'
 }
 
 export const tableCategoryId: string = 'table-category'
 
 export const tableCategoryHeader: IHeader[] = [
-  {value: 'CATEGORIES'},
-  {value: 'CODE'},
-  {value: 'ARTICLES'}
+  {value: 'CATEGORIES', align: 'left'},
+  {value: 'CODE', align: 'left'},
+  //{value: 'ARTICLES', align: 'center'}
 ]
 // end of category
 
@@ -38,15 +38,16 @@ export const impportProductConfig: IImport = {
 
 export const exportProductConfig: IExport = {
   label: 'Exporter modèle',
-  fileName: 'product-model.xlsx'
+  id: 'product-export'
 }
 
 export const tableProductId: string = 'table-product'
 
 export const tableProductHeader: IHeader[] = [
-  {value: 'ARTICLE'},
-  {value: 'CODE'},
-  {value: 'CATEGORIE'},
-  {value: 'PRIX'},
+  {value: 'CODE', align: 'left'},
+  {value: 'LIBELLé', align: 'left'},
+  {value: 'CATEGORIE', align: 'left'},
+  {value: 'SHOP', align: 'left'},
+  {value: 'PRIX (MGA)', align: 'left'},
 ]
 //end of product

@@ -1,0 +1,50 @@
+<div class="card">
+  <div class="card-body" style="padding-bottom: .40rem !important; padding-top: .40rem !important;">
+    <form [formGroup]="filterFormGroup" class="mb-0 ">
+      <div class="row" formArrayName="fields">
+        <div 
+          style="margin-bottom: O!important" 
+          class="row " 
+          [ngClass]="fieldGroup.controls.length > 1 ? 'col-3' : 'col-12'" 
+          *ngFor="let field of fieldGroup.controls; let i = index" 
+          [formGroupName]="i"
+        >
+          <label col-sm-3 col-form-label>{{ field.value.label }} : </label>
+          <ng-container [ngSwitch]="field.value.type">
+            <div *ngSwitchCase="'input'" class="col-sm-7">
+              <input 
+                type="text" 
+                class="form-control form-control-sm" 
+                [name]="'fieldValue'" 
+                [formControlName]="'fieldValue'" 
+                [placeholder]="field.value.placeholder"
+                (input)="triggerValueChange()"
+              >
+            </div>
+            <div *ngSwitchCase="'select'" class="col-sm-7">
+              <select  class="form-control form-control-sm" [name]="'fieldValue'" [formControlName]="'fieldValue'" (change)="triggerValueChange()">
+                <option *ngFor="let value of selectValue[i]" [value]="value.value">{{ value.label }}</option>
+              </select>
+            </div>
+            <div *ngSwitchCase="'autoComplete'" class="col-sm-7">
+              <input
+                type="text" 
+                id="item" 
+                class="form-control form-control-sm"
+                name="fieldValue" 
+                formControlName="field" 
+                [matAutocomplete]="auto"
+                (input)="triggerValueChange(); filterSelectValue(i)"
+              >
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selectedValue($event, i)">
+                <mat-option *ngFor="let value of selectValue[i]" [value]="value" style="text-transform: capitalize">
+                  {{value.label}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

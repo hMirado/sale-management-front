@@ -1,0 +1,83 @@
+<fieldset>
+  <legend>Information</legend>
+  <form class="row m-1" [formGroup]="informationFormgroup">
+    <div class="col-sm-12 col-md-2 form-group">
+      <label for="">Code *</label>
+      <input 
+        type="text" 
+        class="form-control form-control-sm" 
+        id="code"
+        name="code" 
+        formControlName="code"
+        [ngClass]="{'input-error':
+          (
+            informationFormgroup.get('code')?.invalid &&
+            informationFormgroup.get('code')?.hasError('required') &&
+            formError
+          ) || codeIsExist
+        }"
+        [readonly]="!isEditable"
+        (input)="triggerEvent()"
+      >
+      <span *ngIf="codeIsExist" class="input-error-message">Code article déjà utilisé</span>
+    </div>
+    <div class="col-sm-12 col-md-5 col-4 form-group">
+      <label for="">Libellé *</label>
+      <input 
+        type="text" 
+        class="form-control form-control-sm" 
+        id="label" 
+        name="label" 
+        formControlName="label"
+        [ngClass]="{'input-error':
+          (
+            informationFormgroup.get('label')?.invalid &&
+            informationFormgroup.get('label')?.hasError('required') &&
+            formError
+          ) || labelIsExist
+        }"
+        [readonly]="!isEditable"
+        (input)="triggerEvent()"
+      >
+      <span *ngIf="labelIsExist" class="input-error-message">Libellé article déjà utilisé</span>
+    </div>
+    <div class="col-sm-12 col-md-3 form-group">
+      <label>Catégorie *</label>
+      <input
+        type="text" 
+        id="category" 
+        class="form-control form-control-sm" 
+        name="category"
+        formControlName="category"
+        matInput
+        [matAutocomplete]="auto"
+        [ngClass]="{'input-error':
+          (informationFormgroup.get('category')?.invalid &&
+          informationFormgroup.get('category')?.hasError('required') &&
+          formError)
+        }"
+        [readonly]="!isEditable"
+      >
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCategory">
+        <mat-option *ngFor="let category of filteredCategories | async" [value]="category" style="text-transform: capitalize">
+          {{category.label}}
+        </mat-option>
+      </mat-autocomplete>
+    </div>
+    <div class="col-sm-12 col-md-2 form-check text-right" style="margin-top: 2em!important">
+      <input type="checkbox" class="form-check-input" id="serializable" name="serializable" formControlName="serializable" [attr.disabled]="!isEditable ? '' : null">
+      <label class="form-check-label" for="serializable">Sérialisable</label>
+    </div>
+  </form>
+  <div class="card-footer">
+    <div class="float-right" *ngIf="isEditable else disabledEdit">
+      <button class="btn btn-sm btn-outline-danger mr-1" (click)="cancelEdit()">Annuler</button>
+      <button class="btn btn-sm btn-outline-primary ml-1" (click)="saveInformation()">Enregistrer</button>
+    </div>
+    <ng-template #disabledEdit>
+      <div class="float-right">
+        <button class="btn btn-sm btn-default ml-1" (click)="enableEdit()">Modifier</button>
+      </div>
+    </ng-template>
+  </div>
+</fieldset>

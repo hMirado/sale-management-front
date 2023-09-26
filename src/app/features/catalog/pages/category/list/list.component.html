@@ -1,0 +1,118 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-3">
+        <app-info-box [data]="infoBoxCategoryCount" id="catalog"></app-info-box>
+      </div>
+    </div>
+    <div class="row mb-1">
+      <div class="col-2">
+        <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal()">
+          <i class="fas fa-plus"></i> Ajouter
+        </button>
+      </div>
+      <div class="col-2">
+        <app-import id="category" [config]="importConfig"></app-import>
+      </div>
+      <div class="col-2">
+        <app-export id="category-export" [config]="exportConfig"></app-export>
+      </div>
+    </div> <div class="mb-2">
+      <app-table-filter [id]="'category-filter'"></app-table-filter>
+    </div>
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <app-table [id]="tableId"></app-table>
+      </div>
+      <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
+        <ul class="pagination pagination-sm m-0 float-right">
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="goToNextPage(lastPage)">&laquo;</span>
+          </li>
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="goToNextPage(lastPage)">{{ lastPage
+              }}</span>
+          </li>
+          <li class="page-item">
+            <a class="page-link pointer bg-primary">{{ currentPage }}</a>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="goToNextPage(nextPage)">{{ nextPage
+              }}</span>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="goToNextPage(nextPage)">&raquo;</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-modal [id]="uniqueId" size="medium">
+  <div head>
+    <h4 class="modal-title">
+      Création de catégorie d'articles
+    </h4>
+  </div>
+  <div body>
+    <form [formGroup]="categoryFormGroup">
+      <ng-container formArrayName="category">
+        <div class="row" *ngFor="let category of categoryForm.controls; let i = index;" [formGroupName]="i">
+          <div class="col-4">
+            <div class="form-group">
+              <label>Code</label>
+              <input type="text" class="form-control form-control-sm" formControlName="code">
+            </div>
+          </div>
+          <div class="col-7">
+            <div class="form-group">
+              <label>Libéllé</label>
+              <input type="text" class="form-control form-control-sm" [ngClass]="{'input-error': categoryForm.hasError('required') }"
+                formControlName="label">
+            </div>
+          </div>
+          <div class="col-1" *ngIf="i > 0">
+            <label style="visibility: hidden">x</label>
+            <button class="btn btn-sm btn-default" (click)="removeLabel(i)"><i class="fas fa-trash-alt"></i></button>
+          </div>
+        </div>
+      </ng-container>
+    </form>
+    <button *ngIf="categoryForm.controls.length < 5" class="btn btn-sm btn-outline-secondary" (click)="addLabel()">Ajouter ligne</button>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="saveCategory()">Enregistrer</button>
+</app-modal>
+<app-modal [id]="'import'" size="medium">
+  <div head>
+    <h4 class="modal-title">
+      IMPORTER LES CATEGORIES D'ARTICLES
+    </h4>
+  </div>
+  <div body class="text-center">
+    <span>Vous êtes sur le point d'importer un fichier EXCEL contenant les catégories d'articles.</span>
+    <br>
+    <span>Confirmez-vous cette action ?</span>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="confirmImport()">Confirmer</button>
+</app-modal>
+<app-modal [id]="'reponse'" size="small" [singleButton]="true">
+  <div head>
+    <h4 class="modal-title">
+      RAPPORT D'IMPORTATION
+    </h4>
+  </div>
+  <div body>
+    <div class="list-resume-import">
+      <ul>
+        <li>Total des catégories ajoutées: {{ importResponse.success }}</li>
+        <li>
+          <span class="text-left">Total des erreurs: {{ importResponse.error }}</span>
+          <span class="text-right" *ngIf="importResponse.error > 0"><a (click)="downloadFile(importResponse.fileName, 'erreur-catalogue')" class="link-file">Télécharger fichier erreur.</a></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="closeModal('reponse')">Fermer</button>
+</app-modal>

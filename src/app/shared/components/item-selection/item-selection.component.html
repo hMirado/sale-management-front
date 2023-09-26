@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-6" style="border-right: 1px solid #dee2e6;">
+    <app-table-filter [id]="id"></app-table-filter>
+    Mes articles : 
+    <ng-container *ngIf="products.length > 0">
+      <div 
+        class="card pointer" 
+        *ngFor="let product of products" 
+        (click)="selectProduct(product)"
+        [class.selected] = "productIsSelected(product)"
+      >
+        <div class="card-body">      
+          <div> {{ product.label }}</div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="col-6">
+    Articles sélectionnés ({{selectedProducts.length}}) : 
+    <ng-container *ngIf="selectedProducts.length > 0">
+      <div 
+        class="card pointer" 
+        *ngFor="let product of selectedProducts"
+        (click)="removeProduct(product)"
+      >
+        <div class="card-body">      
+          <div> {{ product.label }}</div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

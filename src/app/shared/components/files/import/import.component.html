@@ -1,18 +1,3 @@
-<!-- <form for="file" class="card pt-3 text-center" [formGroup]="importFormGroup">
-  <label for="file">
-    <i class="fas fa-cloud-upload-alt fa-2x icon-color-upload"></i>
-    <input 
-      type="file" 
-      id="file" 
-      class="import" 
-      (change)="onFileChange($event)"
-      (click)="resetForm($event)"
-      [accept]="config.accept"
-    >
-    <span>{{config.label}}</span>
-  </label>
-</form> -->
-
 <button for="file" class="btn btn-block btn-outline-primary btn-sm styles" [formGroup]="importFormGroup">
   <label for="file">
     <input 
@@ -23,6 +8,6 @@
       (click)="resetForm($event)"
       [accept]="config.accept"
     >
-    <span>{{config.label}}</span>
+    <span><i class="fas fa-file-import"></i> {{config.label}}</span>
   </label>
 </button>

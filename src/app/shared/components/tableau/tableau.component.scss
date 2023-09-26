@@ -1,0 +1,49 @@
+th {
+  text-transform: uppercase;
+}
+
+.column-container {
+  display: flex;
+}
+
+.flex-direction-column {
+  flex-direction: column;
+}
+
+.flex-direction-row {
+  flex-direction: row;
+  vertical-align: middle;
+  align-items: center;
+}
+
+.content-center {
+  text-align: center;
+  justify-content: center;
+}
+.content-right {
+  text-align: right;
+  justify-content: flex-end;
+}
+.content-left {
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.table-action {
+  display: flex;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.text {
+  color: #6c757d;
+  &:hover {
+    color: #ffffff;
+  }
+}
+
+.expanded {
+  color: #000;
+  background-color: #3f679109;
+}

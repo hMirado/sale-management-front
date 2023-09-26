@@ -1,0 +1,21 @@
+.row {
+  margin-right: 0!important;
+  margin-left: 0!important;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  min-height: 75px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.item {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

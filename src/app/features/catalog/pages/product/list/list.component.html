@@ -1,0 +1,186 @@
+<app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-3">
+        <app-info-box [data]="infoBoxProductCount" id="product"></app-info-box>
+      </div>
+    </div>
+    <div class="row mb-1">
+      <div class="col-2">
+        <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal(uniqueIdProduct)">
+          <i class="fas fa-plus"></i> Ajouter article(s)
+        </button>
+      </div>
+      <div class="col-2">
+        <app-import id="product-import" [config]="importConfig"></app-import>
+      </div>
+      <div class="col-2">
+        <app-export id="product-export" [config]="exportConfig"></app-export>
+      </div>
+    </div>
+    <div class="mb-2">
+      <app-table-filter [id]="'product-filter'"></app-table-filter>
+    </div>
+    <div class="card">
+      <div class="card-bod table-responsive p-0">
+        <app-table [id]="tableId"></app-table>
+      </div>
+      <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
+        <ul class="pagination pagination-sm m-0 float-right">
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="goToNextPage(lastPage)">&laquo;</span>
+          </li>
+          <li class="page-item" *ngIf="lastPage > 0">
+            <span class="page-link pointer" (click)="goToNextPage(lastPage)">{{ lastPage
+              }}</span>
+          </li>
+          <li class="page-item">
+            <a class="page-link pointer bg-primary">{{ currentPage }}</a>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="goToNextPage(nextPage)">{{ nextPage
+              }}</span>
+          </li>
+          <li class="page-item" *ngIf="nextPage == currentPage + 1">
+            <span class="page-link pointer" (click)="goToNextPage(nextPage)">&raquo;</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-modal [id]="uniqueIdProduct" size="x-large">
+  <div head>
+    <h4 class="modal-title">
+      Ajout d'articles
+    </h4>
+  </div>
+  <div body>
+    <form [formGroup]="productFormGroup">
+      <ng-container formArrayName="product">
+        <div class="mb-3" style="border-bottom: 1px solid #ced4da;" *ngFor="let product of productForm.controls; let i = index;" [formGroupName]="i">
+          <div class="row">
+            <div class="col-2">
+              <div class="form-group">
+                <input type="text" 
+                  id="code" 
+                  class="form-control form-control-sm" 
+                  name="code" 
+                  formControlName="code" 
+                  [ngClass]="{'input-error':
+                   (product.get('code')?.invalid &&
+                    product.get('code')?.hasError('required') &&
+                    product.get('code')?.touched) || formError
+                  }"
+                  placeholder="Code Article *"
+                >
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <input 
+                  type="text" 
+                  id="label" 
+                  class="form-control form-control-sm" 
+                  name="label" 
+                  formControlName="label" 
+                  [ngClass]="{'input-error':
+                    (product.get('label')?.invalid &&
+                    product.get('label')?.hasError('required') &&
+                    product.get('label')?.touched) || formError
+                  }"
+                  placeholder="Libellé Article *"
+                >
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-group">
+                <input
+                  type="text" 
+                  id="category" 
+                  class="form-control form-control-sm" 
+                  name="category"
+                  formControlName="category" 
+                  [ngClass]="{'input-error':
+                    (product.get('category')?.invalid &&
+                    product.get('category')?.hasError('required') &&
+                    product.get('category')?.touched) || formError
+                  }"
+                  [matAutocomplete]="auto"
+                  placeholder="Catégorie d'article"
+                  (input)="getCategoriesValueChange(i)"
+                >
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let category of searchCategories" [value]="category.label" style="text-transform: capitalize">
+                    {{category.label}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+            </div>
+            <div class="col-1" *ngIf="i > 0">
+              <button class="btn btn-sm btn-default" (click)="removeLabel(i)"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3 input-group" input-group>
+              <input 
+                type="number" 
+                class="form-control form-control-sm"
+                [ngClass]="{'input-error':
+                  (product.get('price')?.invalid &&
+                  product.get('price')?.hasError('required') &&
+                  formError)
+                }" 
+                name="price" 
+                formControlName="price"
+                placeholder="Prix TTC"
+              >
+              <div class="input-group-append" style="height: calc(1.8125rem + 2px);">
+                <span class="input-group-text">MGA</span>
+              </div>
+            </div>
+            <div class="col-2">
+              <div class="form-group">
+                <div class="form-check" style="margin-top: 5px">
+                  <input class="form-check-input" type="checkbox" id="isSerializable" name="isSerializable"
+                    formControlName="isSerializable">
+                  <label for="isSerializable" class="form-check-labe">Sérialisable</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </form>
+    <button *ngIf="productForm.controls.length < 5" class="btn btn-sm btn-outline-secondary" (click)="addFormField()">Ajouter ligne</button>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="createItems()">Ajouter</button>
+</app-modal>
+
+<app-modal [id]="modalConfirmationID" [singleButton]="true" size="medium">
+  <div head>
+    <h4 class="modal-title">
+      Ajout d'article(s)
+    </h4>
+  </div>
+  <div body>
+    <ul>
+      <li><i class="fas fa-check-circle text-success"></i> Article(s) créé(s) : {{ created }}</li>
+      <li>
+        <i class="fas fa-exclamation-triangle text-danger"></i> Erreur(s) : {{ error }}
+        <ul *ngIf="errorValues.length > 0" class="">
+          <li *ngFor="let err of errorValues">
+            Ligne d'erreur : {{ err['line'] }} - Libellé: {{ err['product'] }}
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <button footer class="btn btn-sm btn-outline-danger ml-1 mr-1" (click)="closeConfirmModal()">Fermer</button>
+</app-modal>
+
+<app-confirm id="import"></app-confirm>
+<app-result id="import-result"></app-result>

@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {IModal} from "../../models/i-modal/i-modal";
 import {Subscription} from "rxjs";
-import {ModalService} from "../../serives/modal/modal.service";
+import {ModalService} from "../../services/modal/modal.service";
 
 @Component({
   selector: 'app-modal',
@@ -10,6 +10,8 @@ import {ModalService} from "../../serives/modal/modal.service";
 })
 export class ModalComponent implements OnInit,OnDestroy {
   @Input() public id: string = '';
+  @Input() public singleButton: boolean = false;
+  @Input() public size: string = 'small';
   public config!: IModal;
   private subscription: Subscription = new Subscription();
 

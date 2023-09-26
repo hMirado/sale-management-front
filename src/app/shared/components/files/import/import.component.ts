@@ -2,8 +2,8 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IImport } from 'src/app/shared/models/import/i-import';
-import { FileService } from 'src/app/shared/serives/file/file.service';
-import { ImportService } from 'src/app/shared/serives/import/import.service';
+import { FileService } from 'src/app/shared/services/file/file.service';
+import { ImportService } from 'src/app/shared/services/import/import.service';
 
 @Component({
   selector: 'app-import',

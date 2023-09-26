@@ -14,3 +14,112 @@
   display: grid;
   grid-gap: 10px;
 }
+
+
+.overlay.dark {
+  background-color: rgba(0,0,0,.5);
+}
+
+.overlay {
+  border-radius: 0.25rem;
+  -ms-flex-align: center;
+  align-items: center;
+  background-color: rgba(255,255,255,.7);
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: center;
+  justify-content: center;
+  z-index: 99999!important;
+  animation: fadeIn ease-in-out .3s;
+  color: #ced4da;
+}
+
+.box>.overlay {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.spin {
+  animation: cssload-spin 1000ms infinite linear;
+  -o-animation: cssload-spin 1000ms infinite linear;
+  -ms-animation: cssload-spin 1000ms infinite linear;
+  -webkit-animation: cssload-spin 1000ms infinite linear;
+  -moz-animation: cssload-spin 1000ms infinite linear;
+}
+
+@keyframes cssload-spin {
+  100% {
+    transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-o-keyframes cssload-spin {
+  100% {
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-ms-keyframes cssload-spin {
+  100% {
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes cssload-spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes cssload-spin {
+  100% {
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.container {
+  display: flex;
+}
+
+.content-left {
+  background-image: url('~src/assets/images/caisse.jpeg');
+  background-size: cover;
+  position:absolute;
+  top:0px;
+  bottom:0px;
+  left:0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+  
+  .block {
+    background-color: #fff;
+    border-radius: 5px;
+    width: 45%;
+    .image {
+      width: 100%;
+    }
+  }
+}
+
+.content-right {
+  position:absolute;
+  top:0px;
+  right:0px;
+  bottom:0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+}

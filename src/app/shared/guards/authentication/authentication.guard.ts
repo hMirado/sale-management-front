@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tokenKey } from '../../config/constant';
-import { LocalStorageService } from '../../serives/local-storage/local-storage.service';
+import { LocalStorageService } from '../../services/local-storage/local-storage.service';
 
 @Injectable({
   providedIn: 'root'

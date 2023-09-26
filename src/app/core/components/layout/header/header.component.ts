@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { LayoutService } from 'src/app/core/services/layout/layout.service';
-import { LocalStorageService } from 'src/app/shared/serives/local-storage/local-storage.service';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
 
 @Component({
   selector: 'app-header',
@@ -34,13 +34,5 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
       })
     )
-  }
-
-  goToSalePage() {
-    this.router.navigate(['sale']);
-  }
-
-  closeSale() {
-    alert('Close')
   }
 }

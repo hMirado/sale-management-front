@@ -5,14 +5,72 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { NotificationService } from '../../services/notification/notification.service';
+import { Router } from '@angular/router';
+import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor(
+    private notificationService: NotificationService,
+    private router: Router,
+    private localStorageService: LocalStorageService,
+  ) {}
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    return next.handle(request);
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return next.handle(request).pipe(
+      tap(
+        () => {},
+        (error: any) => {
+          switch (error.status) {
+            case 401:
+              this.notificationService.updateNotificationIsRemoved(true);
+              this.showNotification(
+                "warning", 
+                `Votre session est expirée. Vous allez être rediriger vers la page d'authentification.`
+              );
+              this.localStorageService.clearLocalStorage();
+              setTimeout( () => {
+                this.authentificationRequired();
+              }, 10000)
+              break;
+            case 403:
+              this.notificationService.updateNotificationIsRemoved(true);
+              this.showNotification(
+                "warning", 
+                `Votre session est expirée. Vous allez être rediriger vers la page d'authentification.`
+              );
+              break;
+            case 400:
+              this.notificationService.updateNotificationIsRemoved(true);
+              this.showNotification(
+                "danger", 
+                error.error.notification
+              );
+              break;
+            default:
+              console.error(['ERROR', request.url]);
+              this.showNotification(
+                "danger", 
+                `Problème de connexion avec le serveur. Veuillez contacter le responsable si l'erreur persiste.`
+              )
+              break;
+          }
+        }
+      )
+    );
+  }
+
+  authentificationRequired() {
+    this.router.navigate(['/authentication'])
+  }
+
+  showNotification(type: string, message: string) {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
   }
 }
