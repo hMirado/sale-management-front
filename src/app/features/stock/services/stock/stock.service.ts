@@ -387,4 +387,18 @@ export class StockService {
     const url = `${environment['store-service']}/sale`;
     return this.apiService.doPost(url, value);
   }
+
+  getFileModel(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/stock/export`;
+    return this.apiService.doGet(url);
+  }
+
+  importStock(file:  string|ArrayBuffer|null): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/stock/import`;
+    let data: Object = {
+      file: file
+    }
+
+    return this.apiService.doPost(url, data)
+  }
 }

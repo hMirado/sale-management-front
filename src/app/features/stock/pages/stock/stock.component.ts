@@ -16,7 +16,7 @@ import { LocalStorageService } from 'src/app/shared/services/local-storage/local
 import { ModalService } from 'src/app/shared/services/modal/modal.service';
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 import { TableService } from 'src/app/shared/services/table/table.service';
-import { depotShopCode, tableStockHeader } from '../../config/constant';
+import { depotShopCode, exportStockConfig, importStockConfig, tableStockHeader } from '../../config/constant';
 import { SerializationType } from '../../models/serialization-type/serialization-type.model';
 import { Serialization } from '../../models/serialization/serialization.model';
 import { Stock } from '../../models/stock/stock.model';
@@ -25,6 +25,12 @@ import { Table } from 'src/app/shared/models/table/table.model';
 import { Line } from 'src/app/shared/models/table/body/line/line.model';
 import { TableauService } from 'src/app/shared/services/table/tableau.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { IImport } from 'src/app/shared/models/import/i-import';
+import { IExport } from 'src/app/shared/models/export/i-export';
+import { ExportService } from 'src/app/shared/services/export/export.service';
+import { FileService } from 'src/app/shared/services/file/file.service';
+import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
+import { ImportService } from 'src/app/shared/services/import/import.service';
 
 @Component({
   selector: 'app-stock',
@@ -59,6 +65,8 @@ export class StockComponent implements OnInit, OnDestroy {
   public quantity: number = 0;
   private lines: Line[] = [];
   public sellForm!: FormGroup;
+  public importConfig: IImport = importStockConfig;
+  public exportConfig: IExport = exportStockConfig;
 
   constructor(
     private tableService: TableService,
@@ -73,6 +81,9 @@ export class StockComponent implements OnInit, OnDestroy {
     private authorizationService: AuthorizationService,
     private tableauService: TableauService,
     private notificationService: NotificationService,
+    private exportService: ExportService,
+    private fileService: FileService,
+    private importService: ImportService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -87,6 +98,9 @@ export class StockComponent implements OnInit, OnDestroy {
     this.getExpandedId();
     this.getFilterValue();
     this.cancel();
+    this.getFileModel();
+    this.getFileValid();
+    this.confirmImport();
   }
 
   ngOnDestroy(): void {
@@ -588,5 +602,67 @@ export class StockComponent implements OnInit, OnDestroy {
       type: type,
       message: message
     })
+  }
+
+  getFileModel(): void {
+    this.subscription.add(
+      this.exportService.getIsExportValue().pipe(
+        filter((value) => value.id == 'stock-export' && value.status),
+        switchMap((value) => this.stockService.getFileModel())
+      ).subscribe((response: ApiResponse) => this.downloadFile(response.data, 'stock'))
+    );
+  }
+
+  downloadFile(file: string, fileName: string): void {
+    const byteCharacters = window.atob(file);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    let blob = new Blob([byteArray], { type: 'xlsx/xls' });
+
+    let link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = fileName + '.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  private file: any;
+  getFileValid(): void {
+    this.subscription.add(
+      this.fileService.base64File$.pipe(
+        filter((base64: IBase64File) => base64.id == 'stock-import' && base64.file != null)
+      ).subscribe((base64: IBase64File) => {
+        this.importService.setConfirmImportData({
+          id: 'import',
+          title: 'IMPORTER LES STOCK D\'ARTICLES',
+          text: 'Vous êtes sur le point d\'importer un fichier EXCEL contenant les stocks d\'articles.'
+        })
+        this.file = base64.file;
+      })
+    )
+  }
+
+  confirmImport(): void {
+    this.subscription.add(
+      this.importService.getConfirmImport().pipe(
+        filter(value => value.id == 'import' && value.status && this.file != ''),
+        switchMap(value => {
+          return this.stockService.importStock(this.file)
+        })
+      ).subscribe((response: ApiResponse) => {
+        this.modalService.hideModal('import');
+        const result = {
+          id: 'import-result',
+          fileName: 'erreur-stock',
+          ... response.data
+        }
+        this.importService.setResult(result);
+        this.getStocks();
+      })
+    )
   }
 }

@@ -5,17 +5,17 @@ import { Header } from "src/app/shared/models/table/header/header.model";
 import { IHeader } from "src/app/shared/models/table/i-table";
 
 export const importStockConfig: IImport = {
-  label: 'Importer Stock',
+  label: 'Importer',
   validation: {
     encoding: ['utf8'],
-    maxSize: 1024 * 8
+    maxSize: 1024 * 10,
   },
   accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 }
 
 export const exportStockConfig: IExport = {
-  label: 'Exporter le modèle',
-  id: 'category-model.xlsx'
+  label: 'Exporter modèle',
+  id: 'stock-export'
 }
 
 export const tableStockHeader: Header[] = [
