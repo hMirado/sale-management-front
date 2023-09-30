@@ -254,4 +254,13 @@ export class ProductService {
     let url = `${environment['store-service']}/product/image/remove`;
     return this.apiService.doPut(url, { product: uuid });
   }
+
+  addImage(product: string, file: string|ArrayBuffer|null): Observable<ApiResponse> {
+    let url = `${environment['store-service']}/product/image`;
+    const data = {
+      product: product,
+      file: file
+    }
+    return this.apiService.doPost(url, data);
+  }
 }

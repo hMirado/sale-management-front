@@ -9,6 +9,8 @@ import { ProductFormValue } from '../../../models/validations/product-form-value
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { Image } from 'src/app/shared/models/image/image';
 import { ImageService } from 'src/app/shared/services/image/image.service';
+import { FileService } from 'src/app/shared/services/file/file.service';
+import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
 
 @Component({
   selector: 'app-detail',
@@ -26,13 +28,15 @@ export class DetailComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
     private notificationService: NotificationService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private fileService: FileService,
   ) { }
 
   ngOnInit(): void {
     this.addHeaderContent();
     this.getCurrentProduct();
     this.deleteImage();
+    this.getFile();
   }
 
   ngOnDestroy(): void {
@@ -67,11 +71,7 @@ export class DetailComponent implements OnInit, OnDestroy {
           return this.productService.getProductByUuid(uuid)
         })
       ).subscribe((response: ApiResponse) => {
-        this.product = response.data.product;
-        this.image = {
-          id: this.product.product_uuid,
-          ... response.data.image
-        }
+        this.imageResponse(response);
       })
     );
   }
@@ -109,12 +109,28 @@ export class DetailComponent implements OnInit, OnDestroy {
         filter((value: any) => value['status'] && value['id'] != ''),
         switchMap((value: any) => this.productService.deleteImage(value['id']))
       ).subscribe((response: ApiResponse) => {
-        this.product = response.data.product;
-        this.image = {
-          id: this.product.product_uuid,
-          ... response.data.image
-        }
+        this.imageResponse(response);
       })
     );
+  }
+
+  getFile(): void {
+    this.subscription.add(
+      this.fileService.base64File$.pipe(
+        filter((base64: IBase64File) => base64.id != '' && base64.file != null),
+        switchMap((base64: IBase64File) => this.productService.addImage(base64.id, base64.file))
+      ).subscribe((response: ApiResponse) => {
+        this.imageResponse(response);
+      })
+    )
+  }
+
+  imageResponse(response: ApiResponse): void {
+    this.product = response.data.product;
+    const image = {
+      id: this.product.product_uuid,
+      ... response.data.image
+    }
+    this.imageService.setImage(image);
   }
 }

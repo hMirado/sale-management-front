@@ -1,4 +1,4 @@
-<div class="image-content">
+<div class="image-content" *ngIf="image != null">
   <img *ngIf="image.hasImage else noImage" class="product-image img-fluid" [src]="imageUrl(image.path)"/>
   <ng-template #noImage>
     <img class="product-image img-fluid" src="assets/images/images.png" alt="User profile picture" />
@@ -9,7 +9,8 @@
     </div>
     <form class="block-middle-img-info mt-2">
       <span class="btn btn-sm btn-primary btn-file">
-        {{ imageButtonText(image.hasImage) }} <input type="file">
+        {{ imageButtonText(image.hasImage) }} 
+        <input type="file" accept=".jpeg, .jpg, .png" (change)="onFileChange($event, image.id)">
       </span>
     </form>
   </div>
