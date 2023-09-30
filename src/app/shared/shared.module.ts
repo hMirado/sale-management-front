@@ -39,6 +39,7 @@ import { SmallBoxComponent } from './components/small-box/small-box.component';
 import { ErrorComponent } from './components/files/error/error.component';
 import { ConfirmComponent } from './components/files/confirm/confirm.component';
 import { ResultComponent } from './components/files/result/result.component';
+import { ImageComponent } from './components/image/image.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { ResultComponent } from './components/files/result/result.component';
     ErrorComponent,
     ConfirmComponent,
     ResultComponent,
+    ImageComponent,
   ],
   imports: [
     CommonModule,
@@ -120,7 +122,8 @@ import { ResultComponent } from './components/files/result/result.component';
     SmallBoxComponent,
     ErrorComponent,
     ConfirmComponent,
-    ResultComponent
+    ResultComponent,
+    ImageComponent
   ]
 })
 export class SharedModule { }

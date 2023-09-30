@@ -1,0 +1,43 @@
+.block-middle-img-info {
+  text-align: center;
+  font-weight: normal;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.block-bottom-img-info {
+  display: flex;
+  column-gap: 10px;
+  row-gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+  margin-bottom: 2px;
+  flex-flow: wrap;
+}
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;   
+  cursor: inherit;
+  display: block;
+}
+
+.image {
+  width: 142px;
+  height: 142px;
+  border: 1px dashed;
+  border-radius: 5px;
+  object-fit: cover;
+}

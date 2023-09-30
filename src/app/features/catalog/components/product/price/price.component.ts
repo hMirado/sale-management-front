@@ -126,6 +126,7 @@ export class PriceComponent implements OnInit, OnDestroy {
     this.priceField.reset();
     this.priceField.clear();
     this.getShops();
+    this.isEditable = false;
   }
 
   savePrice() {
