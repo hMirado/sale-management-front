@@ -45,7 +45,7 @@ export class ImageComponent implements OnInit, OnDestroy {
   }
 
   imageUrl(url: string): string {
-    return this.env + url;
+    return this.env + '/file/image/' + url;
   }
 
   deleteImage(id: string): void {
