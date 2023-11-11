@@ -1,7 +1,7 @@
 <app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
 <section class="content">
   <div class="container-fluid">
-    <div class="row">
+    <!--<div class="row">
       <div class="col-sm-12 col-lg-4">
         <div class="card card-primary">
           <div class="card-header">
@@ -17,8 +17,42 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-12 col-lg-8 bg-danger">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates, quaerat praesentium inventore ab minima placeat natus provident ipsam perspiciatis magni at ducimus ut, voluptate voluptatum, doloribus dicta. A, porro impedit.
+    </div>-->
+    <div class="card">
+      <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+        <h3 class="card-title">
+          <i class="fas fa-th mr-1"></i>
+          Récapitulatif des ventes
+        </h3>
+        <div class="card-tools">
+          <button type="button" class="btn bg-default btn-sm" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="chartjs-size-monitor">
+          <div class="chartjs-size-monitor-expand">
+            <div class="">
+            </div>
+          </div>
+          <div class="chartjs-size-monitor-shrink">
+            <div class=""></div>
+          </div>
+        </div>
+        <ngx-charts-line-chart
+          [legend]="chartLegend"
+          [legendTitle]="legendTitle"
+          [showXAxisLabel]="showXAxisLabel"
+          [showYAxisLabel]="showYAxisLabel"
+          [xAxis]="xAxis"
+          [yAxis]="yAxis"
+          [xAxisLabel]="xAxisLabel"
+          [yAxisLabel]="yAxisLabel"
+          [timeline]="timeline"
+          [results]="chartData"
+          >
+        </ngx-charts-line-chart>
       </div>
     </div>
   </div>

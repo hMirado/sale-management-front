@@ -25,4 +25,9 @@ export class HomeService {
     const url = `${environment['store-service']}/shop`;
     return this.apiService.doGet(url, { open: 1 });
   }
+
+  getSaleGraphData(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/sale/graph`;
+    return this.apiService.doGet(url);
+  }
 }

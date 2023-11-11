@@ -40,6 +40,7 @@ import { ErrorComponent } from './components/files/error/error.component';
 import { ConfirmComponent } from './components/files/confirm/confirm.component';
 import { ResultComponent } from './components/files/result/result.component';
 import { ImageComponent } from './components/image/image.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { ImageComponent } from './components/image/image.component';
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
+    NgxChartsModule
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -123,7 +125,8 @@ import { ImageComponent } from './components/image/image.component';
     ErrorComponent,
     ConfirmComponent,
     ResultComponent,
-    ImageComponent
+    ImageComponent,
+    NgxChartsModule
   ]
 })
 export class SharedModule { }

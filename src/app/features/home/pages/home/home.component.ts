@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.getUserData();
     this.addHeaderContent();
     this.configButton();
+    this.getSaleGraphData();
   }
 
   ngOnDestroy(): void {
@@ -152,5 +153,30 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.localStorageService.setLocalStorage('shop', event.shop_uuid);
     this.closeModal(this.openShopId);
     this.router.navigate(['sale']);
+  }
+
+  public chartView: any = [1500, 500];
+  public chartData: any[] = [];
+  public chartLegend: boolean = true;
+  public legendTitle: string = "Légende";
+  public showLabels: boolean = true;
+  public animations: boolean = true;
+  public xAxis: boolean = true;
+  public yAxis: boolean = true;
+  public showYAxisLabel: boolean = true;
+  public showXAxisLabel: boolean = true;
+  public xAxisLabel: string = "Date";
+  public yAxisLabel: string = "Chiffre d'affaire (MGA)";
+  public timeline: boolean = true;
+  colorScheme = {
+    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
+  };
+  getSaleGraphData(): void {
+    this.subscription.add(
+      this.homeService.getSaleGraphData().subscribe((response: ApiResponse) => {
+        console.log(response);
+        this.chartData = response.data;
+      })
+    );
   }
 }
