@@ -31,28 +31,51 @@
         </div>
       </div>
       <div class="card-body">
-        <div class="chartjs-size-monitor">
-          <div class="chartjs-size-monitor-expand">
-            <div class="">
+        <form class="row" [formGroup]="saleChartForm">
+          <div class="col-sm-2">
+            <div class="form-group">
+              <div class="row">
+                <div class="form-group row">
+                  <label for="startDate" class="col-sm-3 col-form-label">Du: </label>
+                  <div class="col-sm-9">
+                    <input type="date" class="form-control form-control-sm" id="startDate" formControlName="startDate" (input)="triggerSaleChartForm()">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="endDate" class="col-sm-3 col-form-label">Au: </label>
+                  <div class="col-sm-9">
+                    <input type="date" class="form-control form-control-sm" id="endDate" formControlName="endDate" (input)="triggerSaleChartForm()">
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="chartjs-size-monitor-shrink">
-            <div class=""></div>
+          <div class="col-sm-2">
+            <div class="form-group">
+              <label>Shop :</label>
+              <select class="form-control form-control-sm" id="shop" formControlName="shop" (change)="triggerSaleChartForm()">
+                <option value="">Selectionner ici</option>
+                <option *ngFor="let shop of shops" [value]="shop.shop_uuid">{{ getShopName(shop.shop_location, shop.shop_box) }}</option>
+              </select>
+            </div>
           </div>
+        </form>
+        <div>
+          <ngx-charts-line-chart
+            [legend]="chartLegend"
+            [legendTitle]="legendTitle"
+            [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel"
+            [xAxis]="xAxis"
+            [yAxis]="yAxis"
+            [xAxisLabel]="xAxisLabel"
+            [yAxisLabel]="yAxisLabel"
+            [timeline]="timeline"
+            [results]="chartData"
+            [yAxisTickFormatting]="yAxisTickFormatting"
+            >
+          </ngx-charts-line-chart>
         </div>
-        <ngx-charts-line-chart
-          [legend]="chartLegend"
-          [legendTitle]="legendTitle"
-          [showXAxisLabel]="showXAxisLabel"
-          [showYAxisLabel]="showYAxisLabel"
-          [xAxis]="xAxis"
-          [yAxis]="yAxis"
-          [xAxisLabel]="xAxisLabel"
-          [yAxisLabel]="yAxisLabel"
-          [timeline]="timeline"
-          [results]="chartData"
-          >
-        </ngx-charts-line-chart>
       </div>
     </div>
   </div>

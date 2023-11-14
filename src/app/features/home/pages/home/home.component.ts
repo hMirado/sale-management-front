@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, debounceTime, filter, switchMap } from 'rxjs';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { Button } from 'src/app/shared/models/button/button.model';
 import { HomeService } from '../../services/home/home.service';
@@ -10,6 +10,9 @@ import { ModalService } from 'src/app/shared/services/modal/modal.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Router } from '@angular/router';
 import { Authorization } from 'src/app/shared/models/authorization/authorization.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Shop } from 'src/app/shared/models/shop/shop.model';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
 
 @Component({
   selector: 'app-home',
@@ -36,19 +39,41 @@ export class HomeComponent implements OnInit, OnDestroy {
   public closeShopId: string = 'close-shop';
   public singleShop: boolean = true;
 
+  public chartView: any = [1500, 500];
+  public chartData: any[] = [];
+  public chartLegend: boolean = true;
+  public legendTitle: string = "Légende";
+  public showLabels: boolean = true;
+  public animations: boolean = true;
+  public xAxis: boolean = true;
+  public yAxis: boolean = true;
+  public showYAxisLabel: boolean = true;
+  public showXAxisLabel: boolean = true;
+  public xAxisLabel: string = "Date (jj-mm-aaaa)";
+  public yAxisLabel: string = "Chiffre d'affaire (MGA)";
+  public timeline: boolean = false;
+
+  public saleChartForm !: FormGroup;
+
   constructor(
     private homeService: HomeService,
     private localStorageService: LocalStorageService,
     private helperService: HelperService,
     private modalService: ModalService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private notificationService: NotificationService,
+  ) { 
+    this.createForm();
+  }
 
   ngOnInit(): void {
     this.getUserData();
     this.addHeaderContent();
     this.configButton();
     this.getSaleGraphData();
+    this.getShops();
+    this.getFormValue();
   }
 
   ngOnDestroy(): void {
@@ -155,28 +180,95 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['sale']);
   }
 
-  public chartView: any = [1500, 500];
-  public chartData: any[] = [];
-  public chartLegend: boolean = true;
-  public legendTitle: string = "Légende";
-  public showLabels: boolean = true;
-  public animations: boolean = true;
-  public xAxis: boolean = true;
-  public yAxis: boolean = true;
-  public showYAxisLabel: boolean = true;
-  public showXAxisLabel: boolean = true;
-  public xAxisLabel: string = "Date";
-  public yAxisLabel: string = "Chiffre d'affaire (MGA)";
-  public timeline: boolean = true;
-  colorScheme = {
-    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
-  };
+  private params: any = {}
   getSaleGraphData(): void {
+    this.params = {
+      groupByDate: "D",
+      startDate: this.getLastWeek()[1],
+      endDate: this.getLastWeek()[0],
+      shop: ''
+    }
     this.subscription.add(
-      this.homeService.getSaleGraphData().subscribe((response: ApiResponse) => {
-        console.log(response);
+      this.homeService.getSaleGraphData(this.params).subscribe((response: ApiResponse) => {
         this.chartData = response.data;
       })
     );
+  }
+
+  yAxisTickFormatting (value: any) {
+    return value.toLocaleString('fr-Fr');
+  }
+
+  getLastWeek(): String[] {
+    const date = new Date();
+    const dayNow = ('0' + date.getDate()).slice(-2)
+    const monthNow = ('0' + date.getMonth()).slice(-2)
+    const now = date.getFullYear() + '-' + monthNow + '-' + dayNow;
+    
+    const lastWeekDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() - 7,
+    );
+    const lastDay = ('0' + lastWeekDate.getDate()).slice(-2)
+    const lastMonth = ('0' + lastWeekDate.getMonth()).slice(-2)
+    const previous = date.getFullYear() + '-' + lastMonth + '-' + lastDay;
+    
+    return [now, previous];
+  }
+
+  createForm(): void {
+    this.saleChartForm = this.formBuilder.group({
+      startDate: this.getLastWeek()[1],
+      endDate: this.getLastWeek()[0],
+      shop: '',
+      trigger: false
+    })
+  }
+
+  triggerSaleChartForm(status: boolean = true): void {
+    this.saleChartForm.patchValue({ trigger: status });
+    this.saleChartForm.updateValueAndValidity();
+  }
+
+  getFormValue(): void {
+    this.subscription.add(
+      this.saleChartForm.valueChanges.pipe(
+        filter((value: any) => value['trigger']),
+        debounceTime(500),
+        switchMap((value: any) => {
+          this.triggerSaleChartForm(false);
+          if (new Date(value['startDate']) > new Date(value['endDate'])) {
+            this.showNotification(
+              "danger", 
+              "La date de début doit-être inferieur à la date de fin"
+            )
+            return [];
+          } else {
+            return this.homeService.getSaleGraphData(value);
+          }
+        })
+      ).subscribe((response: ApiResponse) => this.chartData = response.data)
+    );
+  }
+
+  public shops: Shop[] = [];
+  getShops(): void {
+    this.subscription.add(
+      this.homeService.getShops().subscribe((response:ApiResponse) => {
+        this.shops = response.data;
+      })
+    );
+  }
+
+  getShopName (location: string, box: any): string {
+    return location + ' ' + ((box && box != null) ? box : '');
+  }
+
+  showNotification(type: string, message: string) {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
   }
 }

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { ButtonLeftMenuComponent } from './components/button-left-menu/button-left-menu.component';
 import { BreadCrumbComponent } from './components/bread-crumb/bread-crumb.component';
 import { PageTitleComponent } from './components/page-title/page-title.component';
@@ -41,6 +41,9 @@ import { ConfirmComponent } from './components/files/confirm/confirm.component';
 import { ResultComponent } from './components/files/result/result.component';
 import { ImageComponent } from './components/image/image.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 @NgModule({
   declarations: [
@@ -86,7 +89,10 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
-    NgxChartsModule
+    NgxChartsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    JsonPipe
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -126,7 +132,10 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     ConfirmComponent,
     ResultComponent,
     ImageComponent,
-    NgxChartsModule
+    NgxChartsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    JsonPipe
   ]
 })
 export class SharedModule { }

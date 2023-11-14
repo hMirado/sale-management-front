@@ -26,8 +26,21 @@ export class HomeService {
     return this.apiService.doGet(url, { open: 1 });
   }
 
-  getSaleGraphData(): Observable<ApiResponse> {
+  getSaleGraphData(value: any): Observable<ApiResponse> {
+    let params: any = {
+      groupByDate: (value['groupByDate'] == "Y") ? "Y" : ((value['groupByDate'] == "M") ? "M": "D"),
+      startDate: value['startDate'],
+      endDate: value['endDate']
+    };
+    if (value['shop'] && value['shop'] != '') params['shop'] = value['shop'];
+
     const url = `${environment['store-service']}/sale/graph`;
+    return this.apiService.doGet(url, params);
+  }
+
+
+  getShops(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/shop`;
     return this.apiService.doGet(url);
   }
 }
