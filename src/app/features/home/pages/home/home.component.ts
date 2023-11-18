@@ -13,6 +13,7 @@ import { Authorization } from 'src/app/shared/models/authorization/authorization
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { ScaleType } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-home',
@@ -52,8 +53,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   public xAxisLabel: string = "Date (jj-mm-aaaa)";
   public yAxisLabel: string = "Chiffre d'affaire (MGA)";
   public timeline: boolean = false;
-
+  public shops: Shop[] = [];
   public saleChartForm !: FormGroup;
+  public barChartForm !: FormGroup;
+  public barChartData: any [];
+  colorScheme = {
+    name: 'myScheme',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#5AA454', '#dc3545', '#0030ff']
+  };
 
   constructor(
     private homeService: HomeService,
@@ -74,6 +83,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.getSaleGraphData();
     this.getShops();
     this.getFormValue();
+    this.getSaleBarChartData();
   }
 
   ngOnDestroy(): void {
@@ -180,16 +190,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['sale']);
   }
 
-  private params: any = {}
   getSaleGraphData(): void {
-    this.params = {
+    const params = {
       groupByDate: "D",
       startDate: this.getLastWeek()[1],
       endDate: this.getLastWeek()[0],
       shop: ''
     }
     this.subscription.add(
-      this.homeService.getSaleGraphData(this.params).subscribe((response: ApiResponse) => {
+      this.homeService.getSaleGraphData(params).subscribe((response: ApiResponse) => {
         this.chartData = response.data;
       })
     );
@@ -202,12 +211,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   getLastWeek(): String[] {
     const date = new Date();
     const dayNow = ('0' + date.getDate()).slice(-2)
-    const monthNow = ('0' + date.getMonth()).slice(-2)
+    const monthNow = ('0' + (date.getMonth() + 1)).slice(-2)
     const now = date.getFullYear() + '-' + monthNow + '-' + dayNow;
     
     const lastWeekDate = new Date(
       date.getFullYear(),
-      date.getMonth(),
+      date.getMonth() + 1,
       date.getDate() - 7,
     );
     const lastDay = ('0' + lastWeekDate.getDate()).slice(-2)
@@ -224,11 +233,20 @@ export class HomeComponent implements OnInit, OnDestroy {
       shop: '',
       trigger: false
     })
+    this.barChartForm = this.formBuilder.group({
+      perBy: '',
+      trigger: false
+    })
   }
 
   triggerSaleChartForm(status: boolean = true): void {
     this.saleChartForm.patchValue({ trigger: status });
     this.saleChartForm.updateValueAndValidity();
+  }
+
+  triggerBarChartForm(status: boolean = true): void {
+    this.barChartForm.patchValue({ trigger: status });
+    this.barChartForm.updateValueAndValidity();
   }
 
   getFormValue(): void {
@@ -250,9 +268,20 @@ export class HomeComponent implements OnInit, OnDestroy {
         })
       ).subscribe((response: ApiResponse) => this.chartData = response.data)
     );
+
+    this.subscription.add(
+      this.barChartForm.valueChanges.pipe(
+        filter((value: any) => value['trigger']),
+        debounceTime(500),
+        switchMap((value: any) => {
+          this.triggerSaleChartForm(false);
+          delete value['trigger'];
+          return this.homeService.getBarChartData(value);
+        })
+      ).subscribe((response: ApiResponse) => this.barChartData = response.data)
+    );
   }
 
-  public shops: Shop[] = [];
   getShops(): void {
     this.subscription.add(
       this.homeService.getShops().subscribe((response:ApiResponse) => {
@@ -261,8 +290,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  getShopName (location: string, box: any): string {
+  getShopName(location: string, box: any): string {
     return location + ' ' + ((box && box != null) ? box : '');
+  }
+  getSaleBarChartData(): void {
+    this.subscription.add(
+      this.homeService.getBarChartData({}).subscribe((response: ApiResponse) => {
+        this.barChartData = response.data;
+      })
+    );
   }
 
   showNotification(type: string, message: string) {

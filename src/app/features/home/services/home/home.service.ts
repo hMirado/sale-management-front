@@ -38,9 +38,15 @@ export class HomeService {
     return this.apiService.doGet(url, params);
   }
 
-
   getShops(): Observable<ApiResponse> {
     const url = `${environment['store-service']}/shop`;
     return this.apiService.doGet(url);
+  }
+
+  getBarChartData(value: any): Observable<ApiResponse> {
+    const params: any = {};
+    if (value['perBy'] && value['perBy'] != '') params['perBy'] = value['perBy'];
+    const url = `${environment['store-service']}/sale/graph-compare`;
+    return this.apiService.doGet(url, params);
   }
 }
