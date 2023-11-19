@@ -50,7 +50,7 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-2" *ngIf="getAuthorization(multiShopKey)">
             <div class="form-group">
               <label>Shop :</label>
               <select class="form-control form-control-sm" id="shop" formControlName="shop" (change)="triggerSaleChartForm()">
@@ -79,7 +79,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-12 col-6 col-md-8">
+      <div class="col-sm-12 col-8 col-md-10">
         <div class="card">
           <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
             <h3 class="card-title">
@@ -114,6 +114,22 @@
               >
               </ngx-charts-bar-vertical-2d>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="card col-sm-12 col-4 col-md-2">
+        <div class="info-box mb-3 bg-info">
+          <span class="info-box-icon"><i class="fas fa-money-check"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Total des ventes</span>
+            <span class="info-box-number">{{ totalSale }}</span>
+          </div>
+        </div>
+        <div class="info-box mb-3 bg-danger">
+          <span class="info-box-icon"><i class="fas fa-tag"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Articles vendus</span>
+            <span class="info-box-number">{{ totalQuantity }}</span>
           </div>
         </div>
       </div>

@@ -49,4 +49,9 @@ export class HomeService {
     const url = `${environment['store-service']}/sale/graph-compare`;
     return this.apiService.doGet(url, params);
   }
+
+  getTotal(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/sale/total`;
+    return this.apiService.doGet(url); 
+  }
 }

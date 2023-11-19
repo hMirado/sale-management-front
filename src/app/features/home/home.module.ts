@@ -18,7 +18,7 @@ import { OpenShopComponent } from './components/open-shop/open-shop.component';
     HomeRoutingModule,
     SharedModule,
     ReactiveFormsModule,
-    FormsModule,
+    FormsModule
   ]
 })
 export class HomeModule { }

@@ -14,6 +14,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { ScaleType } from '@swimlane/ngx-charts';
+import { AuthorizationService } from 'src/app/shared/services/authorization/authorization.service';
 
 @Component({
   selector: 'app-home',
@@ -57,12 +58,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   public saleChartForm !: FormGroup;
   public barChartForm !: FormGroup;
   public barChartData: any [];
-  colorScheme = {
+  public colorScheme = {
     name: 'myScheme',
     selectable: true,
     group: ScaleType.Ordinal,
     domain: ['#5AA454', '#dc3545', '#0030ff']
   };
+  public multiShopKey: string = authorizations.shop.element.multipleAction;
+  public totalSale: string = '0';
+  public totalQuantity: string = '0';
 
   constructor(
     private homeService: HomeService,
@@ -72,6 +76,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private formBuilder: FormBuilder,
     private notificationService: NotificationService,
+    private authorizationService: AuthorizationService
   ) { 
     this.createForm();
   }
@@ -84,6 +89,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.getShops();
     this.getFormValue();
     this.getSaleBarChartData();
+    this.getTotal();
   }
 
   ngOnDestroy(): void {
@@ -92,6 +98,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   addHeaderContent() {
     this.breadCrumbs = [
+      {
+        url: '/',
+        label: 'Accueil'
+      },
       {
         url: '',
         label: 'Tableau de bord'
@@ -306,5 +316,18 @@ export class HomeComponent implements OnInit, OnDestroy {
       type: type,
       message: message
     })
+  }
+
+  getTotal(): void {
+    this.subscription.add(
+      this.homeService.getTotal().subscribe((response: ApiResponse) => {
+        this.totalSale = this.helperService.numberFormat(response.data['total_price']/100);
+        this.totalQuantity = this.helperService.numberFormat(response.data['total_quantity']);
+      })
+    )
+  }
+
+  getAuthorization(key: string) {
+    return this.authorizationService.getAuthorization(key)
   }
 }
