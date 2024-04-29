@@ -75,11 +75,13 @@
             [matAutocomplete]="auto"
             (input)="getProductValueChange()"
           >
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
-            <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize">
-              {{product.label}}
-            </mat-option>
-          </mat-autocomplete>
+          <div>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
+              <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize;">
+                {{product.label}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
         </div>
         <div class="form-group col-12 col-lg-2">
           <label for="quantity">Quantité *</label>
