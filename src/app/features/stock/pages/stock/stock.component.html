@@ -12,13 +12,19 @@
           <i class="fas fa-plus"></i> Ajouter stock
         </button>
       </div>
+      <div class="col-2">
+        <app-import id="stock-import" [config]="importConfig"></app-import>
+      </div>
+      <div class="col-2">
+        <app-export id="stock-export" [config]="exportConfig"></app-export>
+      </div>
     </div>
     <div class="mb-2">
       <app-table-filter [id]="'stock-filter'"></app-table-filter>
     </div>
     <div class="card">
       <div class="card-body table-responsive p-0">
-        <app-table [id]="tableId"></app-table>
+        <app-tableau [id]="stockId"></app-tableau>
       </div>
       <div class="bg-white card-footer" *ngIf="currentPage > 0 && totalItems > 0 ">
         <ul class="pagination pagination-sm m-0 float-right">
@@ -69,11 +75,13 @@
             [matAutocomplete]="auto"
             (input)="getProductValueChange()"
           >
-          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
-            <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize">
-              {{product.label}}
-            </mat-option>
-          </mat-autocomplete>
+          <div>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedValue($event)">
+              <mat-option *ngFor="let product of searchProducts" [value]="product.label" style="text-transform: capitalize;">
+                {{product.label}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
         </div>
         <div class="form-group col-12 col-lg-2">
           <label for="quantity">Quantité *</label>
@@ -141,3 +149,54 @@
   </div>
   <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="addStock()">Enregistrer</button>
 </app-modal>
+<app-modal [id]="'sell'" size="small">
+  <div head>
+    <h4 class="modal-title">
+      Vente d'article
+    </h4>
+  </div>
+  <div body>
+    <div>
+     <h6 class="text-center">Voulez-vous vraiment vendre cette article ? Veuillez confirmer.</h6>
+     <form class="form-horizontal" [formGroup]="sellForm">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="price">Prix de vente: </label>
+            <input 
+              type="number" 
+              class="form-control form-control-sm" 
+              id="price" 
+              formControlName="price"
+              [ngClass]="{'input-error':
+              (
+                sellForm.get('price')?.invalid &&
+                (sellForm.get('price')?.dirty ||
+                sellForm.get('price')?.touched) &&
+                sellForm.get('price')?.hasError('required')
+              )
+            }"
+            >
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label for="quantity">Quantité : </label>
+            <input 
+              type="number" 
+              class="form-control form-control-sm" 
+              id="quantity" 
+              formControlName="quantity"
+              [readonly]="inputIsDisabled(sellForm.controls['serialization'].value)"
+            >
+          </div>
+        </div>
+      </div>
+     </form>
+    </div>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="sellProduct()">Confirmer</button>
+</app-modal>
+
+<app-confirm id="import"></app-confirm>
+<app-result id="import-result"></app-result>

@@ -91,4 +91,9 @@ export class CategoryService {
       ]
     }
   }
+
+  getCategoryModel(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/category/export/model`;
+    return this.apiService.doGet(url);
+  }
 }

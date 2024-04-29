@@ -19,3 +19,17 @@
   justify-content: center;
   align-items: center;
 }
+
+.mat-form-field {
+  display: contents!important;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  border-radius: 0!important;
+  padding: 0!important;
+}
+
+.mat-form-field-type-mat-date-range-input .mat-form-field-infix {
+  width: 100% !important;
+  display: flex !important;
+}

@@ -1,7 +1,7 @@
 <app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
 <section class="content">
   <div class="container-fluid">
-    <div class="row">
+    <!--<div class="row">
       <div class="col-sm-12 col-lg-4">
         <div class="card card-primary">
           <div class="card-header">
@@ -17,8 +17,121 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-12 col-lg-8 bg-danger">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates, quaerat praesentium inventore ab minima placeat natus provident ipsam perspiciatis magni at ducimus ut, voluptate voluptatum, doloribus dicta. A, porro impedit.
+    </div>-->
+    <div class="card">
+      <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+        <h3 class="card-title">
+          <i class="fas fa-chart-line mr-1"></i>
+          Récapitulatif des ventes
+        </h3>
+        <div class="card-tools">
+          <button type="button" class="btn bg-default btn-sm" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <form class="row" [formGroup]="saleChartForm">
+          <div class="col-sm-2">
+            <div class="form-group">
+              <div class="row">
+                <div class="form-group row">
+                  <label for="startDate" class="col-sm-3 col-form-label">Du: </label>
+                  <div class="col-sm-9">
+                    <input type="date" class="form-control form-control-sm" id="startDate" formControlName="startDate" (input)="triggerSaleChartForm()">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="endDate" class="col-sm-3 col-form-label">Au: </label>
+                  <div class="col-sm-9">
+                    <input type="date" class="form-control form-control-sm" id="endDate" formControlName="endDate" (input)="triggerSaleChartForm()">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-2" *ngIf="getAuthorization(multiShopKey)">
+            <div class="form-group">
+              <label>Shop :</label>
+              <select class="form-control form-control-sm" id="shop" formControlName="shop" (change)="triggerSaleChartForm()">
+                <option value="">Selectionner ici</option>
+                <option *ngFor="let shop of shops" [value]="shop.shop_uuid">{{ getShopName(shop.shop_location, shop.shop_box) }}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+        <div>
+          <ngx-charts-line-chart
+            [legend]="chartLegend"
+            [legendTitle]="legendTitle"
+            [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel"
+            [xAxis]="xAxis"
+            [yAxis]="yAxis"
+            [xAxisLabel]="xAxisLabel"
+            [yAxisLabel]="yAxisLabel"
+            [timeline]="timeline"
+            [results]="chartData"
+            [yAxisTickFormatting]="yAxisTickFormatting"
+          >
+          </ngx-charts-line-chart>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-8 col-md-10">
+        <div class="card">
+          <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+            <h3 class="card-title">
+              <i class="fas fa-chart-bar mr-1"></i>
+              Compartif des ventes
+            </h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="barChartForm">
+              <div class="form-group row">
+                <label for="" class="col-sm-1 col-form-label">Par :</label>
+                <div class="col-sm-2">
+                  <select class="form-control" id="perBy" formControlName="perBy" (change)="triggerBarChartForm()">
+                    <option value="" selected>Jour</option>
+                    <option value="month">Mois</option>
+                    <option value="year">Année</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+            <div>
+              <ngx-charts-bar-vertical-2d
+                [results]="barChartData"
+                [xAxis]="xAxis"
+                [yAxis]="yAxis"
+                [legend]="true"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel"
+                [xAxisLabel]="'Shop'"
+                [yAxisLabel]="'Ventes'"
+                [legendTitle]="legendTitle"
+              >
+              </ngx-charts-bar-vertical-2d>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card col-sm-12 col-4 col-md-2">
+        <div class="info-box mb-3 bg-info">
+          <span class="info-box-icon"><i class="fas fa-money-check"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Total des ventes</span>
+            <span class="info-box-number">{{ totalSale }}</span>
+          </div>
+        </div>
+        <div class="info-box mb-3 bg-danger">
+          <span class="info-box-icon"><i class="fas fa-tag"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Articles vendus</span>
+            <span class="info-box-number">{{ totalQuantity }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -10,6 +10,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ProductComponent } from './components/catalog/product/product.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CategoryComponent } from './components/category/category.component';
+import { ListComponent } from './page/list/list.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { CategoryComponent } from './components/category/category.component';
     SearchComponent,
     CartComponent,
     ProductComponent,
-    CategoryComponent
+    CategoryComponent,
+    ListComponent
   ],
   imports: [
     CommonModule,

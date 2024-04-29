@@ -27,9 +27,9 @@ import { HttpErrorInterceptor } from './core/interceptors/http-error/http-error.
     AuthenticationModule
   ],
   providers: [
-    {
-      provide: LocationStrategy, useClass: HashLocationStrategy
-    },
+    // {
+    //   provide: LocationStrategy, useClass: HashLocationStrategy
+    // },
     { 
       provide: LOCALE_ID,
       useValue: 'fr-FR'

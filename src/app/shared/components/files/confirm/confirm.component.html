@@ -1,0 +1,15 @@
+<ng-container *ngIf="this.id === data?.id">
+  <app-modal [id]="this.id">
+    <div head>
+      <h4 class="modal-title">
+        {{ data?.title?.toLocaleUpperCase() }}
+      </h4>
+    </div>
+    <div body class="text-center">
+      <span>{{data?.text }}</span>
+      <br>
+      <span>Confirmez-vous cette action ?</span>
+    </div>
+    <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="confirmImport(this.id)">Confirmer</button>
+  </app-modal>
+</ng-container>

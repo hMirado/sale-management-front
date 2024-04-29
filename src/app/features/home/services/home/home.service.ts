@@ -25,4 +25,33 @@ export class HomeService {
     const url = `${environment['store-service']}/shop`;
     return this.apiService.doGet(url, { open: 1 });
   }
+
+  getSaleGraphData(value: any): Observable<ApiResponse> {
+    let params: any = {
+      groupByDate: (value['groupByDate'] == "Y") ? "Y" : ((value['groupByDate'] == "M") ? "M": "D"),
+      startDate: value['startDate'],
+      endDate: value['endDate']
+    };
+    if (value['shop'] && value['shop'] != '') params['shop'] = value['shop'];
+
+    const url = `${environment['store-service']}/sale/graph`;
+    return this.apiService.doGet(url, params);
+  }
+
+  getShops(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/shop`;
+    return this.apiService.doGet(url);
+  }
+
+  getBarChartData(value: any): Observable<ApiResponse> {
+    const params: any = {};
+    if (value['perBy'] && value['perBy'] != '') params['perBy'] = value['perBy'];
+    const url = `${environment['store-service']}/sale/graph-compare`;
+    return this.apiService.doGet(url, params);
+  }
+
+  getTotal(): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/sale/total`;
+    return this.apiService.doGet(url); 
+  }
 }

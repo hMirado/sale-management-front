@@ -113,7 +113,7 @@ export class TransferService {
             key: "serialization",
             disabled: false,
             value: 'Numéro de série',
-            function: () => {},
+            action: () => {},
           },
           {
             type: 'icon',
@@ -121,7 +121,7 @@ export class TransferService {
             icon: 'fas fa-exclamation-circle',
             bg: 'text-danger',
             tooltip: {
-              hasTooltip: false,
+              hasTooltip: true,
               text: 'Veuillez entrer un numéro de série',
               flow: 'top'
             }

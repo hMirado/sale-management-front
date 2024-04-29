@@ -35,6 +35,20 @@ export class DetailComponent implements OnInit, OnDestroy {
   public buttonValid!: Button;
   public ButtonCancel: Button;
   public inProgress: string = status.inProgress
+  public productTable: Table = {
+    id: 'product-table',
+    header: tableProductHeader,
+    body: {
+      bodyId: 'product-table-body',
+      line: []
+    },
+    action: {
+      isParent: false,
+      isChild: false,
+      delete: false,
+      edit: false
+    }
+  };
 
   constructor(
     private transferService: TransferService,
@@ -77,18 +91,6 @@ export class DetailComponent implements OnInit, OnDestroy {
     ]
   }
 
-  public productTable: Table = {
-    id: 'product-table',
-    header: tableProductHeader,
-    body: {
-      bodyId: 'product-table-body',
-      line: []
-    },
-    action: {
-      delete: false,
-      edit: false
-    }
-  };
   getTransfer(): void {
     this.subscription.add(
       this.activatedRoute.paramMap.pipe(

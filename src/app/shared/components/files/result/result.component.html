@@ -1,0 +1,21 @@
+<ng-container *ngIf="this.id == result?.id">
+  <app-modal [id]="this.id" [singleButton]="true">
+    <div head>
+      <h4 class="modal-title">
+        RAPPORT D'IMPORTATION
+      </h4>
+    </div>
+    <div body>
+      <div class="list-resume-import">
+        <ul>
+          <li>Total des catégories ajoutées: {{ result?.success }}</li>
+          <li>
+            <span class="text-left">Total des erreurs: {{ result?.error }}</span>
+            <span class="text-right" *ngIf="result?.error > 0"><a (click)="downloadFile(result?.file, result?.fileName)" class="link-file">Télécharger fichier erreur.</a></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="closeModal(this.id)">Fermer</button>
+  </app-modal>
+</ng-container>

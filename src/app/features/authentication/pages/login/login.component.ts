@@ -88,7 +88,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.localStorageService.setLocalStorage(tokenKey, data['token']);
     this.localStorageService.setLocalStorage('pgu', cryted);
     this.modalService.hideModal('edit-password');
-    this.router.navigateByUrl('/');
+    location.href = '/'
+    //this.router.navigate(['/']);
   }
 
   addNotification() {

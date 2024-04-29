@@ -31,10 +31,6 @@ const routes: Routes = [
     loadChildren: () => import('./features/user/user.module').then(user => user.UserModule)
   },
   {
-    path: 'profil',
-    loadChildren: () => import('./features/role/role.module').then(role => role.RoleModule)
-  },
-  {
     path: 'transfer',
     loadChildren: () => import('./features/transfer/transfer.module').then(transfer => transfer.TransferModule)
   },

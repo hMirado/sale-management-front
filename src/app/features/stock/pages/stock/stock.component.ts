@@ -10,19 +10,27 @@ import { ADMIN, authorizations, inputTimer, userInfo } from 'src/app/shared/conf
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
 import { IInfoBox } from 'src/app/shared/models/i-info-box/i-info-box';
 import { ITableFilter, ITableFilterFieldValue, ITableFilterSearchValue } from 'src/app/shared/models/i-table-filter/i-table-filter';
-import { ICell, IRow, ITable } from 'src/app/shared/models/table/i-table';
 import { AuthorizationService } from 'src/app/shared/services/authorization/authorization.service';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
 import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
 import { ModalService } from 'src/app/shared/services/modal/modal.service';
-import { TabService } from 'src/app/shared/services/tab/tab.service';
 import { TableFilterService } from 'src/app/shared/services/table-filter/table-filter.service';
 import { TableService } from 'src/app/shared/services/table/table.service';
-import { depotShopCode, tableStockHeader, tableStockId } from '../../config/constant';
+import { depotShopCode, exportStockConfig, importStockConfig, tableStockHeader } from '../../config/constant';
 import { SerializationType } from '../../models/serialization-type/serialization-type.model';
 import { Serialization } from '../../models/serialization/serialization.model';
 import { Stock } from '../../models/stock/stock.model';
 import { StockService } from '../../services/stock/stock.service';
+import { Table } from 'src/app/shared/models/table/table.model';
+import { Line } from 'src/app/shared/models/table/body/line/line.model';
+import { TableauService } from 'src/app/shared/services/table/tableau.service';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { IImport } from 'src/app/shared/models/import/i-import';
+import { IExport } from 'src/app/shared/models/export/i-export';
+import { ExportService } from 'src/app/shared/services/export/export.service';
+import { FileService } from 'src/app/shared/services/file/file.service';
+import { IBase64File } from 'src/app/shared/models/file/i-base64-file';
+import { ImportService } from 'src/app/shared/services/import/import.service';
 
 @Component({
   selector: 'app-stock',
@@ -34,9 +42,6 @@ export class StockComponent implements OnInit, OnDestroy {
   public breadCrumbs: BreadCrumb[] = [];
   private subscription = new Subscription();
   public stockId: string = 'stock-id';
-  public transferId: string = 'transfer-id';
-  public tableId: string = tableStockId;
-  private rows: IRow[] = [];
   public currentPage: number = 0;
   public lastPage: number = 0;
   public nextPage: number = 0;
@@ -58,6 +63,10 @@ export class StockComponent implements OnInit, OnDestroy {
   public authorizationStockAdd: string = authorizations.stock.element.add;
   public authorizationStockTransfer: string = "authorizations.stock.element.transfer";
   public quantity: number = 0;
+  private lines: Line[] = [];
+  public sellForm!: FormGroup;
+  public importConfig: IImport = importStockConfig;
+  public exportConfig: IExport = exportStockConfig;
 
   constructor(
     private tableService: TableService,
@@ -69,8 +78,12 @@ export class StockComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private localStorageService: LocalStorageService,
     private tableFilterService: TableFilterService,
-    private tabService: TabService,
     private authorizationService: AuthorizationService,
+    private tableauService: TableauService,
+    private notificationService: NotificationService,
+    private exportService: ExportService,
+    private fileService: FileService,
+    private importService: ImportService
   ) {
     this.addHeaderContent();
     this.createForm();
@@ -82,9 +95,12 @@ export class StockComponent implements OnInit, OnDestroy {
     this.getStocks();
     this.countStock();
     this.getShopFilter();
-    this.getProductSerialization();
+    this.getExpandedId();
     this.getFilterValue();
     this.cancel();
+    this.getFileModel();
+    this.getFileValid();
+    this.confirmImport();
   }
 
   ngOnDestroy(): void {
@@ -107,8 +123,7 @@ export class StockComponent implements OnInit, OnDestroy {
 
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
-    this.userData = JSON.parse(this.helperService.decrypt(data));  
-    console.log(this.userData);  
+    this.userData = JSON.parse(this.helperService.decrypt(data));
     this.shopFilter = ''
     if (this.userData.role.role_key != ADMIN) {
       this.shopFilter = this.userData.shops[0].shop_uuid;
@@ -135,6 +150,15 @@ export class StockComponent implements OnInit, OnDestroy {
     quantity: ['', Validators.required],
     serializations: this.formBuilder.array([])
    });
+
+   this.sellForm = this.formBuilder.group({
+    user: ['', Validators.required],
+    shop: ['', Validators.required],
+    product: ['', Validators.required],
+    serialization: ['', Validators.required],
+    price: ['', Validators.required],
+    quantity: [1, Validators.required],
+   })
   }
 
   clearForm() {
@@ -305,31 +329,36 @@ export class StockComponent implements OnInit, OnDestroy {
   }
 
   getStockresponse(response: ApiResponse) {
-    let table: ITable = {
-      id: this.tableId,
+    this.lines = [];
+    let table: Table = {
+      id: this.stockId,
       header: tableStockHeader,
-      body: null
+      body: {
+        bodyId: 'product-table-body',
+        line: []
+      },
+      action: {
+        isParent: false,
+        isChild: false,
+        delete: false,
+        edit: false
+      }
     }
     if (response.status == responseStatus.success) {
-      this.rows = [];
       this.stocks = response.data.items;
-      this.stocks.forEach((stock: Stock) =>  {
-        let row: IRow = this.stockService.addTableRowValue(stock);
-        this.rows.push(row);
-      })
-      
-      let cells: ICell = {
-        cellValue: this.rows,
-        paginate: true
-      }
-      table.body = cells;
-      this.tableService.setTableValue(table);
+      this.stocks.forEach((stock: Stock, i: number) =>  {
+        let line: Line = this.stockService.getTableStock(stock);
+        line.column[6] = this.addLineAction(line, stock?.shop?.shop_uuid as string, stock.product?.product_uuid as string);
+        this.lines.push(line);
+      });
       this.currentPage = response.data.currentPage;
       this.lastPage = this.currentPage == 1 ? 0 : this.currentPage - 1;
       this.nextPage = response.data.totalPages == this.currentPage ? this.currentPage : this.currentPage + 1;
       this.totalPages = response.data.totalPages;
       this.totalItems = response.data.totalItems;
     }
+    table.body.line = this.lines;
+    this.tableauService.setTable(table);
   }
 
   getProductSerialization() {
@@ -353,10 +382,25 @@ export class StockComponent implements OnInit, OnDestroy {
     )
   }
 
+  getExpandedId() {
+    this.subscription.add(
+      this.tableauService.getExpandedId().pipe(
+        filter((id: string) => id != ''),
+        switchMap((id: string) => {
+          const stock = this.stocks.filter(x => x.stock_uuid == id);
+          const productUuid = stock[0]?.product?.product_uuid as string;
+          const line = this.lines.filter(x => x.lineId == id)[0];
+          const shop = line.column[4].content[0].key.split('/')[1];
+          return this.stockService.getProductSerialization(productUuid, shop);
+        })
+      ).subscribe((response: ApiResponse) => this.getProductSerializationResponse(response))
+    );
+  }
+
   getProductSerializationResponse(response: ApiResponse) {
     if (response.status == responseStatus.success) {
       const serializationGroup: Serialization[][] = response.data;
-      let serialization: any[] = [] 
+      let serialization: any[] = [];
       for (let index = 0; index < serializationGroup.length; index++) {
         const serializations = serializationGroup[index];
         const value = serializations.map((_serialization: Serialization) => {
@@ -364,25 +408,31 @@ export class StockComponent implements OnInit, OnDestroy {
         });
         serialization.push({
           id: serializations[0].group_id,
-          value: value
+          value: value,
+          shop: serializations[0]?.shop_uuid,
+          product: serializations[0]?.product_uuid,
         })
       }
-      
       this.serializationValue(serialization);
     }
   }
 
   serializationValue(values: any[]) {
-    let rows: IRow[] = []
+    let lines: Line[] = [];
     values.forEach((value: any) => {
-      const row = this.stockService.addTableRowSerializationValue(value);
-      rows.push(row)
+      let line: Line = this.stockService.addTableRowSerializationValue(value);
+      line.column[6] = this.addLineAction(line, value['shop'], value['product'], value['id']);
+      lines.push(line);
     })
-    let cells: ICell = {
-      cellValue: rows,
-      paginate: false
-    };
-    this.tableService.setExpandedValue(cells)
+    this.tableauService.setExpandedLineValues(lines);
+  }
+
+  addLineAction(line: Line, shop: string, product: string, serialization: string | null = null) {
+    let columnAction = line.column[6];
+    if (columnAction.content[0].type == 'button') {
+      columnAction.content[0].action = () => {this.openSellModal(shop, product, serialization);}
+    }
+    return columnAction;
   }
 
   getShopFilter() {
@@ -464,7 +514,7 @@ export class StockComponent implements OnInit, OnDestroy {
       this.tableFilterService.filterFormValue$.pipe(
         filter((filter: ITableFilterSearchValue|null) => filter != null && filter?.id == 'stock-filter'),
         switchMap((filter: ITableFilterSearchValue|null) => {
-          this.rows = [];
+          this.lines = [];
           this.params['p'] = 0;
           this.params = { ...this.params, ... filter?.value };
           
@@ -518,5 +568,101 @@ export class StockComponent implements OnInit, OnDestroy {
         queryParams: qParams,
         queryParamsHandling: ''
     });
+  }
+
+  openSellModal(shop: string, product: string, serialization: string | null = null) {
+    this.sellForm.patchValue(
+      {
+        user: this.userData.user_uuid,
+        shop: shop,
+        product: product,
+        serialization: serialization,
+        quantity: 1
+      }
+    )
+    this.openModal('sell');
+  }
+
+  sellProduct() {
+    this.subscription.add(
+      this.stockService.saleProductInStock(this.sellForm.value).subscribe((response: ApiResponse) => {
+        this.closeModal('sell');
+        this.showNotification('success', response.notification);
+        this.getStocks(this.currentPage);
+      })
+    );
+  }
+
+  inputIsDisabled(value: any): boolean {
+    return value || value != null ? true : false;
+  }
+
+  showNotification(type: string, message: string) {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
+  }
+
+  getFileModel(): void {
+    this.subscription.add(
+      this.exportService.getIsExportValue().pipe(
+        filter((value) => value.id == 'stock-export' && value.status),
+        switchMap((value) => this.stockService.getFileModel())
+      ).subscribe((response: ApiResponse) => this.downloadFile(response.data, 'stock'))
+    );
+  }
+
+  downloadFile(file: string, fileName: string): void {
+    const byteCharacters = window.atob(file);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    let blob = new Blob([byteArray], { type: 'xlsx/xls' });
+
+    let link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = fileName + '.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  private file: any;
+  getFileValid(): void {
+    this.subscription.add(
+      this.fileService.base64File$.pipe(
+        filter((base64: IBase64File) => base64.id == 'stock-import' && base64.file != null)
+      ).subscribe((base64: IBase64File) => {
+        this.importService.setConfirmImportData({
+          id: 'import',
+          title: 'IMPORTER LES STOCK D\'ARTICLES',
+          text: 'Vous êtes sur le point d\'importer un fichier EXCEL contenant les stocks d\'articles.'
+        })
+        this.file = base64.file;
+      })
+    )
+  }
+
+  confirmImport(): void {
+    this.subscription.add(
+      this.importService.getConfirmImport().pipe(
+        filter(value => value.id == 'import' && value.status && this.file != ''),
+        switchMap(value => {
+          return this.stockService.importStock(this.file)
+        })
+      ).subscribe((response: ApiResponse) => {
+        this.modalService.hideModal('import');
+        const result = {
+          id: 'import-result',
+          fileName: 'erreur-stock',
+          ... response.data
+        }
+        this.importService.setResult(result);
+        this.getStocks();
+      })
+    )
   }
 }
