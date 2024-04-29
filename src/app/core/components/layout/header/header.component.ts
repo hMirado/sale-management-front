@@ -30,7 +30,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.layoutService.logout().subscribe(response => {
         if (response.status === responseStatus.success) {
           this.localStorageService.clearLocalStorage();
-          this.router.navigate(['authentication']);
+          location.href = '/authentication'
+          //this.router.navigate(['authentication']);
         }
       })
     )

@@ -58,12 +58,13 @@ export class ShopFormComponent implements OnInit, OnDestroy {
     return this.shopFormGroup.get('shops') as FormArray;
   }
 
-  addShop(id: number, name: string, isChecked: boolean, location: string) {
+  addShop(id: number, name: string, isChecked: boolean = false, location: string, isDefault: boolean = false) {
     const field = this.formBuilder.group({
       id: [id, Validators.required],
       isChecked: isChecked,
       name: [name, Validators.required],
       location: [location, Validators.required],
+      isDefault: isDefault
     });
     this.shopField.push(field);
   }
@@ -83,7 +84,8 @@ export class ShopFormComponent implements OnInit, OnDestroy {
           this.shopFormGroup.addControl('shops', this.formBuilder.array([]));
           const userShopId = this.user.shops?.map((shop: Shop) => shop.shop_id);
           this.shops.forEach((shop: Shop) => {
-            this.addShop(shop.shop_id, shop.shop_name, userShopId ? userShopId.includes(shop.shop_id) : false, shop.shop_location + ' ' + (shop.shop_box || ''));
+            const isDep = shop.shop_code === 'DEP';
+            this.addShop(shop.shop_id, shop.shop_name, ((userShopId && userShopId.includes(shop.shop_id)) || isDep) ? true : false, shop.shop_location + ' ' + (shop.shop_box || ''), isDep);
           });
         } else {
           this.isAdmin = false;

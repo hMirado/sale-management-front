@@ -226,13 +226,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     
     const lastWeekDate = new Date(
       date.getFullYear(),
-      date.getMonth() + 1,
+      date.getMonth(),
       date.getDate() - 7,
     );
     const lastDay = ('0' + lastWeekDate.getDate()).slice(-2)
-    const lastMonth = ('0' + lastWeekDate.getMonth()).slice(-2)
+    const lastMonth = ('0' + (lastWeekDate.getMonth() + 1)).slice(-2)
     const previous = date.getFullYear() + '-' + lastMonth + '-' + lastDay;
-    
+
     return [now, previous];
   }
 
