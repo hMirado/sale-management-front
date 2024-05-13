@@ -312,8 +312,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   openSerializationModal(productUuid: string): void {
-    console.log(productUuid);
-    
     const transferProduct = this.transferProduct.filter((product: TransfertProduct) => product.product_uuid == productUuid)[0]
     this.transferService.setSelectedProduct(transferProduct);
     this.openModal('serialization');

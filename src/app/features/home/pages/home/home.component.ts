@@ -10,7 +10,7 @@ import { ModalService } from 'src/app/shared/services/modal/modal.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Router } from '@angular/router';
 import { Authorization } from 'src/app/shared/models/authorization/authorization.model';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Shop } from 'src/app/shared/models/shop/shop.model';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { ScaleType } from '@swimlane/ngx-charts';
@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public breadCrumbs: BreadCrumb[] = [];
   private subscription = new Subscription();
   private userData: any = {};
-  public shopIsOpen: boolean = false;
+  public sessionIsStart: boolean = false;
   public sessionId: string = 'session-id';
 
   public chartView: any = [1500, 500];
@@ -67,6 +67,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private authorizationService: AuthorizationService
   ) { 
     this.createForm();
+    this.initSessionForm();
   }
 
   ngOnInit(): void {
@@ -99,10 +100,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
     this.userData = JSON.parse(this.helperService.decrypt(data));
-    console.log(this.userData);
-    
     this.getAction(this.userData.role.authorizations);
-    this.getShopIsOpen();
   }
 
   getAction(_authorizations: []) {
@@ -118,7 +116,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
 
-  getShopIsOpen() {
+  /*getShopIsOpen() {
     this.subscription.add(
       this.homeService.getShopByUuid(this.userData.shops[0].shop_uuid).subscribe((response: ApiResponse) => {
         const isOpen = response.data.is_opened;
@@ -134,7 +132,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.localStorageService.setLocalStorage('shop', this.userData.shops[0].shop_uuid);
   }
 
-  /*openShop() {
+  openShop() {
     this.subscription.add(
       this.homeService.openShop(this.userData.shops[0].shop_uuid, true).subscribe((response: ApiResponse) => {
         this.shopIsOpenButton();
@@ -303,24 +301,41 @@ export class HomeComponent implements OnInit, OnDestroy {
   initSessionForm(): void {
     this.sessionForm = this.formBuilder.group({
       cash_float: 0,
-      shop_uuid: this.userData.shops[0].shop_uuid
+      shop: ['', Validators.required]
     });
   }
+
+  public userShops: Shop[] = [];
+  getUserShop() {
+    this.subscription.add(
+      this.homeService.getUserShops(this.userData.user_uuid).subscribe((response: ApiResponse) => {
+        this.userShops = response.data;
+      })
+    )
+  }
+
   openModalStartSession() {
     this.getUserShop();
     this.openModal(this.sessionId)
   }
 
+  public formError: boolean = false;
   startSession() {
-
+    if (!this.sessionForm.valid) {
+      this.formError = true;
+    } else {
+      this.formError = false;
+      const value = this.sessionForm.value;
+      this.subscription.add(
+        this.homeService.startSession(value.cash_float, value.shop).subscribe((response: ApiResponse) => {
+          this.sessionIsStart = true
+          this.closeModal(this.sessionId);
+        })
+      )
+    }
   }
 
-  getUserShop() {
-    this.subscription.add(
-      this.homeService.getUserShops(this.userData.user_uuid).subscribe((response: ApiResponse) => {
-        console.log(response);
-        
-      })
-    )
+  endSession() {
+    
   }
 }

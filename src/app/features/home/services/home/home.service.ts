@@ -59,4 +59,10 @@ export class HomeService {
     const url = `${environment['store-service']}/sale/total`;
     return this.apiService.doGet(url); 
   }
+
+  startSession(cash_float: number, shop: string): Observable<ApiResponse> {
+    const data = {cash_float, shop};
+    const url = `${environment['store-service']}/session`;
+    return this.apiService.doPost(url, data);
+  }
 }
