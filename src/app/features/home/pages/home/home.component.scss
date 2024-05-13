@@ -33,3 +33,26 @@
   width: 100% !important;
   display: flex !important;
 }
+
+.box-operation {
+  width: 100px;
+  height: 80px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.operation-primary:hover {
+  color: #0030ff!important;
+}
+.operation-danger:hover {
+  color: #dc3545!important;
+}
+
+.operation-success:hover {
+  color: #28a745!important;
+}

@@ -43,6 +43,11 @@ export class HomeService {
     return this.apiService.doGet(url);
   }
 
+  getUserShops(userUuid: string): Observable<ApiResponse> {
+    const url = `${environment['store-service']}/shop/user/${userUuid}`;
+    return this.apiService.doGet(url);
+  }
+
   getBarChartData(value: any): Observable<ApiResponse> {
     const params: any = {};
     if (value['perBy'] && value['perBy'] != '') params['perBy'] = value['perBy'];

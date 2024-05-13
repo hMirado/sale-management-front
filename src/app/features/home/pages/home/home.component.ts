@@ -24,22 +24,10 @@ import { AuthorizationService } from 'src/app/shared/services/authorization/auth
 export class HomeComponent implements OnInit, OnDestroy {
   public title: string = 'Tableau de bord';
   public breadCrumbs: BreadCrumb[] = [];
-  public buttonMakeSale: Button = {
-    id: 'sale',
-    label: 'Faire une vente',
-    color: 'secondary'
-  };
-  public buttonOpenShop: Button = {
-    id: 'open',
-    label: 'Ouvrir un shop',
-    color: 'primary'
-  };
   private subscription = new Subscription();
   private userData: any = {};
   public shopIsOpen: boolean = false;
-  public openShopId: string = 'open-shop';
-  public closeShopId: string = 'close-shop';
-  public singleShop: boolean = true;
+  public sessionId: string = 'session-id';
 
   public chartView: any = [1500, 500];
   public chartData: any[] = [];
@@ -84,7 +72,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getUserData();
     this.addHeaderContent();
-    this.configButton();
     this.getSaleGraphData();
     this.getShops();
     this.getFormValue();
@@ -109,26 +96,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     ]
   }
 
-  configButton() {
-    this.buttonOpenShop.action = this.openShopModal;
-  }
-
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
     this.userData = JSON.parse(this.helperService.decrypt(data));
+    console.log(this.userData);
+    
     this.getAction(this.userData.role.authorizations);
+    this.getShopIsOpen();
   }
 
   getAction(_authorizations: []) {
     const isSingle = _authorizations.filter((authorization: Authorization) => authorization.authorization_key == authorizations.shop.element.singleAction)[0];
-    this.singleShop = isSingle ? true : false;
-    if (this.singleShop) {
-      this.getShopIsOpen();
-    }
-    else {
-      this.buttonMakeSale.color = 'success';
-      this.buttonMakeSale.action = this.openShopModal;
-    }
   }
 
   openModal(id: string) {
@@ -138,42 +116,25 @@ export class HomeComponent implements OnInit, OnDestroy {
   closeModal(id: string) {
     this.modalService.hideModal(id)
   }
-  
-  openShopModal = () => {
-    this.openModal(this.openShopId)
-  }
+
 
   getShopIsOpen() {
     this.subscription.add(
       this.homeService.getShopByUuid(this.userData.shops[0].shop_uuid).subscribe((response: ApiResponse) => {
         const isOpen = response.data.is_opened;
         if (isOpen) this.shopIsOpenButton();
-        else this.shopIsCloseButton();
+        //else this.shopIsCloseButton();
       })
     );
   }
 
   shopIsOpenButton() {
     this.shopIsOpen = true;
-    this.buttonOpenShop.action = this.closeShop;
-    this.buttonOpenShop.color = 'danger';
-    this.buttonOpenShop.label = 'Fermer shop'
-    this.buttonMakeSale.color = 'success';
-    this.buttonMakeSale.action = this.makeSale;
+    //this.buttonOpenShop.action = this.closeShop;
     this.localStorageService.setLocalStorage('shop', this.userData.shops[0].shop_uuid);
   }
 
-  shopIsCloseButton() {
-    this.shopIsOpen = false;
-    this.buttonOpenShop.action = this.openShopModal;
-    this.buttonOpenShop.color = 'primary';
-    this.buttonOpenShop.label = 'Ouvrir un shop'
-    this.buttonMakeSale.color = 'secondary';
-    this.buttonMakeSale.action = () => {};
-    this.localStorageService.removeLocalStorage('shop');
-  }
-
-  openShop() {
+  /*openShop() {
     this.subscription.add(
       this.homeService.openShop(this.userData.shops[0].shop_uuid, true).subscribe((response: ApiResponse) => {
         this.shopIsOpenButton();
@@ -188,7 +149,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.shopIsCloseButton();
       })
     );
-  }
+  }*/
 
   makeSale = () => {
     this.router.navigate(['sale']);
@@ -196,10 +157,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getSelectedShop(event: any) {
     this.localStorageService.setLocalStorage('shop', event.shop_uuid);
-    this.closeModal(this.openShopId);
+    this.closeModal(this.sessionId);
     this.router.navigate(['sale']);
   }
 
+  /**
+   * @description: START CHART FUNCTION
+   */
   getSaleGraphData(): void {
     const params = {
       groupByDate: "D",
@@ -329,5 +293,34 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getAuthorization(key: string) {
     return this.authorizationService.getAuthorization(key)
+  }
+
+  /**
+   * @description: SESSION FUNCTION
+   */
+
+  public sessionForm !: FormGroup;
+  initSessionForm(): void {
+    this.sessionForm = this.formBuilder.group({
+      cash_float: 0,
+      shop_uuid: this.userData.shops[0].shop_uuid
+    });
+  }
+  openModalStartSession() {
+    this.getUserShop();
+    this.openModal(this.sessionId)
+  }
+
+  startSession() {
+
+  }
+
+  getUserShop() {
+    this.subscription.add(
+      this.homeService.getUserShops(this.userData.user_uuid).subscribe((response: ApiResponse) => {
+        console.log(response);
+        
+      })
+    )
   }
 }
