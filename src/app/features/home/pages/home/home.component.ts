@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, debounceTime, filter, switchMap } from 'rxjs';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
-import { Button } from 'src/app/shared/models/button/button.model';
 import { HomeService } from '../../services/home/home.service';
 import { authorizations, userInfo } from 'src/app/shared/config/constant';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
@@ -65,7 +64,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private notificationService: NotificationService,
     private authorizationService: AuthorizationService
-  ) { 
+  ) {
     this.createForm();
     this.initSessionForm();
   }
@@ -78,6 +77,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.getFormValue();
     this.getSaleBarChartData();
     this.getTotal();
+    this.userSession();
   }
 
   ngOnDestroy(): void {
@@ -115,47 +115,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.modalService.hideModal(id)
   }
 
-
-  /*getShopIsOpen() {
-    this.subscription.add(
-      this.homeService.getShopByUuid(this.userData.shops[0].shop_uuid).subscribe((response: ApiResponse) => {
-        const isOpen = response.data.is_opened;
-        if (isOpen) this.shopIsOpenButton();
-        //else this.shopIsCloseButton();
-      })
-    );
-  }
-
-  shopIsOpenButton() {
-    this.shopIsOpen = true;
-    //this.buttonOpenShop.action = this.closeShop;
-    this.localStorageService.setLocalStorage('shop', this.userData.shops[0].shop_uuid);
-  }
-
-  openShop() {
-    this.subscription.add(
-      this.homeService.openShop(this.userData.shops[0].shop_uuid, true).subscribe((response: ApiResponse) => {
-        this.shopIsOpenButton();
-        this.closeModal(this.openShopId);
-      })
-    );
-  }
-
-  closeShop = () => {
-    this.subscription.add(
-      this.homeService.openShop(this.userData.shops[0].shop_uuid, false).subscribe((response: ApiResponse) => {
-        this.shopIsCloseButton();
-      })
-    );
-  }*/
-
   makeSale = () => {
-    this.router.navigate(['sale']);
-  }
-
-  getSelectedShop(event: any) {
-    this.localStorageService.setLocalStorage('shop', event.shop_uuid);
-    this.closeModal(this.sessionId);
     this.router.navigate(['sale']);
   }
 
@@ -185,7 +145,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const dayNow = ('0' + date.getDate()).slice(-2)
     const monthNow = ('0' + (date.getMonth() + 1)).slice(-2)
     const now = date.getFullYear() + '-' + monthNow + '-' + dayNow;
-    
+
     const lastWeekDate = new Date(
       date.getFullYear(),
       date.getMonth(),
@@ -230,7 +190,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.triggerSaleChartForm(false);
           if (new Date(value['startDate']) > new Date(value['endDate'])) {
             this.showNotification(
-              "danger", 
+              "danger",
               "La date de début doit-être inferieur à la date de fin"
             )
             return [];
@@ -306,6 +266,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   public userShops: Shop[] = [];
+  public formError: boolean = false;
   getUserShop() {
     this.subscription.add(
       this.homeService.getUserShops(this.userData.user_uuid).subscribe((response: ApiResponse) => {
@@ -319,7 +280,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.openModal(this.sessionId)
   }
 
-  public formError: boolean = false;
+  sessionAction() {
+    if(this.sessionIsStart) this.closeSession();
+    else this.startSession();
+  }
+
   startSession() {
     if (!this.sessionForm.valid) {
       this.formError = true;
@@ -330,12 +295,40 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.homeService.startSession(value.cash_float, value.shop).subscribe((response: ApiResponse) => {
           this.sessionIsStart = true
           this.closeModal(this.sessionId);
+          this.router.navigate(['sale']);
         })
       )
     }
   }
 
-  endSession() {
-    
+  userSession() {
+    this.homeService.userSession().subscribe(response => this.sessionIsStart = response.data ? true : false)
+  }
+
+  closeSession(): void {
+    this.homeService.userSession().pipe(
+      switchMap(response => {
+        if (response.data) {
+          return this.homeService.endSession(this.sessionForm.value.cash_float, response.data.session_uuid)
+        } else {
+          this.showNotification(
+            "success",
+            response.notification
+          )
+          return [];
+        }
+      })
+    ).subscribe((response: ApiResponse) => {
+      this.sessionIsStart = false
+      this.closeModal(this.sessionId);
+      this.showNotification(
+        "success",
+        response.notification
+      )
+    })
+  }
+
+  goToSalePage() {
+    this.router.navigate(['sale']);
   }
 }
