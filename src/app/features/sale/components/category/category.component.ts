@@ -11,7 +11,7 @@ import { SaleService } from '../../services/sale/sale.service';
 export class CategoryComponent implements OnInit, OnDestroy {
   public categories?: Category[] = [];
   private subscription = new Subscription();
-  
+
   constructor(
     private saleService: SaleService,
     ) { }
@@ -27,7 +27,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   getCategories() {
     this.subscription.add(
       this.saleService.categories$.subscribe(categories => {
-        this.categories = categories
+        if (categories.length > 0) this.categories = categories;
       })
     )
   }

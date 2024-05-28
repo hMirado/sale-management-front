@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { tokenKey, userInfo } from 'src/app/shared/config/constant';
@@ -38,23 +38,29 @@ export class SaleComponent implements OnInit, OnDestroy {
   getUserData() {
     const data = this.localStorageService.getLocalStorage(userInfo);
     this.userData = JSON.parse(this.helperService.decrypt(data));
-    this.shopUuid = this.localStorageService.getLocalStorage('shop')
   }
 
   getProducts() {
     this.subscription.add(
-      this.saleService.getCategorieAndProduct(this.shopUuid).subscribe((response: ApiResponse) => {
+      this.saleService.userSession().pipe(
+        switchMap((response: ApiResponse) => {
+          if (response.data) {
+            this.shopUuid = response.data.shop.shop_uuid;
+            return this.saleService.getCategorieAndProduct(this.shopUuid)
+          } else {
+            return []
+          }
+        })
+      ).subscribe((response: ApiResponse) => {
         if (response.status == responseStatus.success) {
-          console.log('product', response.data.products);
-          
           this.saleService.setCategories(response.data.categories)
-          this.saleService.setProducts(response.data.products)
+          this.saleService.setProducts(response.data.products.items)
         }
       })
     );
   }
 
   remove(uuid: string) {
-    
+
   }
 }

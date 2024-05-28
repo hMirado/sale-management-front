@@ -13,5 +13,7 @@ export class Product {
   updatedAt?: Date;
   fk_category_id!: number;
   category!: Category;
-  stock?: Stock;
+  stocks?: Stock[];
+  stock?: number;
+  price?: number
 }

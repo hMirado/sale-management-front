@@ -16,15 +16,15 @@ export class ProductComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
   }
 
   getStockStatus() {
-    return (this.product.stock && this.product.stock.quantity > 0) ? true : false;
+    return (this.product.stock && this.product.stock > 0) ? true : false;
   }
 
   getStockText() {
-    return (this.product.stock && this.product.stock.quantity > 0) ? 'En stock' : 'Rupture';
+    return (this.product.stock && this.product.stock > 0) ? 'En stock' : 'Rupture';
   }
 
   addProduct(product: Product) {

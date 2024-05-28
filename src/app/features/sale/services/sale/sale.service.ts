@@ -24,7 +24,7 @@ export class SaleService {
 
   getCategorieAndProduct(shopUuid: string, search: string = '', category: string = ''): Observable<ApiResponse> {
     const params = {
-      paginate: 0,
+      paginate: 1,
       search: search,
       category: category
     }
@@ -266,5 +266,10 @@ export class SaleService {
         }
       ]
     }
+  }
+
+  userSession() {
+    const url = `${environment['store-service']}/session/user`;
+    return this.apiService.doGet(url);
   }
 }

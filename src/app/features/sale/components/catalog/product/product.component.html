@@ -9,15 +9,15 @@ align-content: center;">
   <div>
     <span class="category">{{ product.category.label }}</span>
     <p class="product-title">
-      {{ product.label }} 
+      {{ product.label }}
       <span class="product-code">({{ product.code }})</span>
     </p>
     <div class="detail">
       <div>
-        {{ product.ttc_price | number:'1.0':'fr' }} 
+        {{ product.price | number:'1.0':'fr' }}
         <span class="currency">AR</span>
       </div>
-      
+
       <div class="add-to-cart" *ngIf="getStockStatus()">
         <button *ngIf="!isAdded else notAdded" class="btn btn-add-to-cart btn-xs" (click)="addProduct(product)"><i class="fa fa-shopping-basket"></i> Ajouter</button>
         <ng-template #notAdded>
