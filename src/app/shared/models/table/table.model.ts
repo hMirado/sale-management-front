@@ -6,6 +6,8 @@ export class Table {
   header: Header[];
   body: Body;
   action: {
+    isParent: boolean;
+    isChild: boolean;
     delete: boolean;
     edit: boolean;
   }

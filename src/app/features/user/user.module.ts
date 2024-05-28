@@ -12,6 +12,7 @@ import { ShopFormComponent } from './components/shop-form/shop-form.component';
 import { EditComponent } from './pages/edit/edit.component';
 import { ShopFormComponent as ShopFormEditComponent } from './components/edit/shop-form/shop-form.component';
 import { ProfilComponent } from './components/edit/profil/profil.component';
+import { CardComponent } from './components/card/card.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { ProfilComponent } from './components/edit/profil/profil.component';
     ShopFormComponent,
     EditComponent,
     ShopFormEditComponent,
-    ProfilComponent
+    ProfilComponent,
+    CardComponent
   ],
   imports: [
     CommonModule,

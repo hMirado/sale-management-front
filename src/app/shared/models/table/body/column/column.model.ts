@@ -26,7 +26,7 @@ export class Column {
     type: 'button';
     key: string;
     value: string;
-    function: Function;
+    action: Function;
     disabled: boolean;
     icon?: Icon;
   } | {
@@ -59,5 +59,5 @@ export class Tooltip {
 export class Icon {
   tooltip: Tooltip;
   icon: string;
-  bg: 'text-success' | 'text-danger' | 'text-warning' | 'text-default';
+  bg: 'text-success' | 'text-danger' | 'text-warning' | 'text-default' | 'text-secondary';
 }

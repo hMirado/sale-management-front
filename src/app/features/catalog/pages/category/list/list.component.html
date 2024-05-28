@@ -9,8 +9,14 @@
     <div class="row mb-1">
       <div class="col-2">
         <button class="btn btn-block btn-outline-primary btn-sm" (click)="openModal()">
-          <i class="fas fa-plus"></i> Ajouter catégorie(s)
+          <i class="fas fa-plus"></i> Ajouter
         </button>
+      </div>
+      <div class="col-2">
+        <app-import id="category" [config]="importConfig"></app-import>
+      </div>
+      <div class="col-2">
+        <app-export id="category-export" [config]="exportConfig"></app-export>
       </div>
     </div> <div class="mb-2">
       <app-table-filter [id]="'category-filter'"></app-table-filter>
@@ -77,4 +83,36 @@
     <button *ngIf="categoryForm.controls.length < 5" class="btn btn-sm btn-outline-secondary" (click)="addLabel()">Ajouter ligne</button>
   </div>
   <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="saveCategory()">Enregistrer</button>
+</app-modal>
+<app-modal [id]="'import'" size="medium">
+  <div head>
+    <h4 class="modal-title">
+      IMPORTER LES CATEGORIES D'ARTICLES
+    </h4>
+  </div>
+  <div body class="text-center">
+    <span>Vous êtes sur le point d'importer un fichier EXCEL contenant les catégories d'articles.</span>
+    <br>
+    <span>Confirmez-vous cette action ?</span>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="confirmImport()">Confirmer</button>
+</app-modal>
+<app-modal [id]="'reponse'" size="small" [singleButton]="true">
+  <div head>
+    <h4 class="modal-title">
+      RAPPORT D'IMPORTATION
+    </h4>
+  </div>
+  <div body>
+    <div class="list-resume-import">
+      <ul>
+        <li>Total des catégories ajoutées: {{ importResponse.success }}</li>
+        <li>
+          <span class="text-left">Total des erreurs: {{ importResponse.error }}</span>
+          <span class="text-right" *ngIf="importResponse.error > 0"><a (click)="downloadFile(importResponse.fileName, 'erreur-catalogue')" class="link-file">Télécharger fichier erreur.</a></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="closeModal('reponse')">Fermer</button>
 </app-modal>

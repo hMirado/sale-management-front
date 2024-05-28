@@ -47,7 +47,9 @@ export class CreateComponent implements OnInit, OnDestroy {
       bodyId: 'product-table-body',
       line: []
     },
-    action: {
+    action: {        
+      isParent: true,
+      isChild: false,
       delete: true,
       edit: false
     }
@@ -240,8 +242,6 @@ export class CreateComponent implements OnInit, OnDestroy {
         this.selectedProducts = value['products'];
         this.closeModal(this.productId);
         this.selectedProducts.forEach((product: Product) => {
-
-          this.transferService.getTableProduct(product)
           if (this.line.length > 0 && this.line.find((value: Line) => value.lineId == product.product_uuid) ) {
             return;
           }
@@ -255,7 +255,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           let line: Line = this.transferService.getTableProduct(product);
           const isButton = line.column[2].content[0].type;
           if (product.is_serializable && isButton == 'button') {
-            line.column[2].content[0].function =  () => {this.openSerializationModal(product.product_uuid)}
+            line.column[2].content[0].action = () => {this.openSerializationModal(product.product_uuid)}
           }
           this.line.push(line);
         });
@@ -406,41 +406,5 @@ export class CreateComponent implements OnInit, OnDestroy {
 
   updateSerialNumberIcon() {
     
-  }
-
-  getTableInputValue() {
-    this.subscription.add(
-      this.tableService.getTableInputValue().subscribe((value: any) => {    
-        if (value['tableId'] == 'product-table') {
-          const line = this.productTable.body.line.filter((line: Line) => line.lineId == value['line'])[0];
-          const indexes = value['indexes'].split('-');
-
-          console.log(value);
-          
-          // Ajout icon check line 1 and column 2
-          /*let column = line.column[2];
-          column.content[1] = 
-            {
-              type: 'icon',
-              key: "string",
-              icon: 'fas fa-check-circle',
-              bg: 'text-success',
-              tooltip: {
-                hasTooltip: true,
-                text: 'Valide',
-                flow: 'top'
-              }
-            };
-          
-          const _value = {
-            tableId: value['tableId'],
-            line: value['line'],
-            index: 1,
-            columns: column
-          }
-          this.tableService.setColumn(_value);*/
-        }
-      })
-    );
   }
 }

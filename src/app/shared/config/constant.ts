@@ -76,7 +76,7 @@ export const authorizations = {
     page: 'PAGE_SHOP',
     element: {
       singleAction: 'PAGE_ELEMENT_SINGLE_SHOP',
-      multipleAction: 'PAGE_ELEMENT_OPEN_MULTIPLE_SHOP'
+      multipleAction: "PAGE_ELEMENT_MULTIPLE_SHOP"
     }
   }
 }

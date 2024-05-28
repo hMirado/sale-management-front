@@ -9,13 +9,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
-import { TransfertComponent } from './components/transfert/transfert.component';
 
 
 @NgModule({
   declarations: [
     StockComponent,
-    TransfertComponent,
   ],
   imports: [
     CommonModule,

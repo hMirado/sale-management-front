@@ -12,7 +12,7 @@
             <div class="custom-control custom-checkbox">
               <input class="custom-control-input custom-control-input-primary custom-control-input-outline"
                 type="checkbox" id="checkbox-{{i}}" name="isChecked" formControlName="isChecked"
-                [attr.disabled]="!isEditable ? '' : null">
+                [attr.disabled]="!isEditable || shop.value['isDefault'] ? '' : null">
               <label for="checkbox-{{i}}" class="custom-control-label">
                 <div class="info-box">
                   <div class="info-box-content">

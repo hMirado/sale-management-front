@@ -1,34 +1,192 @@
 <app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
 <section class="content">
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-12 col-lg-4">
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Que voulez-vous faire ?</h3>
-          </div>
-          <div class="card-body container p-2">
-            <div class="item">
-              <app-button id="sale" [disabled]="!shopIsOpen && singleShop" [button]="buttonMakeSale"></app-button>
+    <div class="card">
+      <div class="card-header border-0 ui-sortable-handle">
+        <h3 class="card-title">
+          <i class="fas fa-ellipsis-h mr-1"></i>
+          Opérations
+        </h3>
+      </div>
+      <div class="card-body">
+        <a class="btn btn-app box-operation operation-success" [class.disabled]="sessionIsStart" (click)="openModalStartSession()">
+          <i class="fas fa-shopping-basket fa-3x"></i>Ouvrir une session
+        </a>
+        <a class="btn btn-app box-operation operation-danger" [class.disabled]="!sessionIsStart" (click)="openModalStartSession()">
+          <i class="fas fa-shopping-basket fa-3x"></i>Fermer la session
+        </a>
+        <a class="btn btn-app box-operation operation-warning" [class.disabled]="!sessionIsStart" (click)="goToSalePage()">
+          <i class="fas fa-wallet fa-3x"></i>Page de vente
+        </a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+        <h3 class="card-title">
+          <i class="fas fa-chart-line mr-1"></i>
+          Récapitulatif des ventes
+        </h3>
+        <div class="card-tools">
+          <button type="button" class="btn bg-default btn-sm" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <form class="row" [formGroup]="saleChartForm">
+          <div class="col-sm-2">
+            <div class="form-group">
+              <div class="row">
+                <div class="form-group row">
+                  <label for="startDate" class="col-sm-3 col-form-label">Du: </label>
+                  <div class="col-sm-9">
+                    <input type="date" class="form-control form-control-sm" id="startDate" formControlName="startDate" (input)="triggerSaleChartForm()">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="endDate" class="col-sm-3 col-form-label">Au: </label>
+                  <div class="col-sm-9">
+                    <input type="date" class="form-control form-control-sm" id="endDate" formControlName="endDate" (input)="triggerSaleChartForm()">
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="item" *ngIf="singleShop">
-              <app-button id="open" [button]="buttonOpenShop"></app-button>
+          </div>
+          <div class="col-sm-2" *ngIf="getAuthorization(multiShopKey)">
+            <div class="form-group">
+              <label>Shop :</label>
+              <select class="form-control form-control-sm" id="shop" formControlName="shop" (change)="triggerSaleChartForm()">
+                <option value="">Selectionner ici</option>
+                <option *ngFor="let shop of shops" [value]="shop.shop_uuid">{{ getShopName(shop.shop_location, shop.shop_box) }}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+        <div>
+          <ngx-charts-line-chart
+            [legend]="chartLegend"
+            [legendTitle]="legendTitle"
+            [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel"
+            [xAxis]="xAxis"
+            [yAxis]="yAxis"
+            [xAxisLabel]="xAxisLabel"
+            [yAxisLabel]="yAxisLabel"
+            [timeline]="timeline"
+            [results]="chartData"
+            [yAxisTickFormatting]="yAxisTickFormatting"
+          >
+          </ngx-charts-line-chart>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-8 col-md-10">
+        <div class="card">
+          <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+            <h3 class="card-title">
+              <i class="fas fa-chart-bar mr-1"></i>
+              Compartif des ventes
+            </h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="barChartForm">
+              <div class="form-group row">
+                <label for="" class="col-sm-1 col-form-label">Par :</label>
+                <div class="col-sm-2">
+                  <select class="form-control" id="perBy" formControlName="perBy" (change)="triggerBarChartForm()">
+                    <option value="" selected>Jour</option>
+                    <option value="month">Mois</option>
+                    <option value="year">Année</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+            <div>
+              <ngx-charts-bar-vertical-2d
+                [results]="barChartData"
+                [xAxis]="xAxis"
+                [yAxis]="yAxis"
+                [legend]="true"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel"
+                [xAxisLabel]="'Shop'"
+                [yAxisLabel]="'Ventes'"
+                [legendTitle]="legendTitle"
+              >
+              </ngx-charts-bar-vertical-2d>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-sm-12 col-lg-8 bg-danger">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates, quaerat praesentium inventore ab minima placeat natus provident ipsam perspiciatis magni at ducimus ut, voluptate voluptatum, doloribus dicta. A, porro impedit.
+      <div class="card col-sm-12 col-4 col-md-2">
+        <div class="info-box mb-3 bg-info">
+          <span class="info-box-icon"><i class="fas fa-money-check"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Total des ventes</span>
+            <span class="info-box-number">{{ totalSale }}</span>
+          </div>
+        </div>
+        <div class="info-box mb-3 bg-danger">
+          <span class="info-box-icon"><i class="fas fa-tag"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Articles vendus</span>
+            <span class="info-box-number">{{ totalQuantity }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
-<app-modal [id]="openShopId" size="small">
+<app-modal [id]="sessionId" size="small">
   <div head>
-    <h4>Séléctionner shop</h4>
+    <h4>Veuilez saisir votre fond de caisse</h4>
   </div>
   <div body>
-    <app-open-shop (formValue)="getSelectedShop($event)"></app-open-shop>
+    <form [formGroup]="sessionForm">
+      <ng-container *ngIf="!sessionIsStart else end">
+        <div class="form-group row">
+          <label for="shop" class="col-sm-5 col-form-label">Shop :</label>
+          <div class="col-sm-7">
+            <select class="form-control form-control-sm" id="shop" formControlName="shop"
+              [ngClass]="{'input-error':
+              (sessionForm.get('shop')?.invalid &&
+              sessionForm.get('shop')?.hasError('required') &&
+              formError)
+              }"
+            >
+              <option value="">Selectionner ici</option>
+              <option *ngFor="let shop of userShops" [value]="shop.shop_uuid">{{ getShopName(shop.shop_location, shop.shop_box) }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="cash_float" class="col-sm-5 col-form-label">Fond de caisse: </label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control form-control-sm" id="cash_float" formControlName="cash_float">
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #end>
+        <div class="form-group row">
+          <label for="cash_float" class="col-sm-5 col-form-label">Ventes : </label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control form-control-sm" id="cash_float" formControlName="cash_float">
+          </div>
+        </div>
+      </ng-template>
+    </form>
   </div>
-  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="openShop()">Ouvrir</button>
+  <ng-container footer>
+    <button *ngIf="!sessionIsStart else endButton" class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="startSession()">
+      Ouvrir une session
+    </button>
+    <ng-template #endButton>
+      <button class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="closeSession()">
+        Fermer session
+      </button>
+    </ng-template>
+  </ng-container>
+
+
 </app-modal>

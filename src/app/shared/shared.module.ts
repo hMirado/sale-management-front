@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { ButtonLeftMenuComponent } from './components/button-left-menu/button-left-menu.component';
 import { BreadCrumbComponent } from './components/bread-crumb/bread-crumb.component';
 import { PageTitleComponent } from './components/page-title/page-title.component';
@@ -7,7 +7,6 @@ import { ContentHeaderComponent } from './components/content-header/content-head
 import { ToDoComponent } from './components/to-do/to-do.component';
 import { ImportComponent } from './components/files/import/import.component';
 import { ExportComponent } from './components/files/export/export.component';
-import { BoxSummaryComponent } from './components/box-summary/box-summary.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TableComponent } from './components/table/table.component';
 import { FilterComponent } from './components/filter/filter.component';
@@ -36,6 +35,15 @@ import { TextComponent } from './components/input/text/text.component';
 import { CheckboxComponent } from './components/input/checkbox/checkbox.component';
 import { ButtonComponent } from './components/button/button.component';
 import { TableauComponent } from './components/tableau/tableau.component';
+import { SmallBoxComponent } from './components/small-box/small-box.component';
+import { ErrorComponent } from './components/files/error/error.component';
+import { ConfirmComponent } from './components/files/confirm/confirm.component';
+import { ResultComponent } from './components/files/result/result.component';
+import { ImageComponent } from './components/image/image.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 @NgModule({
   declarations: [
@@ -46,7 +54,6 @@ import { TableauComponent } from './components/tableau/tableau.component';
     ToDoComponent,
     ImportComponent,
     ExportComponent,
-    BoxSummaryComponent,
     TableComponent,
     FilterComponent,
     CardButtonComponent,
@@ -63,6 +70,11 @@ import { TableauComponent } from './components/tableau/tableau.component';
     CheckboxComponent,
     ButtonComponent,
     TableauComponent,
+    SmallBoxComponent,
+    ErrorComponent,
+    ConfirmComponent,
+    ResultComponent,
+    ImageComponent,
   ],
   imports: [
     CommonModule,
@@ -77,6 +89,10 @@ import { TableauComponent } from './components/tableau/tableau.component';
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
+    NgxChartsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    JsonPipe
   ],
   exports: [
     ButtonLeftMenuComponent,
@@ -110,7 +126,16 @@ import { TableauComponent } from './components/tableau/tableau.component';
     TextComponent,
     CheckboxComponent,
     ButtonComponent,
-    TableauComponent
+    TableauComponent,
+    SmallBoxComponent,
+    ErrorComponent,
+    ConfirmComponent,
+    ResultComponent,
+    ImageComponent,
+    NgxChartsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    JsonPipe
   ]
 })
 export class SharedModule { }

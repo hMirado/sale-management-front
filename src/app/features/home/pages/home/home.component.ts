@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, debounceTime, filter, switchMap } from 'rxjs';
 import { BreadCrumb } from 'src/app/shared/models/bread-crumb/bread-crumb.model';
-import { Button } from 'src/app/shared/models/button/button.model';
 import { HomeService } from '../../services/home/home.service';
 import { authorizations, userInfo } from 'src/app/shared/config/constant';
 import { HelperService } from 'src/app/shared/services/helper/helper.service';
@@ -10,6 +9,11 @@ import { ModalService } from 'src/app/shared/services/modal/modal.service';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
 import { Router } from '@angular/router';
 import { Authorization } from 'src/app/shared/models/authorization/authorization.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Shop } from 'src/app/shared/models/shop/shop.model';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { ScaleType } from '@swimlane/ngx-charts';
+import { AuthorizationService } from 'src/app/shared/services/authorization/authorization.service';
 
 @Component({
   selector: 'app-home',
@@ -19,35 +23,61 @@ import { Authorization } from 'src/app/shared/models/authorization/authorization
 export class HomeComponent implements OnInit, OnDestroy {
   public title: string = 'Tableau de bord';
   public breadCrumbs: BreadCrumb[] = [];
-  public buttonMakeSale: Button = {
-    id: 'sale',
-    label: 'Faire une vente',
-    color: 'secondary'
-  };
-  public buttonOpenShop: Button = {
-    id: 'open',
-    label: 'Ouvrir un shop',
-    color: 'primary'
-  };
   private subscription = new Subscription();
   private userData: any = {};
-  public shopIsOpen: boolean = false;
-  public openShopId: string = 'open-shop';
-  public closeShopId: string = 'close-shop';
-  public singleShop: boolean = true;
+  public sessionIsStart: boolean = false;
+  public sessionId: string = 'session-id';
+
+  public chartView: any = [1500, 500];
+  public chartData: any[] = [];
+  public chartLegend: boolean = true;
+  public legendTitle: string = "Légende";
+  public showLabels: boolean = true;
+  public animations: boolean = true;
+  public xAxis: boolean = true;
+  public yAxis: boolean = true;
+  public showYAxisLabel: boolean = true;
+  public showXAxisLabel: boolean = true;
+  public xAxisLabel: string = "Date (jj-mm-aaaa)";
+  public yAxisLabel: string = "Chiffre d'affaire (MGA)";
+  public timeline: boolean = false;
+  public shops: Shop[] = [];
+  public saleChartForm !: FormGroup;
+  public barChartForm !: FormGroup;
+  public barChartData: any [];
+  public colorScheme = {
+    name: 'myScheme',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#5AA454', '#dc3545', '#0030ff']
+  };
+  public multiShopKey: string = authorizations.shop.element.multipleAction;
+  public totalSale: string = '0';
+  public totalQuantity: string = '0';
 
   constructor(
     private homeService: HomeService,
     private localStorageService: LocalStorageService,
     private helperService: HelperService,
     private modalService: ModalService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private notificationService: NotificationService,
+    private authorizationService: AuthorizationService
+  ) {
+    this.createForm();
+    this.initSessionForm();
+  }
 
   ngOnInit(): void {
     this.getUserData();
     this.addHeaderContent();
-    this.configButton();
+    this.getSaleGraphData();
+    this.getShops();
+    this.getFormValue();
+    this.getSaleBarChartData();
+    this.getTotal();
+    this.userSession();
   }
 
   ngOnDestroy(): void {
@@ -57,14 +87,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   addHeaderContent() {
     this.breadCrumbs = [
       {
+        url: '/',
+        label: 'Accueil'
+      },
+      {
         url: '',
         label: 'Tableau de bord'
       },
     ]
-  }
-
-  configButton() {
-    this.buttonOpenShop.action = this.openShopModal;
   }
 
   getUserData() {
@@ -75,14 +105,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getAction(_authorizations: []) {
     const isSingle = _authorizations.filter((authorization: Authorization) => authorization.authorization_key == authorizations.shop.element.singleAction)[0];
-    this.singleShop = isSingle ? true : false;
-    if (this.singleShop) {
-      this.getShopIsOpen();
-    }
-    else {
-      this.buttonMakeSale.color = 'success';
-      this.buttonMakeSale.action = this.openShopModal;
-    }
   }
 
   openModal(id: string) {
@@ -92,65 +114,221 @@ export class HomeComponent implements OnInit, OnDestroy {
   closeModal(id: string) {
     this.modalService.hideModal(id)
   }
-  
-  openShopModal = () => {
-    this.openModal(this.openShopId)
-  }
-
-  getShopIsOpen() {
-    this.subscription.add(
-      this.homeService.getShopByUuid(this.userData.shops[0].shop_uuid).subscribe((response: ApiResponse) => {
-        const isOpen = response.data.is_opened;
-        if (isOpen) this.shopIsOpenButton();
-        else this.shopIsCloseButton();
-      })
-    );
-  }
-
-  shopIsOpenButton() {
-    this.shopIsOpen = true;
-    this.buttonOpenShop.action = this.closeShop;
-    this.buttonOpenShop.color = 'danger';
-    this.buttonOpenShop.label = 'Fermer shop'
-    this.buttonMakeSale.color = 'success';
-    this.buttonMakeSale.action = this.makeSale;
-    this.localStorageService.setLocalStorage('shop', this.userData.shops[0].shop_uuid);
-  }
-
-  shopIsCloseButton() {
-    this.shopIsOpen = false;
-    this.buttonOpenShop.action = this.openShopModal;
-    this.buttonOpenShop.color = 'primary';
-    this.buttonOpenShop.label = 'Ouvrir un shop'
-    this.buttonMakeSale.color = 'secondary';
-    this.buttonMakeSale.action = () => {};
-    this.localStorageService.removeLocalStorage('shop');
-  }
-
-  openShop() {
-    this.subscription.add(
-      this.homeService.openShop(this.userData.shops[0].shop_uuid, true).subscribe((response: ApiResponse) => {
-        this.shopIsOpenButton();
-        this.closeModal(this.openShopId);
-      })
-    );
-  }
-
-  closeShop = () => {
-    this.subscription.add(
-      this.homeService.openShop(this.userData.shops[0].shop_uuid, false).subscribe((response: ApiResponse) => {
-        this.shopIsCloseButton();
-      })
-    );
-  }
 
   makeSale = () => {
     this.router.navigate(['sale']);
   }
 
-  getSelectedShop(event: any) {
-    this.localStorageService.setLocalStorage('shop', event.shop_uuid);
-    this.closeModal(this.openShopId);
+  /**
+   * @description: START CHART FUNCTION
+   */
+  getSaleGraphData(): void {
+    const params = {
+      groupByDate: "D",
+      startDate: this.getLastWeek()[1],
+      endDate: this.getLastWeek()[0],
+      shop: ''
+    }
+    this.subscription.add(
+      this.homeService.getSaleGraphData(params).subscribe((response: ApiResponse) => {
+        this.chartData = response.data;
+      })
+    );
+  }
+
+  yAxisTickFormatting (value: any) {
+    return value.toLocaleString('fr-Fr');
+  }
+
+  getLastWeek(): String[] {
+    const date = new Date();
+    const dayNow = ('0' + date.getDate()).slice(-2)
+    const monthNow = ('0' + (date.getMonth() + 1)).slice(-2)
+    const now = date.getFullYear() + '-' + monthNow + '-' + dayNow;
+
+    const lastWeekDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() - 7,
+    );
+    const lastDay = ('0' + lastWeekDate.getDate()).slice(-2)
+    const lastMonth = ('0' + (lastWeekDate.getMonth() + 1)).slice(-2)
+    const previous = date.getFullYear() + '-' + lastMonth + '-' + lastDay;
+
+    return [now, previous];
+  }
+
+  createForm(): void {
+    this.saleChartForm = this.formBuilder.group({
+      startDate: this.getLastWeek()[1],
+      endDate: this.getLastWeek()[0],
+      shop: '',
+      trigger: false
+    })
+    this.barChartForm = this.formBuilder.group({
+      perBy: '',
+      trigger: false
+    })
+  }
+
+  triggerSaleChartForm(status: boolean = true): void {
+    this.saleChartForm.patchValue({ trigger: status });
+    this.saleChartForm.updateValueAndValidity();
+  }
+
+  triggerBarChartForm(status: boolean = true): void {
+    this.barChartForm.patchValue({ trigger: status });
+    this.barChartForm.updateValueAndValidity();
+  }
+
+  getFormValue(): void {
+    this.subscription.add(
+      this.saleChartForm.valueChanges.pipe(
+        filter((value: any) => value['trigger']),
+        debounceTime(500),
+        switchMap((value: any) => {
+          this.triggerSaleChartForm(false);
+          if (new Date(value['startDate']) > new Date(value['endDate'])) {
+            this.showNotification(
+              "danger",
+              "La date de début doit-être inferieur à la date de fin"
+            )
+            return [];
+          } else {
+            return this.homeService.getSaleGraphData(value);
+          }
+        })
+      ).subscribe((response: ApiResponse) => this.chartData = response.data)
+    );
+
+    this.subscription.add(
+      this.barChartForm.valueChanges.pipe(
+        filter((value: any) => value['trigger']),
+        debounceTime(500),
+        switchMap((value: any) => {
+          this.triggerSaleChartForm(false);
+          delete value['trigger'];
+          return this.homeService.getBarChartData(value);
+        })
+      ).subscribe((response: ApiResponse) => this.barChartData = response.data)
+    );
+  }
+
+  getShops(): void {
+    this.subscription.add(
+      this.homeService.getShops().subscribe((response:ApiResponse) => {
+        this.shops = response.data;
+      })
+    );
+  }
+
+  getShopName(location: string, box: any): string {
+    return location + ' ' + ((box && box != null) ? box : '');
+  }
+  getSaleBarChartData(): void {
+    this.subscription.add(
+      this.homeService.getBarChartData({}).subscribe((response: ApiResponse) => {
+        this.barChartData = response.data;
+      })
+    );
+  }
+
+  showNotification(type: string, message: string) {
+    this.notificationService.addNotification({
+      type: type,
+      message: message
+    })
+  }
+
+  getTotal(): void {
+    this.subscription.add(
+      this.homeService.getTotal().subscribe((response: ApiResponse) => {
+        this.totalSale = this.helperService.numberFormat(response.data['total_price']/100);
+        this.totalQuantity = this.helperService.numberFormat(response.data['total_quantity']);
+      })
+    )
+  }
+
+  getAuthorization(key: string) {
+    return this.authorizationService.getAuthorization(key)
+  }
+
+  /**
+   * @description: SESSION FUNCTION
+   */
+
+  public sessionForm !: FormGroup;
+  initSessionForm(): void {
+    this.sessionForm = this.formBuilder.group({
+      cash_float: 0,
+      shop: ['', Validators.required]
+    });
+  }
+
+  public userShops: Shop[] = [];
+  public formError: boolean = false;
+  getUserShop() {
+    this.subscription.add(
+      this.homeService.getUserShops(this.userData.user_uuid).subscribe((response: ApiResponse) => {
+        this.userShops = response.data;
+      })
+    )
+  }
+
+  openModalStartSession() {
+    this.getUserShop();
+    this.openModal(this.sessionId)
+  }
+
+  sessionAction() {
+    if(this.sessionIsStart) this.closeSession();
+    else this.startSession();
+  }
+
+  startSession() {
+    if (!this.sessionForm.valid) {
+      this.formError = true;
+    } else {
+      this.formError = false;
+      const value = this.sessionForm.value;
+      this.subscription.add(
+        this.homeService.startSession(value.cash_float, value.shop).subscribe((response: ApiResponse) => {
+          this.sessionIsStart = true
+          this.closeModal(this.sessionId);
+          this.router.navigate(['sale']);
+        })
+      )
+    }
+  }
+
+  userSession() {
+    this.homeService.userSession().subscribe(response => this.sessionIsStart = response.data ? true : false)
+  }
+
+  closeSession(): void {
+    this.homeService.userSession().pipe(
+      switchMap(response => {
+        if (response.data) {
+          return this.homeService.endSession(this.sessionForm.value.cash_float, response.data.session_uuid)
+        } else {
+          this.showNotification(
+            "success",
+            response.notification
+          )
+          return [];
+        }
+      })
+    ).subscribe((response: ApiResponse) => {
+      this.sessionIsStart = false
+      this.closeModal(this.sessionId);
+      this.showNotification(
+        "success",
+        response.notification
+      )
+    })
+  }
+
+  goToSalePage() {
     this.router.navigate(['sale']);
   }
 }

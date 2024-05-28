@@ -13,8 +13,8 @@ export const impportCategoryConfig: IImport = {
 }
 
 export const exportCategoryConfig: IExport = {
-  label: 'Exporter le modèle',
-  fileName: 'category-model.xlsx'
+  label: 'Exporter modèle',
+  id: 'category-export'
 }
 
 export const tableCategoryId: string = 'table-category'
@@ -38,7 +38,7 @@ export const impportProductConfig: IImport = {
 
 export const exportProductConfig: IExport = {
   label: 'Exporter modèle',
-  fileName: 'product-model.xlsx'
+  id: 'product-export'
 }
 
 export const tableProductId: string = 'table-product'

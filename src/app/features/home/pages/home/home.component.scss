@@ -19,3 +19,44 @@
   justify-content: center;
   align-items: center;
 }
+
+.mat-form-field {
+  display: contents!important;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  border-radius: 0!important;
+  padding: 0!important;
+}
+
+.mat-form-field-type-mat-date-range-input .mat-form-field-infix {
+  width: 100% !important;
+  display: flex !important;
+}
+
+.box-operation {
+  width: 100px;
+  height: 80px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.operation-primary:hover {
+  color: #0030ff!important;
+}
+.operation-danger:hover {
+  color: #dc3545!important;
+}
+
+.operation-success:hover {
+  color: #28a745!important;
+}
+
+.operation-warning:hover {
+  color: #f8da7f!important;
+}
