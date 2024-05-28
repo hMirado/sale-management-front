@@ -1,23 +1,25 @@
 <app-content-header [breadCrumbs]="breadCrumbs" [title]="title"></app-content-header>
 <section class="content">
   <div class="container-fluid">
-    <!--<div class="row">
-      <div class="col-sm-12 col-lg-4">
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Que voulez-vous faire ?</h3>
-          </div>
-          <div class="card-body container p-2">
-            <div class="item">
-              <app-button id="sale" [disabled]="!shopIsOpen && singleShop" [button]="buttonMakeSale"></app-button>
-            </div>
-            <div class="item" *ngIf="singleShop">
-              <app-button id="open" [button]="buttonOpenShop"></app-button>
-            </div>
-          </div>
-        </div>
+    <div class="card">
+      <div class="card-header border-0 ui-sortable-handle">
+        <h3 class="card-title">
+          <i class="fas fa-ellipsis-h mr-1"></i>
+          Opérations
+        </h3>
       </div>
-    </div>-->
+      <div class="card-body">
+        <a class="btn btn-app box-operation operation-success" [class.disabled]="sessionIsStart" (click)="openModalStartSession()">
+          <i class="fas fa-shopping-basket fa-3x"></i>Ouvrir une session
+        </a>
+        <a class="btn btn-app box-operation operation-danger" [class.disabled]="!sessionIsStart" (click)="openModalStartSession()">
+          <i class="fas fa-shopping-basket fa-3x"></i>Fermer la session
+        </a>
+        <a class="btn btn-app box-operation operation-warning" [class.disabled]="!sessionIsStart" (click)="goToSalePage()">
+          <i class="fas fa-wallet fa-3x"></i>Page de vente
+        </a>
+      </div>
+    </div>
     <div class="card">
       <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
         <h3 class="card-title">
@@ -136,12 +138,55 @@
     </div>
   </div>
 </section>
-<app-modal [id]="openShopId" size="small">
+<app-modal [id]="sessionId" size="small">
   <div head>
-    <h4>Séléctionner shop</h4>
+    <h4>Veuilez saisir votre fond de caisse</h4>
   </div>
   <div body>
-    <app-open-shop (formValue)="getSelectedShop($event)"></app-open-shop>
+    <form [formGroup]="sessionForm">
+      <ng-container *ngIf="!sessionIsStart else end">
+        <div class="form-group row">
+          <label for="shop" class="col-sm-5 col-form-label">Shop :</label>
+          <div class="col-sm-7">
+            <select class="form-control form-control-sm" id="shop" formControlName="shop"
+              [ngClass]="{'input-error':
+              (sessionForm.get('shop')?.invalid &&
+              sessionForm.get('shop')?.hasError('required') &&
+              formError)
+              }"
+            >
+              <option value="">Selectionner ici</option>
+              <option *ngFor="let shop of userShops" [value]="shop.shop_uuid">{{ getShopName(shop.shop_location, shop.shop_box) }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="cash_float" class="col-sm-5 col-form-label">Fond de caisse: </label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control form-control-sm" id="cash_float" formControlName="cash_float">
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #end>
+        <div class="form-group row">
+          <label for="cash_float" class="col-sm-5 col-form-label">Ventes : </label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control form-control-sm" id="cash_float" formControlName="cash_float">
+          </div>
+        </div>
+      </ng-template>
+    </form>
   </div>
-  <button footer class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="openShop()">Ouvrir</button>
+  <ng-container footer>
+    <button *ngIf="!sessionIsStart else endButton" class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="startSession()">
+      Ouvrir une session
+    </button>
+    <ng-template #endButton>
+      <button class="btn btn-sm btn-outline-primary ml-1 mr-1" (click)="closeSession()">
+        Fermer session
+      </button>
+    </ng-template>
+  </ng-container>
+
+
 </app-modal>
