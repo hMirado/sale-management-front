@@ -16,7 +16,30 @@
           <app-category></app-category>
         </div>
         <div class="col-10" style="height:100%">
-          <app-catalog></app-catalog>
+          <div style="height: 95%;">
+            <app-catalog></app-catalog>
+          </div>
+          <div class="bg-white"*ngIf="currentPage > 0 && totalItems > 0 ">
+            <ul class="pagination pagination-sm m-0" style="justify-content: center;">
+              <li class="page-item" *ngIf="lastPage > 0">
+                <span class="page-link pointer" (click)="goToNextPage(lastPage)">&laquo;</span>
+              </li>
+              <li class="page-item" *ngIf="lastPage > 0">
+                <span class="page-link pointer" (click)="goToNextPage(lastPage)">{{ lastPage
+                  }}</span>
+              </li>
+              <li class="page-item">
+                <a class="page-link pointer bg-primary">{{ currentPage }}</a>
+              </li>
+              <li class="page-item" *ngIf="nextPage == currentPage + 1">
+                <span class="page-link pointer" (click)="goToNextPage(nextPage)">{{ nextPage
+                  }}</span>
+              </li>
+              <li class="page-item" *ngIf="nextPage == currentPage + 1">
+                <span class="page-link pointer" (click)="goToNextPage(nextPage)">&raquo;</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

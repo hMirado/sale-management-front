@@ -1,3 +1,15 @@
 <div class="content">
-  <button class="btn btn-sm btn-category category-item" *ngFor="let category of categories">{{ category.label }}</button>
+  <button class="btn btn-sm btn-category category-item"
+    [class.category-selected] = "isSelected === 0"
+    (click)="choseCategory(0)"
+  >
+    Tous
+  </button>
+  <button class="btn btn-sm btn-category category-item"
+    [class.category-selected] = "isSelected === category.category_id"
+    *ngFor="let category of categories"
+    (click)="choseCategory(category.category_id)"
+  >
+    {{ category.label }}
+  </button>
 </div>

@@ -243,6 +243,8 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   getCategoriesResponse(response: ApiResponse) {
+    console.log(response);
+
     if (response.status == responseStatus.success) {
       this.categories = response.data;
       this.searchCategories = response.data;
@@ -322,7 +324,7 @@ export class ListComponent implements OnInit, OnDestroy {
         label: 'Tous',
         value: 'all',
         default: true
-      }, 
+      },
       ...categories.map((category: Category) => {
         const filter = {
           key: 'category',
@@ -332,7 +334,7 @@ export class ListComponent implements OnInit, OnDestroy {
         return filter;
       })
     ];
-    
+
     let filter: ITableFilter = { id: 'product-filter', title: '', fields: [] };
     filter.fields = [
       {

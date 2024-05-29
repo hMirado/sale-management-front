@@ -22,11 +22,13 @@ export class SaleService {
     private helperService: HelperService
   ) { }
 
-  getCategorieAndProduct(shopUuid: string, search: string = '', category: string = ''): Observable<ApiResponse> {
+  getCategorieAndProduct(shopUuid: string, search: string = '', category: number = 0, page: number = 1): Observable<ApiResponse> {
     const params = {
       paginate: 1,
-      search: search,
-      category: category
+      size: 20,
+      search,
+      category: category > 0 ? category : '',
+      page
     }
     const url = `${environment['store-service']}/product/sale/${shopUuid}`;
     return this.apiService.doGet(url, params);
