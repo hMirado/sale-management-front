@@ -17,7 +17,8 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-content: flex-start;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 30px;
 }
 
 .product-item {

@@ -1,12 +1,10 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Subscription, switchMap } from 'rxjs';
+import { Subscription, filter, pairwise, switchMap } from 'rxjs';
 import { responseStatus } from 'src/app/core/config/constant';
 import { ApiResponse } from 'src/app/core/models/api-response/api-response.model';
-import { tokenKey, userInfo } from 'src/app/shared/config/constant';
-import { HelperService } from 'src/app/shared/services/helper/helper.service';
-import { LocalStorageService } from 'src/app/shared/services/local-storage/local-storage.service';
 import { Product } from '../../models/product/product.model';
 import { SaleService } from '../../services/sale/sale.service';
+import { SearchService } from '../../services/search/search.service';
 
 @Component({
   selector: 'app-sale',
@@ -17,50 +15,58 @@ import { SaleService } from '../../services/sale/sale.service';
 export class SaleComponent implements OnInit, OnDestroy {
   public product!: Product;
   private subscription = new Subscription();
-  private userData: any;
+  private shopUuid: string = '';
+  public shopName: string = '';
 
   constructor(
     private saleService: SaleService,
-    private localStorageService: LocalStorageService,
-    private helperService: HelperService,
+    private searchService: SearchService
   ) { }
 
   ngOnInit(): void {
-    this.getUserData();
     this.getProducts();
+    this.getSearchValue();
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
-  private shopUuid: string = '';
-  getUserData() {
-    const data = this.localStorageService.getLocalStorage(userInfo);
-    this.userData = JSON.parse(this.helperService.decrypt(data));
-  }
-
-  getProducts() {
+  getProducts(): void {
     this.subscription.add(
       this.saleService.userSession().pipe(
         switchMap((response: ApiResponse) => {
           if (response.data) {
+            this.shopName = response.data.shop.shop_name;
             this.shopUuid = response.data.shop.shop_uuid;
-            return this.saleService.getCategorieAndProduct(this.shopUuid)
+            return this.saleService.getCategorieAndProduct(this.shopUuid);
           } else {
-            return []
+            return [];
           }
         })
-      ).subscribe((response: ApiResponse) => {
-        if (response.status == responseStatus.success) {
-          this.saleService.setCategories(response.data.categories)
-          this.saleService.setProducts(response.data.products.items)
-        }
-      })
+      ).subscribe((response: ApiResponse) => this.itemResponse(response))
     );
   }
 
-  remove(uuid: string) {
+  getSearchValue(): void {
+    this.subscription.add(
+      this.searchService.getSearch().pipe(
+        pairwise(),
+        switchMap(([prev, next]: [any, any]) => {
+          if (prev != next) {
+            return this.saleService.getCategorieAndProduct(this.shopUuid, next)
+          } else {
+            return [];//this.saleService.getCategorieAndProduct(this.shopUuid, value)
+          }
+        })
+      ).subscribe((response: ApiResponse) => this.itemResponse(response))
+    )
+  }
 
+  itemResponse(response: ApiResponse): void {
+    if (response.status == responseStatus.success) {
+      this.saleService.setCategories(response.data.categories);
+      this.saleService.setProducts(response.data.products.items);
+    }
   }
 }

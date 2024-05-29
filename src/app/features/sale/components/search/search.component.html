@@ -1,8 +1,8 @@
 <form class="input-group mb-3" [formGroup]="searchFormGroup">
   <div class="input-group-prepend">
-    <button type="button" class="btn btn-default" data-toggle="dropdown">
+    <span type="button" class="btn btn-default">
       Recherche
-    </button>
+    </span>
   </div>
   <!-- /btn-group -->
   <input type="text" class="form-control" autocomplete="off" placeholder="Nom de l'article, code de l'article" name="search" formControlName="search" (input)="triggerEvent()">

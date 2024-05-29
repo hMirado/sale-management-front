@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, filter, Subscription, switchMap } from 'rxjs';
-import { Category } from '../../models/category/category.model';
-import { SaleService } from '../../services/sale/sale.service';
+import { debounceTime, filter, of, pairwise, Subscription, switchMap } from 'rxjs';
 import { inputTimer } from 'src/app/shared/config/constant';
+import { SearchService } from '../../services/search/search.service';
 
 @Component({
   selector: 'app-sale-search',
@@ -16,8 +15,9 @@ export class SearchComponent implements OnInit, OnDestroy {
   public selected: string = "Catégorie d'article - Tous";
 
   constructor(
-    private formBuilder: FormBuilder
-  ) { 
+    private formBuilder: FormBuilder,
+    private searchService: SearchService
+  ) {
     this.createForm();
   }
 
@@ -31,27 +31,28 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   createForm() {
     this.searchFormGroup = this.formBuilder.group({
-      select: [''],
       search: [''],
-      triggerEvent: false
+      trigger: false
     })
   }
 
-
   triggerEvent() {
-    this.searchFormGroup.patchValue({ triggerEvent: true });
+    this.searchFormGroup.patchValue({ trigger: true });
     this.searchFormGroup.updateValueAndValidity();
   }
 
   formValueChanged() {
     this.subscription.add(
       this.searchFormGroup.valueChanges.pipe(
-        filter(value => value.triggerEvent),
+        filter(value => value.trigger),
         debounceTime(inputTimer),
-        switchMap(value => {
-          return []
+        switchMap((value: any) => {
+          this.searchFormGroup.patchValue({trigger: false});
+          return of(value.search);
         })
-      ).subscribe()
+      ).subscribe((value) => {
+        this.searchService.setSearch(value);
+      })
     );
   }
 }
